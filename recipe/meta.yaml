@@ -1,5 +1,5 @@
 {% set version = "1.6.3" %}
-{% set number = 0 %}
+{% set number = 1 %}
 {% set faiss_proc_type = "gpu" if cuda_compiler_version != "None" else "cpu" %}
 
 # headers for upstream-folders './*.h', 'impl/*.h', 'utils/*.h'
