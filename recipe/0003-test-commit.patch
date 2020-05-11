@@ -1,0 +1,26 @@
+From d4b3f7ae9cf2a5d295f49466e3b1bb7415005a33 Mon Sep 17 00:00:00 2001
+From: Matthijs Douze <matthijs@fb.com>
+Date: Sat, 9 May 2020 23:19:36 +0200
+Subject: [PATCH] test commit
+
+---
+ Index.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Index.h b/Index.h
+index 6d413ad..57ef8ed 100644
+--- a/Index.h
++++ b/Index.h
+@@ -10,6 +10,9 @@
+ #ifndef FAISS_INDEX_H
+ #define FAISS_INDEX_H
+ 
++#include <windows.h>
++
++
+ #include <faiss/MetricType.h>
+ #include <cstdio>
+ #include <typeinfo>
+-- 
+2.13.5
+
