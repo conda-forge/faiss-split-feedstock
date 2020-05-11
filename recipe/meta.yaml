@@ -58,11 +58,12 @@ source:
   patches:
     - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
     - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
+    - patches/0003-test-commit.patch
 
 build:
   number: {{ number }}
   # TODO: figure out compiler errors on windows
-  skip: true                      # [win]
+  skip: false                     # [win]
   # TODO: remove this to retry building GPU on the feedstock
   skip: true                      # [cuda_compiler_version != "None"]
 
