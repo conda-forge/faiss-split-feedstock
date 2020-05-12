@@ -58,6 +58,8 @@ source:
   patches:
     - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
     - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
+    # upstream commit github.com/facebookresearch/faiss/commit/64dd9884
+    - patches/0003-remove-deleted-files-from-template-change.patch
 
 build:
   number: {{ number }}
