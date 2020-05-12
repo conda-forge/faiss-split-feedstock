@@ -1,14 +1,25 @@
 About faiss-split
 =================
 
-Home: https://github.com/conda-forge/faiss-feedstock
+Home: https://github.com/facebookresearch/faiss
 
 Package license: MIT
 
 Feedstock license: BSD 3-Clause
 
-Summary: A meta-package to select CPU or GPU build for faiss.
+Summary: A library for efficient similarity search and clustering of dense vectors.
 
+Faiss is a library for efficient similarity search and clustering of dense vectors.
+It contains algorithms that search in sets of vectors of any size, up to ones that
+possibly do not fit in RAM. It also contains supporting code for evaluation and
+parameter tuning. Faiss is written in C++ with complete wrappers for Python/numpy.
+Some of the most useful algorithms are implemented on the GPU. It is developed by
+[Facebook AI Research](https://research.fb.com/category/facebook-ai-research-fair/).
+
+For best performance, the maintainers of the package
+[recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
+using the MKL implementation of blas/lapack. You can ensure that this is installed
+by adding "libblas =*=mkl" to your dependencies.
 
 
 Current build status
