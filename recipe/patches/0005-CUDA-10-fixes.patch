@@ -1,0 +1,69 @@
+From d41dcff71a519f17d87a9648c75f8f0b7fe36399 Mon Sep 17 00:00:00 2001
+From: Jeff Johnson <jhj@fb.com>
+Date: Mon, 30 Mar 2020 03:01:56 +0000
+Subject: [PATCH 5/5] CUDA 10 fixes
+
+---
+ gpu/impl/PQCodeDistances-inl.cuh |  2 +-
+ gpu/utils/DeviceDefs.cuh         |  2 ++
+ gpu/utils/DeviceUtils.cu         | 14 +++++++++++++-
+ 3 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/gpu/impl/PQCodeDistances-inl.cuh b/gpu/impl/PQCodeDistances-inl.cuh
+index c3ef87f..fcb9a02 100644
+--- a/gpu/impl/PQCodeDistances-inl.cuh
++++ b/gpu/impl/PQCodeDistances-inl.cuh
+@@ -27,7 +27,7 @@ template <typename OutCodeT,
+           int DimsPerSubQuantizer,
+           bool L2Distance>
+ __global__ void
+-__launch_bounds__(288, 4)
++__launch_bounds__(288, 3)
+ pqCodeDistances(Tensor<float, 2, true> queries,
+                 int queriesPerBlock,
+                 Tensor<CentroidT, 2, true> coarseCentroids,
+diff --git a/gpu/utils/DeviceDefs.cuh b/gpu/utils/DeviceDefs.cuh
+index 4e859ec..89d3dda 100644
+--- a/gpu/utils/DeviceDefs.cuh
++++ b/gpu/utils/DeviceDefs.cuh
+@@ -8,6 +8,8 @@
+ 
+ #pragma once
+ 
++#include <cuda.h>
++
+ namespace faiss { namespace gpu {
+ 
+ #ifdef __CUDA_ARCH__
+diff --git a/gpu/utils/DeviceUtils.cu b/gpu/utils/DeviceUtils.cu
+index a8195c9..7bcc230 100644
+--- a/gpu/utils/DeviceUtils.cu
++++ b/gpu/utils/DeviceUtils.cu
+@@ -111,11 +111,23 @@ int getDeviceForAddress(const void* p) {
+     FAISS_ASSERT_FMT(err == cudaErrorInvalidValue,
+                      "unknown error %d", (int) err);
+     return -1;
+-  } else if (att.memoryType == cudaMemoryTypeHost) {
++  }
++
++  // memoryType is deprecated for CUDA 10.0+
++#if CUDA_VERSION < 10000
++  if (att.memoryType == cudaMemoryTypeHost) {
+     return -1;
+   } else {
+     return att.device;
+   }
++#else
++  // FIXME: what to use for managed memory?
++  if (att.type == cudaMemoryTypeDevice) {
++    return att.device;
++  } else {
++    return -1;
++  }
++#endif
+ }
+ 
+ bool getFullUnifiedMemSupport(int device) {
+-- 
+2.26.2.windows.1
+

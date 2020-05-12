@@ -1,7 +1,7 @@
-From e6c2b146abb481ae744b36e43f7a02c2f76ec66d Mon Sep 17 00:00:00 2001
+From 94bd01d4b4f457f40994df7817d8b789a99d605b Mon Sep 17 00:00:00 2001
 From: Jeff Johnson <jhj@fb.com>
 Date: Wed, 25 Mar 2020 10:57:57 -0700
-Subject: [PATCH 3/3] remove deleted files from template change
+Subject: [PATCH 3/5] remove deleted files from template change
 
 ---
  gpu/impl/PQCodeDistances.cu              | 567 ---------------------
