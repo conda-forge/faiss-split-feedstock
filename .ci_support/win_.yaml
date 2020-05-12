@@ -1,0 +1,19 @@
+channel_sources:
+- conda-forge,defaults
+channel_targets:
+- conda-forge main
+cuda_compiler_version:
+- None
+cxx_compiler:
+- vs2017
+libblas:
+- 3.8 *netlib
+liblapack:
+- 3.8.0 *netlib
+pin_run_as_build:
+  python:
+    min_pin: x.x
+    max_pin: x.x
+python:
+- 3.6.* *_cpython
+- 3.7.* *_cpython
