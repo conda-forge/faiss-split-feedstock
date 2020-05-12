@@ -71,6 +71,7 @@ requirements:
     - {{ compiler('cxx') }}
 
 outputs:
+  # A meta-package to select CPU or GPU build for faiss.
   - name: faiss-proc
     version: 1.0.0
     build:
@@ -78,11 +79,6 @@ outputs:
     test:
       commands:
         - exit 0
-    about:
-      home: https://github.com/conda-forge/faiss-feedstock
-      license: MIT
-      license_family: MIT
-      summary: A meta-package to select CPU or GPU build for faiss.
 
   - name: libfaiss
     script: build-lib.sh          # [not win]
