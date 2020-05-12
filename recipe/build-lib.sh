@@ -1,5 +1,20 @@
 CUDA_CONFIG_ARG=""
 if [ ${cuda_compiler_version} != "None" ]; then
+    # for documentation see
+    # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
+    # docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#major-components__table-cuda-toolkit-driver-versions
+    # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
+
+    # default of `./configure --with-cuda-arch=...` corresponds to compute_{35,52,60,61,70,75}
+    ARCHES=(35 52 60 61 70)
+    if [ ${cuda_compiler_version} != "9.2" ]; then
+        # cuda 9.2 does not support Turing (sm_75)
+        ARCHES+=(75)
+    fi
+    for arch in "${ARCHES[@]}"; do
+        CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${arch},code=compute_${arch}";
+    done
+
     CUDA_CONFIG_ARG="--with-cuda=${CUDA_HOME}"
 else
     CUDA_CONFIG_ARG="--without-cuda"
@@ -8,7 +23,7 @@ fi
 # Build vanilla version (no avx)
 ./configure --prefix=${PREFIX} --exec-prefix=${PREFIX} \
   --with-blas=-lblas --with-lapack=-llapack \
-  ${CUDA_CONFIG_ARG}
+  ${CUDA_CONFIG_ARG} --with-cuda-arch="${CUDA_ARCH}" || exit 1
 
 # make sets SHAREDEXT correctly for linux/osx
 make install
