@@ -58,7 +58,7 @@ source:
   patches:
     - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
     - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
-    - patches/0003-test-commit.patch
+    - patches/0003-test-commit.patch                       # [win]
 
 build:
   number: {{ number }}
