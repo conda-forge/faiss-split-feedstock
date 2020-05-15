@@ -178,7 +178,8 @@ outputs:
         - faiss
       commands:
         - python conda/faiss/run_test.py
-        - python conda/faiss-gpu/run_test.py  # [cuda_compiler_version != "None"]
+        # running the following test requires an actual GPU device, which is not available in CI
+        # - python conda/faiss-gpu/run_test.py  # [cuda_compiler_version != "None"]
         - python -m unittest discover tests
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
