@@ -19,7 +19,7 @@ Some of the most useful algorithms are implemented on the GPU. It is developed b
 For best performance, the maintainers of the package
 [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
 using the MKL implementation of blas/lapack. You can ensure that this is installed
-by adding "libblas =*=mkl" to your dependencies.
+by adding "libblas =*=*mkl" to your dependencies.
 
 
 Current build status
