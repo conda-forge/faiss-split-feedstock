@@ -5,8 +5,8 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#major-components__table-cuda-toolkit-driver-versions
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
-    # default of `./configure --with-cuda-arch=...` corresponds to compute_{35,52,60,61,70,75}
-    ARCHES=(35 52 60 61 70)
+    # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
+    ARCHES=(35 50 52 60 61 70)
     LATEST_ARCH=70
     if [ ${cuda_compiler_version} != "9.2" ]; then
         # cuda 9.2 does not support Turing (sm_75)
