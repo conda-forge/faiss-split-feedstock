@@ -7,17 +7,18 @@ if [ ${cuda_compiler_version} != "None" ]; then
 
     # default of `./configure --with-cuda-arch=...` corresponds to compute_{35,52,60,61,70,75}
     ARCHES=(35 52 60 61 70)
+    LATEST_ARCH=70
     if [ ${cuda_compiler_version} != "9.2" ]; then
         # cuda 9.2 does not support Turing (sm_75)
         ARCHES+=(75)
+        LATEST_ARCH=75
     fi
     for arch in "${ARCHES[@]}"; do
         CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${arch},code=sm_${arch}";
     done
     # to support PTX JIT compilation; see first link above or cf.
     # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
-    latest_arch="${ARCHES[-1]}"
-    CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${latest_arch},code=compute_${latest_arch}"
+    CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${LATEST_ARCH},code=compute_${LATEST_ARCH}"
 
     CUDA_CONFIG_ARG="--with-cuda=${CUDA_HOME}"
 else
