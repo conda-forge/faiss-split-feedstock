@@ -1,6 +1,6 @@
 CUDA_CONFIG_ARG=""
 if [ ${cuda_compiler_version} != "None" ]; then
-    # for documentation see
+    # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
     # docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#major-components__table-cuda-toolkit-driver-versions
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
@@ -12,8 +12,12 @@ if [ ${cuda_compiler_version} != "None" ]; then
         ARCHES+=(75)
     fi
     for arch in "${ARCHES[@]}"; do
-        CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${arch},code=compute_${arch}";
+        CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${arch},code=sm_${arch}";
     done
+    # to support PTX JIT compilation; see first link above or cf.
+    # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
+    latest_arch="${ARCHES[-1]}"
+    CUDA_ARCH="${CUDA_ARCH} -gencode=arch=compute_${latest_arch},code=compute_${latest_arch}"
 
     CUDA_CONFIG_ARG="--with-cuda=${CUDA_HOME}"
 else
