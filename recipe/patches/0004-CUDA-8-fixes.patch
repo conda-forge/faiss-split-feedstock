@@ -1,0 +1,117 @@
+From 3a69eeeb6067ebd2e71e510e11535b59a4a7768b Mon Sep 17 00:00:00 2001
+From: Jeff Johnson <jhj@devfair032.maas>
+Date: Sun, 29 Mar 2020 20:07:01 -0700
+Subject: [PATCH 4/5] CUDA 8 fixes
+
+---
+ gpu/impl/Distance.cu          |  2 +-
+ gpu/impl/GeneralDistance.cuh  | 15 ++++++++-------
+ gpu/test/TestGpuIndexFlat.cpp |  2 +-
+ gpu/utils/MathOperators.cuh   |  2 +-
+ 4 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/gpu/impl/Distance.cu b/gpu/impl/Distance.cu
+index 63ed60b..3a46c37 100644
+--- a/gpu/impl/Distance.cu
++++ b/gpu/impl/Distance.cu
+@@ -64,7 +64,7 @@ void runDistance(bool computeL2,
+   if (centroids.numElements() == 0) {
+     thrust::fill(thrust::cuda::par.on(defaultStream),
+                  outDistances.data(), outDistances.end(),
+-                 Limits<T>::getMax());
++                 Limits<float>::getMax());
+ 
+     thrust::fill(thrust::cuda::par.on(defaultStream),
+                  outIndices.data(), outIndices.end(),
+diff --git a/gpu/impl/GeneralDistance.cuh b/gpu/impl/GeneralDistance.cuh
+index 0ecdfa5..a2a447f 100644
+--- a/gpu/impl/GeneralDistance.cuh
++++ b/gpu/impl/GeneralDistance.cuh
+@@ -9,6 +9,7 @@
+ #include <faiss/MetricType.h>
+ #include <faiss/impl/AuxIndexStructures.h>
+ #include <faiss/gpu/impl/DistanceUtils.cuh>
++#include <faiss/gpu/utils/ConversionOperators.cuh>
+ #include <faiss/gpu/utils/DeviceTensor.cuh>
+ #include <faiss/gpu/utils/DeviceDefs.cuh>
+ #include <faiss/gpu/utils/DeviceUtils.h>
+@@ -144,11 +145,11 @@ generalDistance(Tensor<T, 2, InnerContig> query, // m x k
+ 
+         queryTileBase[threadIdx.x + i * kWarpSize] =
+                              kInBounds ?
+-                             queryBase[k] : (T) 0; //DistanceOp::kIdentityData;
++                             queryBase[k] : ConvertTo<T>::to(0);
+ 
+         vecTileBase[threadIdx.x + i * kWarpSize] =
+                              kInBounds ?
+-                             vecBase[k] : (T) 0; // DistanceOp::kIdentityData;
++                             vecBase[k] : ConvertTo<T>::to(0);
+       }
+ 
+       __syncthreads();
+@@ -179,11 +180,11 @@ generalDistance(Tensor<T, 2, InnerContig> query, // m x k
+       // Load query tile
+       queryTileBase[threadIdx.x] =
+         queryThreadInBounds ?
+-        queryBase[k] : (T) 0; // DistanceOp::kIdentityData;
++        queryBase[k] : ConvertTo<T>::to(0);
+ 
+       vecTileBase[threadIdx.x] =
+         vecThreadInBoundsLoad ?
+-        vecBase[k] : (T) 0; // DistanceOp::kIdentityData;
++        vecBase[k] : ConvertTo<T>::to(0);
+ 
+       __syncthreads();
+ 
+@@ -205,11 +206,11 @@ generalDistance(Tensor<T, 2, InnerContig> query, // m x k
+       // Load query tile
+       queryTileBase[threadIdx.x] =
+                            queryThreadInBounds && kInBounds ?
+-                           queryBase[k] : (T) 0; // DistanceOp::kIdentityData;
++                           queryBase[k] : ConvertTo<T>::to(0);
+ 
+       vecTileBase[threadIdx.x] =
+                            vecThreadInBoundsLoad && kInBounds ?
+-                           vecBase[k] : (T) 0; // DistanceOp::kIdentityData;
++                           vecBase[k] : ConvertTo<T>::to(0);
+ 
+       __syncthreads();
+ 
+@@ -278,7 +279,7 @@ void runGeneralDistance(GpuResources* resources,
+   if (centroids.numElements() == 0) {
+     thrust::fill(thrust::cuda::par.on(defaultStream),
+                  outDistances.data(), outDistances.end(),
+-                 Limits<T>::getMax());
++                 Limits<float>::getMax());
+ 
+     thrust::fill(thrust::cuda::par.on(defaultStream),
+                  outIndices.data(), outIndices.end(),
+diff --git a/gpu/test/TestGpuIndexFlat.cpp b/gpu/test/TestGpuIndexFlat.cpp
+index 73cfe20..cabd7aa 100644
+--- a/gpu/test/TestGpuIndexFlat.cpp
++++ b/gpu/test/TestGpuIndexFlat.cpp
+@@ -277,7 +277,7 @@ TEST(TestGpuIndexFlat, CopyFrom) {
+   int device = faiss::gpu::randVal(0, faiss::gpu::getNumDevices() - 1);
+ 
+   faiss::gpu::GpuIndexFlatConfig config;
+-  config.device = 0;
++  config.device = device;
+   config.useFloat16 = false;
+   config.storeTransposed = false;
+ 
+diff --git a/gpu/utils/MathOperators.cuh b/gpu/utils/MathOperators.cuh
+index 68ccbd5..020d220 100644
+--- a/gpu/utils/MathOperators.cuh
++++ b/gpu/utils/MathOperators.cuh
+@@ -537,7 +537,7 @@ struct Math<Half8> {
+     return h;
+   }
+ 
+-  static inline __device__ half reduceAdd(Half8 v) {
++  static inline __device__ float reduceAdd(Half8 v) {
+     float x = Math<Half4>::reduceAdd(v.a);
+     float y = Math<Half4>::reduceAdd(v.b);
+     return x + y;
+-- 
+2.26.2.windows.1
+

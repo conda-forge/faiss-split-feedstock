@@ -5,13 +5,13 @@ channel_targets:
 cuda_compiler:
 - nvcc
 cuda_compiler_version:
-- None
+- '10.1'
 cxx_compiler:
 - gxx
 cxx_compiler_version:
 - '7'
 docker_image:
-- condaforge/linux-anvil-comp7
+- condaforge/linux-anvil-cuda:10.1
 libblas:
 - 3.8 *netlib
 liblapack:

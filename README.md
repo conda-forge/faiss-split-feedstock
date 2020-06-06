@@ -19,7 +19,7 @@ Some of the most useful algorithms are implemented on the GPU. It is developed b
 For best performance, the maintainers of the package
 [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
 using the MKL implementation of blas/lapack. You can ensure that this is installed
-by adding "libblas =*=mkl" to your dependencies.
+by adding "libblas =*=*mkl" to your dependencies.
 
 
 Current build status
@@ -40,6 +40,34 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
+              <td>linux_cuda_compiler_version10.0</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_cuda_compiler_version10.0" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_cuda_compiler_version10.1</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_cuda_compiler_version10.1" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_cuda_compiler_version10.2</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_cuda_compiler_version10.2" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_cuda_compiler_version9.2</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_cuda_compiler_version9.2" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
               <td>linux_cuda_compiler_versionNone</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
