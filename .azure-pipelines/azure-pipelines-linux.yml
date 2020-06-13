@@ -8,22 +8,6 @@ jobs:
     vmImage: ubuntu-16.04
   strategy:
     matrix:
-      linux_cuda_compiler_version10.0:
-        CONFIG: linux_cuda_compiler_version10.0
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.0
-      linux_cuda_compiler_version10.1:
-        CONFIG: linux_cuda_compiler_version10.1
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.1
-      linux_cuda_compiler_version10.2:
-        CONFIG: linux_cuda_compiler_version10.2
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:10.2
-      linux_cuda_compiler_version9.2:
-        CONFIG: linux_cuda_compiler_version9.2
-        UPLOAD_PACKAGES: 'True'
-        DOCKER_IMAGE: condaforge/linux-anvil-cuda:9.2
       linux_cuda_compiler_versionNone:
         CONFIG: linux_cuda_compiler_versionNone
         UPLOAD_PACKAGES: 'True'
@@ -47,3 +31,5 @@ jobs:
     displayName: Run docker build
     env:
       BINSTAR_TOKEN: $(BINSTAR_TOKEN)
+      FEEDSTOCK_TOKEN: $(FEEDSTOCK_TOKEN)
+      STAGING_BINSTAR_TOKEN: $(STAGING_BINSTAR_TOKEN)
