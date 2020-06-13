@@ -1,6 +1,6 @@
 {% set version = "1.6.3" %}
-{% set number = 0 %}
-{% set faiss_proc_type = "gpu" if cuda_compiler_version != "None" else "cpu" %}
+{% set number = 1 %}
+{% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
 # headers for upstream-folders './*.h', 'impl/*.h', 'utils/*.h'
 # gpu adds headers in 'gpu/*.h', 'gpu/impl/*.(cu)?h', 'gpu/utils/*.(cu)?h'
@@ -58,20 +58,24 @@ source:
   patches:
     - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
     - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
-    - patches/0003-test-commit.patch                       # [win]
+    # add upstream commits (64dd9884, e05f773f, ba061ff82) at the recommendation
+    # of the maintainers. These can be removed upon the next release.
+    - patches/0003-remove-deleted-files-from-template-change.patch
+    - patches/0004-CUDA-8-fixes.patch
+    - patches/0005-CUDA-10-fixes.patch
+    - patches/0006-test-commit.patch                       # [win]
 
 build:
   number: {{ number }}
-  # TODO: figure out compiler errors on windows
-  skip: false                     # [win]
-  # TODO: remove this to retry building GPU on the feedstock
-  skip: true                      # [cuda_compiler_version != "None"]
+  # GPU version only for linux
+  skip: true  # [(win or osx) and cuda_compiler_version != "None"]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
 
 outputs:
+  # A meta-package to select CPU or GPU build for faiss.
   - name: faiss-proc
     version: 1.0.0
     build:
@@ -79,11 +83,6 @@ outputs:
     test:
       commands:
         - exit 0
-    about:
-      home: https://github.com/conda-forge/faiss-feedstock
-      license: MIT
-      license_family: MIT
-      summary: A meta-package to select CPU or GPU build for faiss.
 
   - name: libfaiss
     script: build-lib.sh          # [not win]
@@ -178,7 +177,8 @@ outputs:
         - faiss
       commands:
         - python conda/faiss/run_test.py
-        - python conda/faiss-gpu/run_test.py  # [cuda_compiler_version != "None"]
+        # running the following test requires an actual GPU device, which is not available in CI
+        # - python conda/faiss-gpu/run_test.py  # [cuda_compiler_version != "None"]
         - python -m unittest discover tests
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
@@ -203,7 +203,7 @@ outputs:
       host:
         - python
       run:
-        - faiss ={{ version }}=*_gpu
+        - faiss ={{ version }}=*_cuda
     test:
       commands:
         - exit 0
@@ -226,7 +226,7 @@ about:
     For best performance, the maintainers of the package
     [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
     using the MKL implementation of blas/lapack. You can ensure that this is installed
-    by adding "libblas =*=mkl" to your dependencies.
+    by adding "libblas =*=*mkl" to your dependencies.
   doc_url: https://rawgit.com/facebookresearch/faiss/master/docs/html/annotated.html
   dev_url: https://github.com/facebookresearch/faiss
 
