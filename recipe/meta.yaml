@@ -69,6 +69,9 @@ build:
   number: {{ number }}
   # GPU version only for linux
   skip: true  # [(win or osx) and cuda_compiler_version != "None"]
+  # TODO: remove this before merging PR
+  # temporarily skip GPU builds to reduce CI running time.
+  skip: true  # [cuda_compiler_version != "None"]
 
 requirements:
   build:
