@@ -45,10 +45,6 @@ jobs:
         export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
         .scripts/run_docker_build.sh
     displayName: Run docker build
-  - script: |
-        rm -rf /opt/ghc
-        df -h
-    displayName: Manage disk space (rm /opt/ghc)
     env:
       BINSTAR_TOKEN: $(BINSTAR_TOKEN)
       FEEDSTOCK_TOKEN: $(FEEDSTOCK_TOKEN)
