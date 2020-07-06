@@ -5,7 +5,7 @@ Home: https://github.com/facebookresearch/faiss
 
 Package license: MIT
 
-Feedstock license: BSD 3-Clause
+Feedstock license: BSD-3-Clause
 
 Summary: A library for efficient similarity search and clustering of dense vectors.
 
