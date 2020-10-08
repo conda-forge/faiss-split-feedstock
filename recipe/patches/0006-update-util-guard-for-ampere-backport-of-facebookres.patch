@@ -1,0 +1,26 @@
+From c33f254e219c318e25497a8e399ccbe43bd28687 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 8 Oct 2020 12:45:09 +0200
+Subject: [PATCH 6/6] update util-guard for ampere; backport of
+ facebookresearch/faiss#1380
+
+---
+ gpu/utils/DeviceDefs.cuh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gpu/utils/DeviceDefs.cuh b/gpu/utils/DeviceDefs.cuh
+index 89d3dda..bc0f9b5 100644
+--- a/gpu/utils/DeviceDefs.cuh
++++ b/gpu/utils/DeviceDefs.cuh
+@@ -13,7 +13,7 @@
+ namespace faiss { namespace gpu {
+ 
+ #ifdef __CUDA_ARCH__
+-#if __CUDA_ARCH__ <= 750
++#if __CUDA_ARCH__ <= 800
+ constexpr int kWarpSize = 32;
+ #else
+ #error Unknown __CUDA_ARCH__; please define parameters for compute capability
+-- 
+2.26.2.windows.1
+

@@ -64,6 +64,8 @@ source:
     - patches/0003-remove-deleted-files-from-template-change.patch
     - patches/0004-CUDA-8-fixes.patch
     - patches/0005-CUDA-10-fixes.patch
+    # backport of facebookresearch/faiss#1380 to be able to build for Ampere
+    - patches/0006-update-util-guard-for-ampere-backport-of-facebookres.patch
 
 build:
   number: {{ number }}
