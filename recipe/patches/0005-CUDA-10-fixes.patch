@@ -1,7 +1,7 @@
 From d41dcff71a519f17d87a9648c75f8f0b7fe36399 Mon Sep 17 00:00:00 2001
 From: Jeff Johnson <jhj@fb.com>
 Date: Mon, 30 Mar 2020 03:01:56 +0000
-Subject: [PATCH 5/5] CUDA 10 fixes
+Subject: [PATCH 5/7] CUDA 10 fixes
 
 ---
  gpu/impl/PQCodeDistances-inl.cuh |  2 +-

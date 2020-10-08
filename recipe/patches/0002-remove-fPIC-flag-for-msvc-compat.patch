@@ -1,7 +1,7 @@
 From c8dc93d045be8485a4863d20b36e12d1aa2c6c8a Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 8 May 2020 20:12:30 +0200
-Subject: [PATCH 2/5] remove -fPIC flag for msvc-compat
+Subject: [PATCH 2/7] remove -fPIC flag for msvc-compat
 
 ---
  makefile.inc.in | 2 +-

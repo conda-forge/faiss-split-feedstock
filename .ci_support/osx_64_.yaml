@@ -1,21 +1,21 @@
+MACOSX_DEPLOYMENT_TARGET:
+- '10.9'
 channel_sources:
 - conda-forge,defaults
 channel_targets:
 - conda-forge main
-cuda_compiler:
-- nvcc
 cuda_compiler_version:
-- '10.1'
+- None
 cxx_compiler:
-- gxx
+- clangxx
 cxx_compiler_version:
-- '7'
-docker_image:
-- condaforge/linux-anvil-cuda:10.1
+- '10'
 libblas:
 - 3.8 *netlib
 liblapack:
 - 3.8.0 *netlib
+macos_machine:
+- x86_64-apple-darwin13.4.0
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -24,6 +24,5 @@ python:
 - 3.6.* *_cpython
 - 3.7.* *_cpython
 - 3.8.* *_cpython
-zip_keys:
-- - cuda_compiler_version
-  - docker_image
+target_platform:
+- osx-64

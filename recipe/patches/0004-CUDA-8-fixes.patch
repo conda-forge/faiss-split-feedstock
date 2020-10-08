@@ -1,7 +1,7 @@
 From 3a69eeeb6067ebd2e71e510e11535b59a4a7768b Mon Sep 17 00:00:00 2001
 From: Jeff Johnson <jhj@devfair032.maas>
 Date: Sun, 29 Mar 2020 20:07:01 -0700
-Subject: [PATCH 4/5] CUDA 8 fixes
+Subject: [PATCH 4/7] CUDA 8 fixes
 
 ---
  gpu/impl/Distance.cu          |  2 +-
