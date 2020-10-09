@@ -1,7 +1,7 @@
 From c33f254e219c318e25497a8e399ccbe43bd28687 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 8 Oct 2020 12:45:09 +0200
-Subject: [PATCH 6/7] update util-guard for ampere; backport of
+Subject: [PATCH 6/8] update util-guard for ampere; backport of
  facebookresearch/faiss#1380
 
 ---
