@@ -1,7 +1,7 @@
 From 5e576fb95233970295084e7d05b6818d7667af6a Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 8 Oct 2020 18:06:20 +0200
-Subject: [PATCH 7/7] use c++14
+Subject: [PATCH 7/8] use c++14
 
 ---
  configure.ac | 2 +-
