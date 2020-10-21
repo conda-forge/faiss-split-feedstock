@@ -18,6 +18,11 @@ libblas:
 - 3.8 *netlib
 liblapack:
 - 3.8 *netlib
+numpy:
+- '1.18'
+- '1.16'
+- '1.16'
+- '1.16'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -32,3 +37,5 @@ target_platform:
 zip_keys:
 - - cuda_compiler_version
   - docker_image
+- - python
+  - numpy
