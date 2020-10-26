@@ -33,9 +33,6 @@ else
     CUDA_CONFIG_ARG="--without-cuda"
 fi
 
-# need to regenerate ./configure for patch to configure.ac to take effect
-autoreconf -i -f
-
 # Build vanilla version (no avx)
 ./configure --prefix=${PREFIX} --exec-prefix=${PREFIX} \
   --with-blas=-lblas --with-lapack=-llapack \

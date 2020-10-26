@@ -100,9 +100,6 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
-        - autoconf                # [not win]
-        - automake                # [not win]
-        - libtool                 # [not win]
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx or win]
