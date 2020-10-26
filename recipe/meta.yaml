@@ -149,7 +149,7 @@ outputs:
       host:
         - python
         - pip
-        - numpy =1.14.*
+        - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
