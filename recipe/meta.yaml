@@ -65,8 +65,6 @@ source:
 
 build:
   number: {{ number }}
-  # TODO: figure out compiler errors on windows
-  skip: true  # [win]
   # GPU version only for linux
   skip: true  # [(win or osx) and cuda_compiler_version != "None"]
 
