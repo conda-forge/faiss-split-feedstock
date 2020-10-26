@@ -1,0 +1,39 @@
+From 9afff6da38f275020ce3394e2641e53e75faddfd Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Mon, 26 Oct 2020 22:44:44 +0100
+Subject: [PATCH] use c++14
+
+---
+ CMakeLists.txt              | 2 +-
+ faiss/python/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 29b73d8..1748265 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,7 +12,7 @@ project(faiss
+   HOMEPAGE_URL "https://github.com/facebookresearch/faiss"
+   LANGUAGES CXX)
+ 
+-set(CMAKE_CXX_STANDARD 11)
++set(CMAKE_CXX_STANDARD 14)
+ 
+ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+ 
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+index 0b4366d..1ef5dea 100644
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -11,7 +11,7 @@ project(pyfaiss
+   HOMEPAGE_URL "https://github.com/facebookresearch/faiss"
+   LANGUAGES CXX)
+ 
+-set(CMAKE_CXX_STANDARD 11)
++set(CMAKE_CXX_STANDARD 14)
+ 
+ find_package(SWIG REQUIRED COMPONENTS python)
+ include(${SWIG_USE_FILE})
+-- 
+2.26.2.windows.1
+

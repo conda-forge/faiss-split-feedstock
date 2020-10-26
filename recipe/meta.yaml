@@ -61,19 +61,7 @@ source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
   sha256: 6ed6311415ccb70ea1afe82bafc24e9f3aa60c06c9d030bfc23ee4173d59cc99
   patches:
-    - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
-    - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
-    # add upstream commits (64dd9884, e05f773f, ba061ff82) at the recommendation
-    # of the maintainers. These can be removed upon the next release.
-    - patches/0003-remove-deleted-files-from-template-change.patch
-    - patches/0004-CUDA-8-fixes.patch
-    - patches/0005-CUDA-10-fixes.patch
-    # backport of facebookresearch/faiss#1380 to be able to build for Ampere
-    - patches/0006-update-util-guard-for-ampere-backport-of-facebookres.patch
-    # use c++14 (in autoconf macro AX_CXX_COMPILE_STDCXX)
-    - patches/0007-use-c-14.patch
-    # backport of facebookresearch/faiss#1388, see conda-forge/faiss-split-feedstock#14
-    - patches/0008-backport-facebookresearch-faiss-1388.patch
+    - patches/0001-use-c-14.patch
 
 build:
   number: {{ number }}
