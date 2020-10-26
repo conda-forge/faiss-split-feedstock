@@ -1,9 +1,13 @@
-@echo off
+:: Build faiss.dll
+cmake -B _build ^
+    -DBUILD_SHARED_LIBS=ON ^
+    -DBUILD_TESTING=OFF ^
+    -DFAISS_ENABLE_GPU=OFF ^
+    -DFAISS_ENABLE_PYTHON=OFF .
+if %ERRORLEVEL% neq 0 exit 1
 
-:: there's a symbolic link from faiss/ to ./ in the upstream repo that does not work with windows;
-:: delete symlink & copy entire source recursively (= "/S") to folder faiss to work around it
-rmdir faiss
-robocopy . faiss /S
+cmake --build _build --config Release -j %CPU_COUNT%
+if %ERRORLEVEL% neq 0 exit 1
 
-call %BUILD_PREFIX%\Library\bin\run_autotools_clang_conda_build.bat build-lib.sh
+cmake --install _build --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
