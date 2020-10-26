@@ -1,5 +1,5 @@
-{% set version = "1.6.3" %}
-{% set number = 3 %}
+{% set version = "1.6.4" %}
+{% set number = 0 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -55,7 +55,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: e1a41c159f0b896975fbb133e0240a233af5c9286c09a28fde6aefff5336e542
+  sha256: 6ed6311415ccb70ea1afe82bafc24e9f3aa60c06c9d030bfc23ee4173d59cc99
   patches:
     - patches/0001-change-python-Makefile-to-point-to-libfaiss.-SHLIB_E.patch
     - patches/0002-remove-fPIC-flag-for-msvc-compat.patch  # [win]
