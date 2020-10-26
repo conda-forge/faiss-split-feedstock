@@ -3,22 +3,26 @@
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
-# headers for upstream-folders './*.h', 'impl/*.h', 'utils/*.h'
-# gpu adds headers in 'gpu/*.h', 'gpu/impl/*.(cu)?h', 'gpu/utils/*.(cu)?h'
+# headers for upstream-folders 'faiss/*.h', 'faiss/{impl,utils}/*.h',
+# see https://github.com/facebookresearch/faiss/blob/v1.6.4/faiss/CMakeLists.txt
+# gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'
 {% set headers = [
-    'AutoTune.h', 'clone_index.h', 'Clustering.h', 'DirectMap.h', 'Index.h', 'Index2Layer.h',
-    'IndexBinary.h', 'IndexBinaryFlat.h', 'IndexBinaryFromFloat.h', 'IndexBinaryHash.h',
-    'IndexBinaryHNSW.h', 'IndexBinaryIVF.h', 'IndexFlat.h', 'IndexHNSW.h', 'IndexIVF.h',
-    'IndexIVFFlat.h', 'IndexIVFPQ.h', 'IndexIVFPQR.h', 'IndexIVFSpectralHash.h', 'IndexLattice.h',
-    'IndexLSH.h', 'IndexPQ.h', 'IndexPreTransform.h', 'IndexReplicas.h', 'IndexScalarQuantizer.h',
-    'IndexShards.h', 'index_factory.h', 'index_io.h', 'InvertedLists.h', 'IVFlib.h',
-    'MatrixStats.h', 'MetaIndexes.h', 'MetricType.h', 'OnDiskInvertedLists.h', 'VectorTransform.h',
+    'AutoTune.h', 'Clustering.h', 'DirectMap.h', 'IVFlib.h', 'Index.h', 'Index2Layer.h',
+    'IndexBinary.h', 'IndexBinaryFlat.h', 'IndexBinaryFromFloat.h', 'IndexBinaryHNSW.h',
+    'IndexBinaryHash.h', 'IndexBinaryIVF.h', 'IndexFlat.h', 'IndexHNSW.h', 'IndexIVF.h',
+    'IndexIVFFlat.h', 'IndexIVFPQ.h', 'IndexIVFPQR.h', 'IndexIVFSpectralHash.h', 'IndexLSH.h',
+    'IndexLattice.h', 'IndexPQ.h', 'IndexPreTransform.h', 'IndexReplicas.h',
+    'IndexScalarQuantizer.h', 'IndexShards.h', 'InvertedLists.h', 'MatrixStats.h',
+    'MetaIndexes.h', 'MetricType.h', 'VectorTransform.h', 'clone_index.h', 'index_factory.h',
+    'index_io.h',
     'impl/AuxIndexStructures.h', 'impl/FaissAssert.h', 'impl/FaissException.h', 'impl/HNSW.h',
-    'impl/io.h', 'impl/lattice_Zn.h', 'impl/PolysemousTraining.h', 'impl/ProductQuantizer-inl.h',
-    'impl/ProductQuantizer.h', 'impl/ScalarQuantizer.h', 'impl/ThreadedIndex-inl.h',
-    'impl/ThreadedIndex.h',
-    'utils/distances.h', 'utils/extra_distances.h', 'utils/hamming-inl.h', 'utils/hamming.h',
-    'utils/Heap.h', 'utils/random.h', 'utils/utils.h', 'utils/WorkerThread.h'
+    'impl/PolysemousTraining.h', 'impl/ProductQuantizer-inl.h', 'impl/ProductQuantizer.h',
+    'impl/ScalarQuantizer.h', 'impl/ThreadedIndex-inl.h', 'impl/ThreadedIndex.h', 'impl/io.h',
+    'impl/io_macros.h', 'impl/lattice_Zn.h', 'impl/platform_macros.h',
+    'utils/Heap.h', 'utils/WorkerThread.h', 'utils/distances.h', 'utils/extra_distances.h',
+    'utils/hamming-inl.h', 'utils/hamming.h', 'utils/random.h', 'utils/utils.h'
+] + (not win) * [
+    'OnDiskInvertedLists.h'
 ] + (cuda_compiler_version != "None") * [
     'gpu/GpuAutoTune.h', 'gpu/GpuCloner.h', 'gpu/GpuClonerOptions.h', 'gpu/GpuDistance.h',
     'gpu/GpuFaissAssert.h', 'gpu/GpuIndex.h', 'gpu/GpuIndexBinaryFlat.h', 'gpu/GpuIndexFlat.h',
@@ -30,12 +34,12 @@
     'gpu/impl/FlatIndex.cuh', 'gpu/impl/GeneralDistance.cuh', 'gpu/impl/GpuScalarQuantizer.cuh',
     'gpu/impl/IVFAppend.cuh', 'gpu/impl/IVFBase.cuh', 'gpu/impl/IVFFlat.cuh',
     'gpu/impl/IVFFlatScan.cuh', 'gpu/impl/IVFPQ.cuh', 'gpu/impl/IVFUtils.cuh',
-    'gpu/impl/L2Norm.cuh', 'gpu/impl/L2Select.cuh', 'gpu/impl/Metrics.cuh',
+    'gpu/impl/L2Norm.cuh', 'gpu/impl/L2Select.cuh',
     'gpu/impl/PQCodeDistances-inl.cuh', 'gpu/impl/PQCodeDistances.cuh', 'gpu/impl/PQCodeLoad.cuh',
     'gpu/impl/PQScanMultiPassNoPrecomputed-inl.cuh', 'gpu/impl/PQScanMultiPassNoPrecomputed.cuh',
     'gpu/impl/PQScanMultiPassPrecomputed.cuh', 'gpu/impl/VectorResidual.cuh',
-    'gpu/utils/DeviceMemory.h', 'gpu/utils/DeviceUtils.h', 'gpu/utils/MemorySpace.h',
-    'gpu/utils/StackDeviceMemory.h', 'gpu/utils/StaticUtils.h', 'gpu/utils/Timer.h',
+    'gpu/utils/DeviceUtils.h', 'gpu/utils/StackDeviceMemory.h', 'gpu/utils/StaticUtils.h',
+    'gpu/utils/Timer.h',
     'gpu/utils/BlockSelectKernel.cuh', 'gpu/utils/Comparators.cuh',
     'gpu/utils/ConversionOperators.cuh', 'gpu/utils/CopyUtils.cuh', 'gpu/utils/DeviceDefs.cuh',
     'gpu/utils/DeviceTensor-inl.cuh', 'gpu/utils/DeviceTensor.cuh', 'gpu/utils/DeviceVector.cuh',
