@@ -101,7 +101,6 @@ outputs:
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx or win]
-        - autotools_clang_conda   # [win]
       host:
         - libblas
         - liblapack
@@ -139,7 +138,6 @@ outputs:
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - swig
         - cmake
-        - autotools_clang_conda   # [win]
       host:
         - python
         - pip
