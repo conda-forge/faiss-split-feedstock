@@ -171,7 +171,6 @@ outputs:
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
     build:
-      string: "py{{ CONDA_PY }}_{{ number }}"
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
       host:
@@ -184,7 +183,6 @@ outputs:
 
   - name: faiss-gpu
     build:
-      string: "py{{ CONDA_PY }}_{{ number }}"
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
       host:
