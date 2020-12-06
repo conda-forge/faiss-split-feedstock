@@ -11,7 +11,7 @@ cuda_compiler_version:
 cxx_compiler:
 - gxx
 cxx_compiler_version:
-- '9'
+- '7'
 docker_image:
 - quay.io/condaforge/linux-anvil-cuda:10.1
 libblas:
