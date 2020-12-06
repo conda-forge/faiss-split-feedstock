@@ -138,6 +138,8 @@ outputs:
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - swig
         - cmake
+        - libgomp                 # [linux]
+        - llvm-openmp             # [osx or win]
       host:
         - python
         - pip
@@ -145,8 +147,6 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx or win]
       run:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}

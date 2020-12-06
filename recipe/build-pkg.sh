@@ -19,5 +19,7 @@ cmake -B _build_python \
 cmake --build _build_python -j $CPU_COUNT
 
 # Build actual python module.
-cd _build_python
+pushd _build_python
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
+popd
+rm -r _build_python

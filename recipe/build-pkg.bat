@@ -11,6 +11,8 @@ cmake --build _build_python --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build actual python module.
-cd _build_python/
+pushd _build_python
 %PYTHON% setup.py install --single-version-externally-managed --record=record.txt --prefix=%PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
+popd
+rd /S /Q _build_python
