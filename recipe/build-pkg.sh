@@ -22,4 +22,5 @@ cmake --build _build_python -j $CPU_COUNT
 pushd _build_python
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
 popd
+# clean up cmake-cache between builds
 rm -r _build_python
