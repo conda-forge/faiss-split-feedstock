@@ -148,6 +148,7 @@ outputs:
         - libblas
         - liblapack
       run:
+        - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}
       run_constrained:
