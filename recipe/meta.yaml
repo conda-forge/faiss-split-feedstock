@@ -114,13 +114,13 @@ outputs:
     test:
       commands:
         # shared
-        - test -f $PREFIX/lib/libfaiss.so                           # [linux]
-        - test -f $PREFIX/lib/libfaiss.dylib                        # [osx]
-        - if not exist %PREFIX%\\Library\\bin\\libfaiss.dll exit 1  # [win]
+        - test -f $PREFIX/lib/libfaiss.so                        # [linux]
+        - test -f $PREFIX/lib/libfaiss.dylib                     # [osx]
+        - if not exist %PREFIX%\\Library\\bin\\faiss.dll exit 1  # [win]
 
         # absence of static libraries
-        - test ! -f $PREFIX/lib/libfaiss.a                          # [not win]
-        - if exist %PREFIX%\\Library\\lib\\libfaiss.lib exit 1      # [win]
+        - test ! -f $PREFIX/lib/libfaiss.a                       # [not win]
+        - if exist %PREFIX%\\Library\\lib\\faiss.lib exit 1      # [win]
 
         # headers
         {% for each_header in headers %}
