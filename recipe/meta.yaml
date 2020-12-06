@@ -104,9 +104,6 @@ outputs:
       host:
         - libblas
         - liblapack
-      run:
-        - libblas
-        - liblapack
       run_constrained:
         - faiss-proc * {{ faiss_proc_type }}
 
