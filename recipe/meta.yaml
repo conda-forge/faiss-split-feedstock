@@ -122,10 +122,6 @@ outputs:
         - test ! -f $PREFIX/lib/libfaiss.a                          # [not win]
         - if exist %PREFIX%\\Library\\lib\\libfaiss.lib exit 1      # [win]
 
-        # conda tools
-        - conda inspect linkages -p $PREFIX $PKG_NAME               # [not win]
-        - conda inspect objects -p $PREFIX $PKG_NAME                # [osx]
-
         # headers
         {% for each_header in headers %}
         - test -f $PREFIX/include/faiss/{{ each_header }}                                    # [unix]
@@ -169,15 +165,12 @@ outputs:
         - scipy
       source_files:
         - tests/
-        - conda/faiss/run_test.py
-        - conda/faiss-gpu/run_test.py
       imports:
         - faiss
       commands:
-        - python conda/faiss/run_test.py
-        # running the following test requires an actual GPU device, which is not available in CI
-        # - python conda/faiss-gpu/run_test.py  # [cuda_compiler_version != "None"]
         - python -m unittest discover tests
+        # running the following test requires an actual GPU device, which is not available in CI
+        # - python -m unittest discover faiss/gpu/test/
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
