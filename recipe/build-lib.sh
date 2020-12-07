@@ -3,7 +3,7 @@ function version2int { echo "$@" | awk -F. '{ printf("%d%02d\n", $1, $2); }'; }
 
 set -e
 
-CUDA_CONFIG_ARG=""
+declare -a CUDA_CONFIG_ARGS
 if [ ${cuda_compiler_version} != "None" ]; then
     # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
@@ -24,15 +24,17 @@ if [ ${cuda_compiler_version} != "None" ]; then
         LATEST_ARCH=80
     fi
     for arch in "${ARCHES[@]}"; do
-        CUDA_ARCHS="${CUDA_ARCHS} ${arch}-virtual";
+        CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${arch}-virtual"
     done
     # to support PTX JIT compilation; see first link above or cf.
     # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
     # see also cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
-    CUDA_ARCHS="${CUDA_ARCHS} ${LATEST_ARCH}-real"
+    CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${LATEST_ARCH}-real"
 
     FAISS_ENABLE_GPU="ON"
-    CUDA_CONFIG_ARG="-DCMAKE_CUDA_ARCHITECTURES=\"${CUDA_ARCHS}\" "
+    CUDA_CONFIG_ARGS+=(
+        -DCMAKE_CUDA_ARCHITECTURES="${CMAKE_CUDA_ARCHS}"
+    )
 else
     FAISS_ENABLE_GPU="OFF"
 fi
@@ -44,7 +46,7 @@ cmake -B _build_generic \
       -DFAISS_ENABLE_PYTHON=OFF \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
-      ${CUDA_CONFIG_ARG} \
+      ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
       .
 
 cmake --build _build_generic -j $CPU_COUNT
