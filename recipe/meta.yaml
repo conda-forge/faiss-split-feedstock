@@ -100,7 +100,7 @@ outputs:
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - cmake
         - libgomp                 # [linux]
-        - llvm-openmp             # [osx or win]
+        - llvm-openmp             # [osx]
       host:
         - libblas
         - liblapack
@@ -136,7 +136,7 @@ outputs:
         - swig
         - cmake
         - libgomp                 # [linux]
-        - llvm-openmp             # [osx or win]
+        - llvm-openmp             # [osx]
       host:
         - python
         - pip
