@@ -58,6 +58,7 @@ cmake -B _build_generic \
       -DFAISS_ENABLE_PYTHON=OFF \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_LIBDIR=lib \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
       .
 
