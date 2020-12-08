@@ -62,6 +62,7 @@ source:
   sha256: 6ed6311415ccb70ea1afe82bafc24e9f3aa60c06c9d030bfc23ee4173d59cc99
   patches:
     - patches/0001-use-c-14.patch
+    - patches/0002-gh-1541-CMake-use-GNUInstallDirs-instead-of-hardcoded-paths.patch
 
 build:
   number: {{ number }}
