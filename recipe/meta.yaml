@@ -173,25 +173,21 @@ outputs:
     build:
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
-      host:
-        - python
       run:
         - faiss ={{ version }}=*_cpu
     test:
-      commands:
-        - exit 0
+      imports:
+        - faiss
 
   - name: faiss-gpu
     build:
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
-      host:
-        - python
       run:
         - faiss ={{ version }}=*_cuda
     test:
-      commands:
-        - exit 0
+      imports:
+        - faiss
 
 about:
   home: https://github.com/facebookresearch/faiss
