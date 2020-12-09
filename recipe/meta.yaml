@@ -111,18 +111,20 @@ outputs:
     test:
       commands:
         # shared
-        - test -f $PREFIX/lib/libfaiss.so                        # [linux]
-        - test -f $PREFIX/lib/libfaiss.dylib                     # [osx]
-        - if not exist %PREFIX%\\Library\\bin\\faiss.dll exit 1  # [win]
+        - test -f $PREFIX/lib/libfaiss.so               # [linux]
+        - test -f $PREFIX/lib/libfaiss.dylib            # [osx]
+        - if not exist %LIBRARY_BIN%\faiss.dll exit 1   # [win]
+        # On windows, faiss.lib is an "import library";
+        # Deleting it breaks the faiss-builds
+        - if not exist %LIBRARY_LIB%\faiss.lib exit 1   # [win]
 
         # absence of static libraries
-        - test ! -f $PREFIX/lib/libfaiss.a                       # [not win]
-        - if exist %PREFIX%\\Library\\lib\\faiss.lib exit 1      # [win]
+        - test ! -f $PREFIX/lib/libfaiss.a              # [not win]
 
         # headers
         {% for each_header in headers %}
         - test -f $PREFIX/include/faiss/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
-        - if not exist %LIBRARY_INC%\\faiss\\{{ "\\".join(each_header.split("/")) }} exit 1                  # [win]
+        - if not exist %LIBRARY_INC%\faiss\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
         {% endfor %}
 
   - name: faiss
