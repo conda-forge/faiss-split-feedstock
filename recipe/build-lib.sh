@@ -60,6 +60,7 @@ cmake -B _build_generic \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_LIBDIR=lib \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
+      --verbose \
       .
 
 cmake --build _build_generic -j $CPU_COUNT
