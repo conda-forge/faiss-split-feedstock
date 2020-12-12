@@ -1,11 +1,14 @@
-{% set version = "1.6.4" %}
+{% set version = "1.6.5" %}
 {% set number = 0 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,utils}/*.h',
-# see https://github.com/facebookresearch/faiss/blob/v1.6.4/faiss/CMakeLists.txt
-# gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'
+# see https://github.com/facebookresearch/faiss/blob/v{{ version }}/faiss/CMakeLists.txt
+# gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h' based on:
+# ls faiss/gpu | grep -E "h$"
+# ls faiss/gpu/impl | grep -E "h$"
+# ls faiss/gpu/utils | grep -E "h$"
 {% set headers = [
     'AutoTune.h', 'Clustering.h', 'DirectMap.h', 'IVFlib.h', 'Index.h', 'Index2Layer.h',
     'IndexBinary.h', 'IndexBinaryFlat.h', 'IndexBinaryFromFloat.h', 'IndexBinaryHNSW.h',
@@ -20,7 +23,8 @@
     'impl/ScalarQuantizer.h', 'impl/ThreadedIndex-inl.h', 'impl/ThreadedIndex.h', 'impl/io.h',
     'impl/io_macros.h', 'impl/lattice_Zn.h', 'impl/platform_macros.h',
     'utils/Heap.h', 'utils/WorkerThread.h', 'utils/distances.h', 'utils/extra_distances.h',
-    'utils/hamming-inl.h', 'utils/hamming.h', 'utils/random.h', 'utils/utils.h'
+    'utils/hamming-inl.h', 'utils/hamming.h', 'utils/ordered_key_value.h', 'utils/partitioning.h',
+    'utils/random.h', 'utils/simdlib.h', 'utils/utils.h'
 ] + (not win) * [
     'OnDiskInvertedLists.h'
 ] + (cuda_compiler_version != "None") * [
@@ -29,28 +33,28 @@
     'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h', 'gpu/GpuIndexIVFPQ.h',
     'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h', 'gpu/GpuResources.h',
     'gpu/StandardGpuResources.h',
-    'gpu/impl/RemapIndices.h', 'gpu/impl/BinaryDistance.cuh', 'gpu/impl/BinaryFlatIndex.cuh',
-    'gpu/impl/BroadcastSum.cuh', 'gpu/impl/Distance.cuh', 'gpu/impl/DistanceUtils.cuh',
-    'gpu/impl/FlatIndex.cuh', 'gpu/impl/GeneralDistance.cuh', 'gpu/impl/GpuScalarQuantizer.cuh',
-    'gpu/impl/IVFAppend.cuh', 'gpu/impl/IVFBase.cuh', 'gpu/impl/IVFFlat.cuh',
-    'gpu/impl/IVFFlatScan.cuh', 'gpu/impl/IVFPQ.cuh', 'gpu/impl/IVFUtils.cuh',
-    'gpu/impl/L2Norm.cuh', 'gpu/impl/L2Select.cuh',
+    'gpu/impl/BinaryDistance.cuh', 'gpu/impl/BinaryFlatIndex.cuh', 'gpu/impl/BroadcastSum.cuh',
+    'gpu/impl/Distance.cuh', 'gpu/impl/DistanceUtils.cuh', 'gpu/impl/FlatIndex.cuh',
+    'gpu/impl/GeneralDistance.cuh', 'gpu/impl/GpuScalarQuantizer.cuh', 'gpu/impl/IVFAppend.cuh',
+    'gpu/impl/IVFBase.cuh', 'gpu/impl/IVFFlat.cuh', 'gpu/impl/IVFFlatScan.cuh',
+    'gpu/impl/IVFPQ.cuh', 'gpu/impl/IVFUtils.cuh', 'gpu/impl/L2Norm.cuh', 'gpu/impl/L2Select.cuh',
     'gpu/impl/PQCodeDistances-inl.cuh', 'gpu/impl/PQCodeDistances.cuh', 'gpu/impl/PQCodeLoad.cuh',
     'gpu/impl/PQScanMultiPassNoPrecomputed-inl.cuh', 'gpu/impl/PQScanMultiPassNoPrecomputed.cuh',
-    'gpu/impl/PQScanMultiPassPrecomputed.cuh', 'gpu/impl/VectorResidual.cuh',
-    'gpu/utils/DeviceUtils.h', 'gpu/utils/StackDeviceMemory.h', 'gpu/utils/StaticUtils.h',
-    'gpu/utils/Timer.h',
+    'gpu/impl/PQScanMultiPassPrecomputed.cuh', 'gpu/impl/RemapIndices.h',
+    'gpu/impl/VectorResidual.cuh',
     'gpu/utils/BlockSelectKernel.cuh', 'gpu/utils/Comparators.cuh',
     'gpu/utils/ConversionOperators.cuh', 'gpu/utils/CopyUtils.cuh', 'gpu/utils/DeviceDefs.cuh',
-    'gpu/utils/DeviceTensor-inl.cuh', 'gpu/utils/DeviceTensor.cuh', 'gpu/utils/DeviceVector.cuh',
-    'gpu/utils/Float16.cuh', 'gpu/utils/HostTensor-inl.cuh', 'gpu/utils/HostTensor.cuh',
-    'gpu/utils/Limits.cuh', 'gpu/utils/LoadStoreOperators.cuh', 'gpu/utils/MathOperators.cuh',
-    'gpu/utils/MatrixMult-inl.cuh', 'gpu/utils/MatrixMult.cuh', 'gpu/utils/MergeNetworkBlock.cuh',
-    'gpu/utils/MergeNetworkUtils.cuh', 'gpu/utils/MergeNetworkWarp.cuh',
-    'gpu/utils/NoTypeTensor.cuh', 'gpu/utils/Pair.cuh', 'gpu/utils/PtxUtils.cuh',
-    'gpu/utils/ReductionOperators.cuh', 'gpu/utils/Reductions.cuh', 'gpu/utils/Select.cuh',
+    'gpu/utils/DeviceTensor-inl.cuh', 'gpu/utils/DeviceTensor.cuh', 'gpu/utils/DeviceUtils.h',
+    'gpu/utils/DeviceVector.cuh', 'gpu/utils/Float16.cuh', 'gpu/utils/HostTensor-inl.cuh',
+    'gpu/utils/HostTensor.cuh', 'gpu/utils/Limits.cuh', 'gpu/utils/LoadStoreOperators.cuh',
+    'gpu/utils/MathOperators.cuh', 'gpu/utils/MatrixMult-inl.cuh', 'gpu/utils/MatrixMult.cuh',
+    'gpu/utils/MergeNetworkBlock.cuh', 'gpu/utils/MergeNetworkUtils.cuh',
+    'gpu/utils/MergeNetworkWarp.cuh', 'gpu/utils/NoTypeTensor.cuh', 'gpu/utils/Pair.cuh',
+    'gpu/utils/PtxUtils.cuh', 'gpu/utils/ReductionOperators.cuh', 'gpu/utils/Reductions.cuh',
+    'gpu/utils/Select.cuh', 'gpu/utils/StackDeviceMemory.h', 'gpu/utils/StaticUtils.h',
     'gpu/utils/Tensor-inl.cuh', 'gpu/utils/Tensor.cuh', 'gpu/utils/ThrustAllocator.cuh',
-    'gpu/utils/Transpose.cuh', 'gpu/utils/WarpSelectKernel.cuh', 'gpu/utils/WarpShuffles.cuh'
+    'gpu/utils/Timer.h', 'gpu/utils/Transpose.cuh', 'gpu/utils/WarpSelectKernel.cuh',
+    'gpu/utils/WarpShuffles.cuh'
 ] %}
 
 package:
@@ -59,7 +63,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 6ed6311415ccb70ea1afe82bafc24e9f3aa60c06c9d030bfc23ee4173d59cc99
+  sha256: 277add2226fad40544cea5776817a0202ef67e2e80d2c289ebdb0135216d60a5
   patches:
     # backport of facebookresearch/faiss#1541, can be dropped for ver>1.6.5
     - patches/0001-CMake-use-GNUInstallDirs-instead-of-hardcoded-paths.patch
