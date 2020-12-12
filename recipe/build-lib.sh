@@ -11,24 +11,27 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
     # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
-    ARCHES=(35 50 52 60 61 70)
-    LATEST_ARCH=70
-    if [ $(version2int $cuda_compiler_version) -ge $(version2int "10.0") ]; then
-        # cuda >= 10.0 supports Turing (sm_75)
-        ARCHES+=(75)
-        LATEST_ARCH=75
-    fi
+    ARCHES=(52 60 61 70)
+    # cuda 11.0 deprecates arches 35, 50
+    DEPRECATED_IN_11=(35 50)
     if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.0") ]; then
-        # cuda >= 11.0 supports Ampere (sm_80)
-        ARCHES+=(80)
+        # Ampere support (sm_80) needs cuda >= 11.0
+        ARCHES=( "${ARCHES[@]}" 75 80 )
         LATEST_ARCH=80
+    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "10.0") ]; then
+        # Turing support (sm_75) needs cuda >= 10.0
+        ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" 75 )
+        LATEST_ARCH=75
+    else
+        ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" )
+        LATEST_ARCH=70
     fi
     for arch in "${ARCHES[@]}"; do
         CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${arch}-virtual"
     done
-    # to support PTX JIT compilation; see first link above or cf.
+    # for -real vs. -virtual, see cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
+    # this is to support PTX JIT compilation; see first link above or cf.
     # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
-    # see also cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
     CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${LATEST_ARCH}-real"
 
     FAISS_ENABLE_GPU="ON"
