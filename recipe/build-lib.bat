@@ -30,6 +30,10 @@ if "%cuda_compiler_version%"=="None" (
 
     REM cmake does not generate output for the call below; echo some info
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
+
+    REM Debug VS integrations
+    copy /y "%CUDA_PATH%\extras\visual_studio_integration\MSBuildExtensions\*.*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations"
+    findstr /N /R ".*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations\CUDA %cuda_compiler_version%.targets"
 )
 
 :: Build faiss.dll
