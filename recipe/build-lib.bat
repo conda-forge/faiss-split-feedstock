@@ -25,17 +25,14 @@ if "%cuda_compiler_version%"=="None" (
         set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
     )
 
-    REM workaround for https://github.com/conda-forge/nvcc-feedstock/issues/53
-    set "CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v%cuda_compiler_version%"
-    echo "Setting workaround CUDA_PATH=!CUDA_PATH!"
-    set "CUDA_HOME=!CUDA_PATH!"
-    REM With %MY_VAR:\=/% we replace backslashes with forward slashes
-    REM set "CUDA_TOOLKIT_ROOT_DIR=!CUDA_PATH:\=/!"
+    echo CUDA path detected as %CUDA_PATH%
 
-    set "CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS! -DCUDAToolkit_ROOT=!CUDA_PATH!"
-
+    set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
-    echo "Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!"
+    echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
+
+    REM Debug VS integrations
+    set "CudaToolkitDir=%CUDA_PATH%"
 )
 
 :: Build faiss.dll
