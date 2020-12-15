@@ -28,7 +28,8 @@ if "%cuda_compiler_version%"=="None" (
     echo CUDA path detected as %CUDA_PATH%
 
     REM temporarily disabled due to CMake bug, pending release of 3.19.2
-    REM set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
+    set CUDA_CONFIG_ARGS=-DCUDA_VERBOSE_BUILD=ON
+    REM ... -DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 

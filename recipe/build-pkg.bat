@@ -7,6 +7,10 @@ if "%cuda_compiler_version%"=="None" (
 
     REM Debug VS integrations
     set "CudaToolkitDir=%CUDA_PATH%"
+
+    set CUDA_CONFIG_ARGS=-DCUDA_VERBOSE_BUILD=ON
+    REM cmake does not generate output for the call below; echo some info
+    echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
 :: Build vanilla version (no avx2).
@@ -15,6 +19,7 @@ cmake -B _build_python ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
+    !CUDA_CONFIG_ARGS! ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
