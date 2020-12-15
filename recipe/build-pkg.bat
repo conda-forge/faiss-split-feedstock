@@ -10,9 +10,9 @@ if "%cuda_compiler_version%"=="None" (
     echo "Setting workaround CUDA_PATH=!CUDA_PATH!"
     set "CUDA_HOME=!CUDA_PATH!"
     REM With %MY_VAR:\=/% we replace backslashes with forward slashes
-    set "CUDA_TOOLKIT_ROOT_DIR=!CUDA_PATH:\=/!"
+    REM set "CUDA_TOOLKIT_ROOT_DIR=!CUDA_PATH:\=/!"
 
-    set "CUDA_CONFIG_ARGS=-DCUDA_TOOLKIT_ROOT_DIR=!CUDA_TOOLKIT_ROOT_DIR!"
+    set "CUDA_CONFIG_ARGS=-DCUDA_TOOLKIT_ROOT_DIR=!CUDA_PATH!"
 
     REM cmake does not generate output for the call below; echo some info
     echo "Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!"
