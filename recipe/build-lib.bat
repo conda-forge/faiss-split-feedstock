@@ -39,7 +39,7 @@ if "%cuda_compiler_version%"=="None" (
     @REM set "CudaToolkitLibDir=%CUDA_PATH%\lib\x64"
     @REM set "CudaToolkitNvccPath=%CUDA_PATH%\bin\nvcc.exe"
     set "CudaToolkitDir=%CUDA_PATH%"
-    copy /y "%CUDA_PATH%\extras\visual_studio_integration\MSBuildExtensions\*.*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations"
+    @REM copy /y "%CUDA_PATH%\extras\visual_studio_integration\MSBuildExtensions\*.*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations"
 )
 
 :: Build faiss.dll
