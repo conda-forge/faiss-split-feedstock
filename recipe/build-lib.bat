@@ -32,8 +32,17 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 
     REM Debug VS integrations
+    set "CudaToolkitVersion=%cuda_compiler_version%"
+    set "CudaToolkitDir=%CUDA_PATH%"
+    set "CudaToolkitCustomDir=%CUDA_PATH%"
+    set "CudaToolkitBinDir=%CUDA_PATH%\bin"
+    set "CudaToolkitIncludeDir=%CUDA_PATH%\include"
+    set "CudaToolkitLibDir=%CUDA_PATH%\lib\x64"
+    set "CudaToolkitNvccPath =%CUDA_PATH%\bin\nvcc.exe"
     copy /y "%CUDA_PATH%\extras\visual_studio_integration\MSBuildExtensions\*.*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations"
     findstr /N /R ".*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations\CUDA %cuda_compiler_version%.targets"
+
+    set "PATH=%CUDA_PATH%\bin;%PATH%"
 )
 
 :: Build faiss.dll
