@@ -18,28 +18,23 @@ if "%cuda_compiler_version%"=="None" (
     REM windows support start with cuda 10.0
     REM %MY_VAR:~0,2% selects first two characters
     if "%cuda_compiler_version:~0,2%"=="10" (
-        set "CUDA_ARCHS=35-virtual;50-virtual;52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;75-real"
+        set "CMAKE_CUDA_ARCHS=35-virtual;50-virtual;52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;75-real"
     )
     if "%cuda_compiler_version:~0,2%"=="11" (
         REM cuda 11.0 deprecates arches 35, 50
-        set "CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
+        set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
     )
 
     echo CUDA path detected as %CUDA_PATH%
 
-    @REM set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CUDA_ARCHS!
+    REM temporarily disabled due to CMake bug, pending release of 3.19.2
+    set CUDA_CONFIG_ARGS=-DCUDA_VERBOSE_BUILD=ON
+    REM ... -DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
-    @REM echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
+    echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 
     REM Debug VS integrations
-    @REM set "CudaToolkitVersion=%cuda_compiler_version%"
-    @REM set "CudaToolkitCustomDir=%CUDA_PATH%"
-    @REM set "CudaToolkitBinDir=%CUDA_PATH%\bin"
-    @REM set "CudaToolkitIncludeDir=%CUDA_PATH%\include"
-    @REM set "CudaToolkitLibDir=%CUDA_PATH%\lib\x64"
-    @REM set "CudaToolkitNvccPath=%CUDA_PATH%\bin\nvcc.exe"
     set "CudaToolkitDir=%CUDA_PATH%"
-    @REM copy /y "%CUDA_PATH%\extras\visual_studio_integration\MSBuildExtensions\*.*" "%VSINSTALLDIR%\Common7\IDE\VC\VCTargets\BuildCustomizations"
 )
 
 :: Build faiss.dll
