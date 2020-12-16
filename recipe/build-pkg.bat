@@ -23,7 +23,7 @@ cmake -B _build_python ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_python --config Release -j %CPU_COUNT%
+cmake --build _build_python --config Release -j %CPU_COUNT% -v -- /verbosity:diagnostic
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build actual python module.

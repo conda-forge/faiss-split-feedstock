@@ -52,8 +52,8 @@ cmake -B _build ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build --config Release -j %CPU_COUNT%
+cmake --build _build --config Release -j %CPU_COUNT% -v -- /verbosity:diagnostic
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build --config Release --prefix %PREFIX%
+cmake --install _build --config Release --prefix %PREFIX% -v -- /verbosity:diagnostic
 if %ERRORLEVEL% neq 0 exit 1
