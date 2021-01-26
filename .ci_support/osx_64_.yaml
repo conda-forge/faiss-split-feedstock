@@ -11,9 +11,9 @@ cxx_compiler:
 cxx_compiler_version:
 - '10'
 libblas:
-- 3.8 *netlib
+- 3.8 *mkl
 liblapack:
-- 3.8 *netlib
+- 3.8 *mkl
 macos_machine:
 - x86_64-apple-darwin13.4.0
 numpy:
