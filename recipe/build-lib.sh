@@ -60,6 +60,7 @@ cmake -B _build_generic \
       -DBUILD_TESTING=ON \
       -DFAISS_ENABLE_PYTHON=OFF \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
+      -DBLA_VENDOR=Intel10_64lp \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_LIBDIR=lib \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
