@@ -1,4 +1,4 @@
-{% set version = "1.6.5" %}
+{% set version = "1.7.0" %}
 {% set number = 0 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
@@ -63,7 +63,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 277add2226fad40544cea5776817a0202ef67e2e80d2c289ebdb0135216d60a5
+  sha256: f86d346ac9f409ee30abe37e52f6cce366b7f60d3924d65719f40aa07ceb4bec
   patches:
     # backport of facebookresearch/faiss#1541, can be dropped for ver>1.6.5
     - patches/0001-CMake-use-GNUInstallDirs-instead-of-hardcoded-paths.patch
