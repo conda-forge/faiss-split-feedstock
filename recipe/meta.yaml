@@ -72,6 +72,8 @@ source:
   sha256: f86d346ac9f409ee30abe37e52f6cce366b7f60d3924d65719f40aa07ceb4bec
   patches:
     - patches/0001-use-c-14.patch
+    # backport of facebookresearch/faiss#1666, can be dropped for ver>1.7.0
+    - patches/0002-Add-missing-headers-in-faiss-gpu-CMakeLists.txt-1666.patch
 
 build:
   number: {{ number }}
