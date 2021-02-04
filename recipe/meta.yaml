@@ -167,16 +167,16 @@ outputs:
         # - blas * *{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
         - blas =*=mkl
-        # this is necessary for a single test in the test suite
         - scipy
+        - pytest
       source_files:
         - tests/
       imports:
         - faiss
       commands:
-        - python -m unittest discover tests
+        - pytest tests -v
         # running the following test requires an actual GPU device, which is not available in CI
-        # - python -m unittest discover faiss/gpu/test/
+        # - pytest faiss/gpu/test/ -v
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
