@@ -182,9 +182,9 @@ outputs:
       imports:
         - faiss
       commands:
-        - pytest tests
+        - pytest tests -v
         # running the following test requires an actual GPU device, which is not available in CI
-        # - pytest faiss/gpu/test/
+        # - pytest faiss/gpu/test/ -v
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
