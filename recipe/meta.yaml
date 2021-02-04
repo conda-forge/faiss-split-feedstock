@@ -82,6 +82,8 @@ source:
     - patches/0005-skip-test-that-fails-without-GPU-drivers.patch  # [win]
     # backport of facebookresearch/faiss#1600, can be dropped for ver>1.7.0
     - patches/0006-make-AVX2-detection-platform-independent-1600.patch
+    # backport of facebookresearch/faiss#1682, can be dropped for ver>1.7.0
+    - patches/0007-make-setup.py-win-avx2-compatible-1682.patch
 
 build:
   number: {{ number }}
