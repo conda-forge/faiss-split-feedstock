@@ -58,7 +58,7 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
-# Build vanilla version (no avx)
+# Build vanilla version (no avx2)
 cmake -B _build_generic \
       -DBUILD_SHARED_LIBS=ON \
       -DBUILD_TESTING=ON \
@@ -72,3 +72,21 @@ cmake -B _build_generic \
 
 cmake --build _build_generic -j $CPU_COUNT
 cmake --install _build_generic --prefix $PREFIX
+
+# Build version with avx2-support
+cmake -B _build_avx2 \
+      -DBUILD_SHARED_LIBS=ON \
+      -DBUILD_TESTING=ON \
+      -DFAISS_OPT_LEVEL=avx2 \
+      -DFAISS_ENABLE_PYTHON=OFF \
+      -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_LIBDIR=lib \
+      ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
+      --verbose \
+      .
+
+cmake --build _build_avx2 -j $CPU_COUNT
+# install in separate directory to not overwrite vanilla install in $PREFIX;
+# will be reused in build-pkg.sh
+cmake --install _build_avx2 --prefix _libfaiss_avx2_stage/
