@@ -58,6 +58,7 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
+
 # Build vanilla version (no avx2)
 cmake -B _build_generic \
       -DBUILD_SHARED_LIBS=ON \
@@ -73,10 +74,18 @@ cmake -B _build_generic \
 cmake --build _build_generic -j $CPU_COUNT
 cmake --install _build_generic --prefix $PREFIX
 
+
+if [[ "$target_platform" == osx-* ]]; then
+    # OSX CI has no AVX2 support
+    AVX2_BUILD_TESTING="OFF"
+else
+    AVX2_BUILD_TESTING="ON"
+fi
+
 # Build version with avx2-support
 cmake -B _build_avx2 \
       -DBUILD_SHARED_LIBS=ON \
-      -DBUILD_TESTING=ON \
+      -DBUILD_TESTING=${AVX2_BUILD_TESTING} \
       -DFAISS_OPT_LEVEL=avx2 \
       -DFAISS_ENABLE_PYTHON=OFF \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
