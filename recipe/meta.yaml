@@ -190,10 +190,20 @@ outputs:
       imports:
         - faiss
       commands:
-        # the CI agents support AVX2, so by default, we expect faiss will
-        # load the library with AVX2-support, see faiss/python/loader.py.
+        {% if not osx %}
+        # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
+        # we expect faiss will load the library with AVX2-support, see
+        # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L48-L60
         - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-        - pytest tests
+        - pytest tests --log-file-level=INFO --log-file=log.txt
+        # print logfile for completeness (sleep so log has time to print)
+        - cat log.txt && sleep 2  # [not win]
+        - type log.txt            # [win]
+        # ensure that expected logger-messages from loader.py is present;
+        # avoid final '\n', as well as the first 35 = len('INFO     faiss.loader:loader.py:51 ')
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss with AVX2 support.' in [x[35:-1] for x in q] else 1)"
+        # ensure that we did not fall through with an exception, see link to loader.py above
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(1 if 'Loading faiss.' in [x[35:-1] for x in q] else 0)"
         # OTOH, we also want to test the packaged library without AVX2 support;
         # the advantage of the CPU feature detection in numpy is that it can be
         # deactivated, see documentation of NPY_DISABLE_CPU_FEATURES upstream;
@@ -201,9 +211,14 @@ outputs:
         # first import, so we cannot run both variants in a single run_test.py
         - export NPY_DISABLE_CPU_FEATURES=AVX2  # [not win]
         - set NPY_DISABLE_CPU_FEATURES=AVX2     # [win]
+        {% endif %}
         - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
         # rerun test suite again without AVX2 support
-        - pytest tests
+        - pytest tests --log-file-level=INFO --log-file=log.txt
+        - cat log.txt   # [not win]
+        - type log.txt  # [win]
+        # opposite test to above, this should have run without AVX2
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss.' in [x[35:-1] for x in q] else 1)"
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
