@@ -84,6 +84,14 @@ source:
     - patches/0006-make-AVX2-detection-platform-independent-1600.patch
     # backport of facebookresearch/faiss#1682, can be dropped for ver>1.7.0
     - patches/0007-make-setup.py-win-avx2-compatible-1682.patch
+    # backport of facebookresearch/faiss#1683, can be dropped for ver>1.7.0
+    - patches/0008-log-success-messages-and-errors-in-loader.py-1683.patch
+    # backport of facebookresearch/faiss#1680, can be dropped for ver>1.7.0
+    - patches/0009-add-msvc-compatible-AVX2-switch-in-CMakeLists.txt-16.patch
+    # backport of facebookresearch/faiss#1681, can be dropped for ver>1.7.0
+    - patches/0010-Win-AVX2-compat-1681.patch
+    # fix operator overloads & casts for __m128/__m256 that MSVC doesn't define
+    - patches/0011-Windows-portable-intrinsics.patch
 
 build:
   number: {{ number }}
