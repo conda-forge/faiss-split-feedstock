@@ -7,7 +7,7 @@ cuda_compiler:
 cuda_compiler_version:
 - None
 cxx_compiler:
-- vs2017
+- vs2019
 libblas:
 - 3.8 *netlib
 liblapack:
