@@ -215,10 +215,10 @@ outputs:
         - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
         # rerun test suite again without AVX2 support
         - pytest tests --log-file-level=INFO --log-file=log.txt
-        - cat log.txt   # [not win]
-        - type log.txt  # [win]
-        # opposite test to above, this should have run without AVX2
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss.' in [x[35:-1] for x in q] else 1)"
+        - cat log.txt && sleep 2  # [not win]
+        - type log.txt            # [win]
+        # opposite test to above, this should have run without AVX2; disable for py36 due to NPY_DISABLE_CPU_FEATURES not working
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
