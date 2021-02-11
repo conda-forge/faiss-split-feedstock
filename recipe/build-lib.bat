@@ -45,6 +45,9 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
+:: workaround for https://github.com/conda-forge/vc-feedstock/issues/21
+set "CMAKE_GENERATOR=Visual Studio 16 2019"
+
 :: Build vanilla faiss.dll (no avx2)
 cmake -B _build_generic ^
     -DBUILD_SHARED_LIBS=ON ^

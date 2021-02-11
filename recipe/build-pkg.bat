@@ -16,6 +16,9 @@ if "%cuda_compiler_version%"=="None" (
     set "CUDAToolkit_ROOT=%CUDA_PATH%"
 )
 
+:: workaround for https://github.com/conda-forge/vc-feedstock/issues/21
+set "CMAKE_GENERATOR=Visual Studio 16 2019"
+
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -B _build_python_generic ^
     -Dfaiss_ROOT=%PREFIX% ^
