@@ -15,9 +15,9 @@ cxx_compiler_version:
 docker_image:
 - quay.io/condaforge/linux-anvil-cuda:9.2
 libblas:
-- 3.8 *mkl
+- 3.8 *netlib
 liblapack:
-- 3.8 *mkl
+- 3.8 *netlib
 numpy:
 - '1.16'
 - '1.16'

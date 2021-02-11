@@ -7,9 +7,9 @@ cuda_compiler_version:
 cxx_compiler:
 - vs2017
 libblas:
-- 3.8 *mkl
+- 3.8 *netlib
 liblapack:
-- 3.8 *mkl
+- 3.8 *netlib
 numpy:
 - '1.16'
 - '1.16'
