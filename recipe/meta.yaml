@@ -209,9 +209,7 @@ outputs:
         - type log.txt            # [win]
         # ensure that expected logger-messages from loader.py is present;
         # avoid final '\n', as well as the first 35 = len('INFO     faiss.loader:loader.py:51 ')
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss with AVX2 support.' in [x[35:-1] for x in q] else 1)"
-        # ensure that we did not fall through with an exception, see link to loader.py above
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(1 if 'Loading faiss.' in [x[35:-1] for x in q] else 0)"
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss with AVX2 support.' in [x[35:-1] for x in q] else 1)"
         # OTOH, we also want to test the packaged library without AVX2 support;
         # the advantage of the CPU feature detection in numpy is that it can be
         # deactivated, see documentation of NPY_DISABLE_CPU_FEATURES upstream;
@@ -225,8 +223,8 @@ outputs:
         - pytest tests --log-file-level=INFO --log-file=log.txt
         - cat log.txt && sleep 2  # [not win]
         - type log.txt            # [win]
-        # opposite test to above, this should have run without AVX2; disable for py36 due to NPY_DISABLE_CPU_FEATURES not working
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Loading faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
+        # this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
+        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
