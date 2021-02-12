@@ -68,6 +68,9 @@ if %ERRORLEVEL% neq 0 exit 1
 
 cmake --install _build_generic --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
+:: will be reused in build-pkg.bat
+cmake --install _build_generic --config Release --prefix _libfaiss_stage
+if %ERRORLEVEL% neq 0 exit 1
 
 
 :: Build faiss.dll with avx2 support
@@ -88,7 +91,8 @@ if %ERRORLEVEL% neq 0 exit 1
 cmake --build _build_avx2 --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-:: install in separate directory to not overwrite vanilla install in %PREFIX%;
+cmake --install _build_avx2 --config Release --prefix %PREFIX%
+if %ERRORLEVEL% neq 0 exit 1
 :: will be reused in build-pkg.bat
 cmake --install _build_avx2 --config Release --prefix _libfaiss_avx2_stage
 if %ERRORLEVEL% neq 0 exit 1

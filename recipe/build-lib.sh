@@ -73,6 +73,8 @@ cmake -B _build_generic \
 
 cmake --build _build_generic -j $CPU_COUNT
 cmake --install _build_generic --prefix $PREFIX
+# will be reused in build-pkg.sh
+cmake --install _build_generic --prefix _libfaiss_stage/
 
 
 if [[ "$target_platform" == osx-* ]]; then
@@ -96,6 +98,6 @@ cmake -B _build_avx2 \
       .
 
 cmake --build _build_avx2 -j $CPU_COUNT
-# install in separate directory to not overwrite vanilla install in $PREFIX;
+cmake --install _build_avx2 --prefix $PREFIX
 # will be reused in build-pkg.sh
 cmake --install _build_avx2 --prefix _libfaiss_avx2_stage/

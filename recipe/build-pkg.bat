@@ -21,7 +21,7 @@ set "CMAKE_GENERATOR=Visual Studio 16 2019"
 
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -B _build_python_generic ^
-    -Dfaiss_ROOT=%PREFIX% ^
+    -Dfaiss_ROOT=_libfaiss_stage ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
