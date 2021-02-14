@@ -212,7 +212,7 @@ outputs:
       imports:
         - faiss
       commands:
-        {% if not osx %}
+        {% if not (osx or py36) %}
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L48-L60
