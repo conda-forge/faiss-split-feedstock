@@ -48,10 +48,11 @@ if "%cuda_compiler_version%"=="None" (
 :: workaround for https://github.com/conda-forge/vc-feedstock/issues/21
 set "CMAKE_GENERATOR=Visual Studio 16 2019"
 
-:: Build vanilla faiss.dll (no avx2)
-cmake -B _build_generic ^
+:: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+cmake -B _build_%CF_FAISS_BUILD% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
+    -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
@@ -63,36 +64,11 @@ cmake -B _build_generic ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_generic --config Release -j %CPU_COUNT%
+cmake --build _build_%CF_FAISS_BUILD% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build_generic --config Release --prefix %PREFIX%
+cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
 :: will be reused in build-pkg.bat
-cmake --install _build_generic --config Release --prefix _libfaiss_stage
-if %ERRORLEVEL% neq 0 exit 1
-
-
-:: Build faiss.dll with avx2 support
-cmake -B _build_avx2 ^
-    -DBUILD_SHARED_LIBS=ON ^
-    -DBUILD_TESTING=OFF ^
-    -DFAISS_OPT_LEVEL=avx2 ^
-    -DFAISS_ENABLE_GPU=OFF ^
-    -DFAISS_ENABLE_PYTHON=OFF ^
-    -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
-    -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
-    -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
-    -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
-    .
-if %ERRORLEVEL% neq 0 exit 1
-
-cmake --build _build_avx2 --config Release -j %CPU_COUNT%
-if %ERRORLEVEL% neq 0 exit 1
-
-cmake --install _build_avx2 --config Release --prefix %PREFIX%
-if %ERRORLEVEL% neq 0 exit 1
-:: will be reused in build-pkg.bat
-cmake --install _build_avx2 --config Release --prefix _libfaiss_avx2_stage
+cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix _libfaiss_%CF_FAISS_BUILD%_stage
 if %ERRORLEVEL% neq 0 exit 1

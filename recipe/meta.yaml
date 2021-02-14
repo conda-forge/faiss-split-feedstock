@@ -112,9 +112,18 @@ outputs:
       commands:
         - exit 0
 
+  # build two separate C++ libs, one for generic x64, and one for AVX2
+  {% for CF_FAISS_BUILD in ["generic", "avx2"] %}
+  {% if CF_FAISS_BUILD == "generic" %}
   - name: libfaiss
-    script: build-lib.sh          # [not win]
-    script: build-lib.bat         # [win]
+  {% else %}
+  - name: libfaiss-avx2
+  {% endif %}
+  {% set libext = "_avx2" if CF_FAISS_BUILD == "avx2" else "" %}
+    # only one main build script build-lib.{bat|sh}, with the only difference
+    # through CF_FAISS_BUILD={generic,avx2} that's set in the wrappers
+    script: build-lib-{{ CF_FAISS_BUILD }}.sh   # [not win]
+    script: build-lib-{{ CF_FAISS_BUILD }}.bat  # [win]
     build:
       string: "h{{ PKG_HASH }}_{{ number }}_{{ faiss_proc_type }}"                                                  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ number }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
@@ -122,9 +131,9 @@ outputs:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
         # (matches default arguments/behaviour of `pin_compatible`: min_pin='x.x.x.x.x.x', max_pin='x')
-        - {{ pin_compatible('libfaiss') }}
+        - {{ pin_compatible('libfaiss{{ libext }}') }}
         # additionally, we need to ensure matching proc-type
-        - libfaiss =*=*_{{ faiss_proc_type }}
+        - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
     requirements:
       build:
         - {{ compiler('cxx') }}
@@ -141,21 +150,22 @@ outputs:
     test:
       commands:
         # shared
-        - test -f $PREFIX/lib/libfaiss.so               # [linux]
-        - test -f $PREFIX/lib/libfaiss.dylib            # [osx]
-        - if not exist %LIBRARY_BIN%\faiss.dll exit 1   # [win]
+        - test -f $PREFIX/lib/libfaiss{{ libext }}.so               # [linux]
+        - test -f $PREFIX/lib/libfaiss{{ libext }}.dylib            # [osx]
+        - if not exist %LIBRARY_BIN%\faiss{{ libext }}.dll exit 1   # [win]
         # On windows, faiss.lib is an "import library";
         # Deleting it breaks the faiss-builds
-        - if not exist %LIBRARY_LIB%\faiss.lib exit 1   # [win]
+        - if not exist %LIBRARY_LIB%\faiss{{ libext }}.lib exit 1   # [win]
 
         # absence of static libraries
-        - test ! -f $PREFIX/lib/libfaiss.a              # [not win]
+        - test ! -f $PREFIX/lib/libfaiss{{ libext }}.a              # [not win]
 
         # headers
         {% for each_header in headers %}
         - test -f $PREFIX/include/faiss/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
         - if not exist %LIBRARY_INC%\faiss\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
         {% endfor %}
+  {% endfor %}
 
   - name: faiss
     script: build-pkg.sh          # [not win]
@@ -176,11 +186,13 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-proc * {{ faiss_proc_type }}

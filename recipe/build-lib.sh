@@ -58,37 +58,18 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
-
-# Build vanilla version (no avx2)
-cmake -B _build_generic \
-      -DBUILD_SHARED_LIBS=ON \
-      -DBUILD_TESTING=ON \
-      -DFAISS_ENABLE_PYTHON=OFF \
-      -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_LIBDIR=lib \
-      ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
-      --verbose \
-      .
-
-cmake --build _build_generic -j $CPU_COUNT
-cmake --install _build_generic --prefix $PREFIX
-# will be reused in build-pkg.sh
-cmake --install _build_generic --prefix _libfaiss_stage/
-
-
-if [[ "$target_platform" == osx-* ]]; then
+if [[ $target_platform == osx-* ]] && [[ $CF_FAISS_BUILD == avx2 ]]; then
     # OSX CI has no AVX2 support
-    AVX2_BUILD_TESTING="OFF"
+    BUILD_TESTING="OFF"
 else
-    AVX2_BUILD_TESTING="ON"
+    BUILD_TESTING="ON"
 fi
 
-# Build version with avx2-support
-cmake -B _build_avx2 \
+# Build version depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+cmake -B _build_${CF_FAISS_BUILD} \
       -DBUILD_SHARED_LIBS=ON \
-      -DBUILD_TESTING=${AVX2_BUILD_TESTING} \
-      -DFAISS_OPT_LEVEL=avx2 \
+      -DBUILD_TESTING=${BUILD_TESTING} \
+      -DFAISS_OPT_LEVEL=${CF_FAISS_BUILD} \
       -DFAISS_ENABLE_PYTHON=OFF \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
@@ -97,7 +78,7 @@ cmake -B _build_avx2 \
       --verbose \
       .
 
-cmake --build _build_avx2 -j $CPU_COUNT
-cmake --install _build_avx2 --prefix $PREFIX
+cmake --build _build_${CF_FAISS_BUILD} -j $CPU_COUNT
+cmake --install _build_${CF_FAISS_BUILD} --prefix $PREFIX
 # will be reused in build-pkg.sh
-cmake --install _build_avx2 --prefix _libfaiss_avx2_stage/
+cmake --install _build_${CF_FAISS_BUILD} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
