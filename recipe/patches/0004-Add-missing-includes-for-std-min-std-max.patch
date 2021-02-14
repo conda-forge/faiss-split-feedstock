@@ -1,7 +1,7 @@
 From c76bdcca995efee62144f0efbfdff1d7c7c3957c Mon Sep 17 00:00:00 2001
 From: Lucas Hosseini <lucas.hosseini@gmail.com>
 Date: Thu, 7 Jan 2021 12:21:42 +0100
-Subject: [PATCH 04/11] Add missing includes for std::min/std::max.
+Subject: [PATCH 04/12] Add missing includes for std::min/std::max.
 
 ---
  faiss/gpu/GpuIndex.cu                        | 1 +

@@ -1,7 +1,7 @@
 From 6b95f690975758bc324e29ed1768cf2f81967c80 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 12 Feb 2021 00:22:16 +0100
-Subject: [PATCH 11/11] Windows: portable intrinsics
+Subject: [PATCH 11/12] Windows: portable intrinsics
 
 ---
  faiss/Index2Layer.cpp          | 13 ++++---

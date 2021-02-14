@@ -92,6 +92,8 @@ source:
     - patches/0010-Win-AVX2-compat-1681.patch
     # fix operator overloads & casts for __m128/__m256 that MSVC doesn't define
     - patches/0011-Windows-portable-intrinsics.patch
+    # adapt header target directory for faiss_avx2
+    - patches/0012-adapt-header-target-directory-to-outputname.patch
 
 build:
   number: {{ number }}
@@ -162,8 +164,8 @@ outputs:
 
         # headers
         {% for each_header in headers %}
-        - test -f $PREFIX/include/faiss/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
-        - if not exist %LIBRARY_INC%\faiss\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
+        - test -f $PREFIX/include/faiss{{ libext }}/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
+        - if not exist %LIBRARY_INC%\faiss{{ libext }}\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
         {% endfor %}
   {% endfor %}
 
