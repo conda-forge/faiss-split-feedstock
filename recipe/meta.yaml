@@ -112,11 +112,9 @@ outputs:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - cmake
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
+        - llvm-openmp
       host:
-        - libblas
-        - liblapack
+        - blas =*=mkl
       run_constrained:
         - faiss-proc * {{ faiss_proc_type }}
 
@@ -151,15 +149,13 @@ outputs:
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - swig
         - cmake
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
+        - llvm-openmp
       host:
         - python
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libblas
-        - liblapack
+        - blas =*=mkl
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
