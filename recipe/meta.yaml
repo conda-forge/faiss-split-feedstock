@@ -78,6 +78,8 @@ source:
     - patches/0003-update-util-guard-for-compute_86.patch
     # single commit from facebookresearch/faiss#1610
     - patches/0004-Add-missing-includes-for-std-min-std-max.patch
+    # skip test that fails without GPU drivers on windows
+    - patches/0005-skip-test-that-fails-without-GPU-drivers.patch  # [win]
 
 build:
   number: {{ number }}
