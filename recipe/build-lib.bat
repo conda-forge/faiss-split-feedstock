@@ -10,7 +10,7 @@ if "%cuda_compiler_version%"=="None" (
 
     REM for documentation see e.g.
     REM docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
-    REM docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#major-components__table-cuda-toolkit-driver-versions
+    REM docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
     REM docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
     REM for -real vs. -virtual, see cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
@@ -23,8 +23,13 @@ if "%cuda_compiler_version%"=="None" (
         set "CMAKE_CUDA_ARCHS=35-virtual;50-virtual;52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;75-real"
     )
     if "%cuda_compiler_version:~0,2%"=="11" (
-        REM cuda 11.0 deprecates arches 35, 50
-        set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
+        if "%cuda_compiler_version:~0,4%"=="11.0" (
+            REM cuda 11.0 deprecates arches 35, 50
+            set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
+        ) else (
+            REM cuda>=11.1 adds arch 86
+            set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;86-virtual;86-real"
+        )
     )
 
     REM See more extensive comment in build-lib.sh
