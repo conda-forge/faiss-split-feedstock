@@ -115,7 +115,9 @@ outputs:
         - exit 0
 
   # build two separate C++ libs, one for generic x64, and one for AVX2
-  {% for CF_FAISS_BUILD in ["generic", "avx2"] %}
+  {% for CF_FAISS_BUILD in ["avx2", "generic"] %}
+  # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
+  # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
   - name: libfaiss
   {% else %}
