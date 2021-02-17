@@ -1,3 +1,5 @@
+@echo on
+
 SetLocal EnableDelayedExpansion
 
 if "%cuda_compiler_version%"=="None" (
