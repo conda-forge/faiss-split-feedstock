@@ -7,22 +7,26 @@ declare -a CUDA_CONFIG_ARGS
 if [ ${cuda_compiler_version} != "None" ]; then
     # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
-    # docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#major-components__table-cuda-toolkit-driver-versions
+    # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
     # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
     ARCHES=(52 60 61 70)
     # cuda 11.0 deprecates arches 35, 50
     DEPRECATED_IN_11=(35 50)
-    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.0") ]; then
-        # Ampere support (sm_80) needs cuda >= 11.0
+    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
+        # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
+        ARCHES=( "${ARCHES[@]}" 75 80 86 )
+        LATEST_ARCH=86
+    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "11.0") ]; then
+        # Ampere support for A100 (sm_80) needs cuda >= 11.0
         ARCHES=( "${ARCHES[@]}" 75 80 )
         LATEST_ARCH=80
     elif [ $(version2int $cuda_compiler_version) -ge $(version2int "10.0") ]; then
         # Turing support (sm_75) needs cuda >= 10.0
         ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" 75 )
         LATEST_ARCH=75
-    else
+    else  # 9.x
         ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" )
         LATEST_ARCH=70
     fi

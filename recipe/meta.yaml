@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 0 %}
+{% set number = 1 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -74,6 +74,8 @@ source:
     - patches/0001-use-c-14.patch
     # backport of facebookresearch/faiss#1666, can be dropped for ver>1.7.0
     - patches/0002-Add-missing-headers-in-faiss-gpu-CMakeLists.txt-1666.patch
+    # update version-guard to build for compute_86
+    - patches/0003-update-util-guard-for-compute_86.patch
 
 build:
   number: {{ number }}
