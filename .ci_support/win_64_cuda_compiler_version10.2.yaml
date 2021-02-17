@@ -5,7 +5,7 @@ channel_targets:
 cuda_compiler:
 - nvcc
 cuda_compiler_version:
-- None
+- '10.2'
 cxx_compiler:
 - vs2017
 libblas:
