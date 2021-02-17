@@ -1,0 +1,70 @@
+From 1c1fe772e16a841d000e43e448087cea855208c1 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 23 Dec 2020 10:22:30 +0100
+Subject: [PATCH 3/3] set correct EXT_SUFFIX for swig
+
+---
+ faiss/python/CMakeLists.txt |  7 +++----
+ faiss/python/setup.py       | 20 +++++++++++---------
+ 2 files changed, 14 insertions(+), 13 deletions(-)
+
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+index 40ef40c1..66a1c525 100644
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -61,10 +61,9 @@ swig_add_library(swigfaiss
+   SOURCES swigfaiss.swig
+ )
+ 
+-if(NOT WIN32)
+-  # NOTE: Python does not recognize the dylib extension.
+-  set_target_properties(swigfaiss PROPERTIES SUFFIX .so)
+-endif()
++# This is set to the value of sysconfig.get_config_var('EXT_SUFFIX') in build-pkg.{bat|sh}
++# For example, PyPy does not recognize the plain "so"-extension; see https://github.com/swig/swig/issues/1912
++set_target_properties(swigfaiss PROPERTIES SUFFIX $ENV{EXT_SUFFIX})
+ 
+ if(FAISS_ENABLE_GPU)
+   find_package(CUDAToolkit REQUIRED)
+diff --git a/faiss/python/setup.py b/faiss/python/setup.py
+index 8a28eeeb..9ebcdc1b 100644
+--- a/faiss/python/setup.py
++++ b/faiss/python/setup.py
+@@ -7,6 +7,7 @@ from __future__ import print_function
+ from setuptools import setup, find_packages
+ import os
+ import shutil
++import sysconfig
+ import platform
+ 
+ # make the faiss python package dir
+@@ -16,16 +17,17 @@ shutil.copytree("contrib", "faiss/contrib")
+ shutil.copyfile("__init__.py", "faiss/__init__.py")
+ shutil.copyfile("loader.py", "faiss/loader.py")
+ shutil.copyfile("swigfaiss.py", "faiss/swigfaiss.py")
+-if platform.system() == 'Windows':
+-    shutil.copyfile("Release/_swigfaiss.pyd", "faiss/_swigfaiss.pyd")
+ 
+-else:
+-    shutil.copyfile("_swigfaiss.so", "faiss/_swigfaiss.so")
+-    try:
+-        shutil.copyfile("swigfaiss_avx2.py", "faiss/swigfaiss_avx2.py")
+-        shutil.copyfile("_swigfaiss_avx2.so", "faiss/_swigfaiss_avx2.so")
+-    except:
+-        pass
++ext = sysconfig.get_config_var('EXT_SUFFIX')
++prefix = "Release/" * (platform.system() == 'Windows')
++shutil.copyfile(f"{prefix}_swigfaiss{ext}", f"faiss/_swigfaiss{ext}")
++
++try:
++    shutil.copyfile("swigfaiss_avx2.py", "faiss/swigfaiss_avx2.py")
++    shutil.copyfile(f"{prefix}_swigfaiss_avx2{ext}", f"faiss/_swigfaiss_avx2{ext}")
++except Exception as e:
++    print(f"Could not move swigfaiss_avx2.py / {prefix}_swigfaiss_avx2{ext} due to:\n{e!r}")
++    pass
+ 
+ long_description="""
+ Faiss is a library for efficient similarity search and clustering of dense
+-- 
+2.29.2.windows.3
+

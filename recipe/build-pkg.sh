@@ -16,6 +16,11 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
+# needed by patched CMakeLists.txt for correct PyPy-extension
+export EXT_SUFFIX=$(python -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))")
+echo "Setting environment variable EXT_SUFFIX to \"${EXT_SUFFIX}\" (from python-sysconfig)"
+
+
 # Build vanilla version (no avx2), see build-lib.sh
 # Do not use the Python3_* variants for cmake
 cmake -B _build_python \

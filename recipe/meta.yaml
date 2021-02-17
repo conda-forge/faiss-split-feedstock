@@ -74,6 +74,8 @@ source:
     - patches/0001-use-c-14.patch
     # backport of facebookresearch/faiss#1666, can be dropped for ver>1.7.0
     - patches/0002-Add-missing-headers-in-faiss-gpu-CMakeLists.txt-1666.patch
+    # the following patch needs EXT_SUFFIX to be set correctly in build-pkg.{bat|sh}
+    - patches/0003-set-correct-EXT_SUFFIX-for-swig.patch
 
 build:
   number: {{ number }}
