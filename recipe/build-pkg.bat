@@ -1,7 +1,25 @@
+@echo on
+
+SetLocal EnableDelayedExpansion
+
+if "%cuda_compiler_version%"=="None" (
+    set FAISS_ENABLE_GPU="OFF"
+) else (
+    set FAISS_ENABLE_GPU="ON"
+
+    REM See more extensive comment in build-pkg.sh
+    REM TODO: Fix this in nvcc-feedstock or cmake-feedstock.
+    del %BUILD_PREFIX%\bin\nvcc.bat
+
+    REM ... and another workaround just to cover more bases
+    set "CudaToolkitDir=%CUDA_PATH%"
+    set "CUDAToolkit_ROOT=%CUDA_PATH%"
+)
+
 :: Build vanilla version (no avx2).
 :: Do not use the Python3_* variants for cmake
 cmake -B _build_python ^
-    -DFAISS_ENABLE_GPU=OFF ^
+    -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
     faiss/python
