@@ -17,19 +17,32 @@ else
 fi
 
 # Build vanilla version (no avx2), see build-lib.sh
-# Do not use the Python3_* variants for cmake
-cmake -B _build_python \
-      -Dfaiss_ROOT=${PREFIX}\
+cmake -B _build_python_generic \
+      -Dfaiss_ROOT=_libfaiss_generic_stage/ \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
       -DPython_EXECUTABLE="${PYTHON}" \
       faiss/python
+cmake --build _build_python_generic -j $CPU_COUNT
 
-cmake --build _build_python -j $CPU_COUNT
+# Build version with avx2 support, see build-lib.sh
+cmake -B _build_python_avx2 \
+      -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
+      -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DPython_EXECUTABLE="${PYTHON}" \
+      faiss/python
+cmake --build _build_python_avx2 -j $CPU_COUNT
+
+# copy generated swig module with avx2-support to specifically named file, cf.
+# https://github.com/facebookresearch/faiss/blob/v1.7.0/faiss/python/setup.py#L25-L26
+cp _build_python_avx2/swigfaiss.py _build_python_generic/swigfaiss_avx2.py
+cp _build_python_avx2/_swigfaiss.so _build_python_generic/_swigfaiss_avx2.so
 
 # Build actual python module.
-pushd _build_python
+pushd _build_python_generic
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
 popd
 # clean up cmake-cache between builds
-rm -r _build_python
+rm -r _build_python_generic
+rm -r _build_python_avx2

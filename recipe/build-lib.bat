@@ -45,10 +45,14 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
-:: Build faiss.dll
-cmake -B _build ^
+:: workaround for https://github.com/conda-forge/vc-feedstock/issues/21
+set "CMAKE_GENERATOR=Visual Studio 16 2019"
+
+:: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+cmake -B _build_%CF_FAISS_BUILD% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
+    -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
@@ -60,8 +64,11 @@ cmake -B _build ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build --config Release -j %CPU_COUNT%
+cmake --build _build_%CF_FAISS_BUILD% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build --config Release --prefix %PREFIX%
+cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
+if %ERRORLEVEL% neq 0 exit 1
+:: will be reused in build-pkg.bat
+cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix _libfaiss_%CF_FAISS_BUILD%_stage
 if %ERRORLEVEL% neq 0 exit 1

@@ -1,0 +1,70 @@
+From 4888d088f4bd62e82ddddd54fa98565ae201c566 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 17 Feb 2021 15:07:28 -0800
+Subject: [PATCH 07/12] make setup.py win+avx2 compatible (#1682)
+
+Summary:
+While working on https://github.com/conda-forge/faiss-split-feedstock/pull/27, it turned out I needed
+to patch `setup.py` anyway. In order to unify how the extension of the built lib is set, I fell back
+to another patch that would/will become necessary if faiss ever wants to support PyPy
+(see discussion in https://github.com/conda-forge/faiss-split-feedstock/pull/22).
+
+It would be nice if this was done natively by CMake, but as far as I can tell from
+https://gitlab.kitware.com/cmake/cmake/-/issues/21070, cmake is not likely to do that right away.
+
+I didn't particularly expect this patch to be upstreamed (especially if there is no interest for PyPy support, for example),
+but beauby [invited](https://github.com/conda-forge/faiss-split-feedstock/pull/27#issuecomment-777291797)
+me to post it so here goes (plus necessary adaptations to the conda recipes)
+
+Related to https://github.com/facebookresearch/faiss/issues/1600, https://github.com/facebookresearch/faiss/issues/1680, https://github.com/facebookresearch/faiss/issues/1681
+
+PS. I thought about using `logger.INFO` in case of an import failure for AVX2, but since it's a setup file,
+I thought `print` would actually be more useful. Happy to change or remove if desired.
+
+Pull Request resolved: https://github.com/facebookresearch/faiss/pull/1682
+
+Reviewed By: wickedfoo
+
+Differential Revision: D26484393
+
+Pulled By: beauby
+
+fbshipit-source-id: 6cd2598838c4070dbf83d6f27ce15ce9faa6bf20
+---
+ faiss/python/setup.py | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/faiss/python/setup.py b/faiss/python/setup.py
+index 8a28eeeb..d7b77da4 100644
+--- a/faiss/python/setup.py
++++ b/faiss/python/setup.py
+@@ -16,16 +16,17 @@ shutil.copytree("contrib", "faiss/contrib")
+ shutil.copyfile("__init__.py", "faiss/__init__.py")
+ shutil.copyfile("loader.py", "faiss/loader.py")
+ shutil.copyfile("swigfaiss.py", "faiss/swigfaiss.py")
+-if platform.system() == 'Windows':
+-    shutil.copyfile("Release/_swigfaiss.pyd", "faiss/_swigfaiss.pyd")
+ 
+-else:
+-    shutil.copyfile("_swigfaiss.so", "faiss/_swigfaiss.so")
+-    try:
+-        shutil.copyfile("swigfaiss_avx2.py", "faiss/swigfaiss_avx2.py")
+-        shutil.copyfile("_swigfaiss_avx2.so", "faiss/_swigfaiss_avx2.so")
+-    except:
+-        pass
++ext = ".pyd" if platform.system() == 'Windows' else ".so"
++prefix = "Release/" * (platform.system() == 'Windows')
++shutil.copyfile(f"{prefix}_swigfaiss{ext}", f"faiss/_swigfaiss{ext}")
++
++try:
++    shutil.copyfile("swigfaiss_avx2.py", "faiss/swigfaiss_avx2.py")
++    shutil.copyfile(f"{prefix}_swigfaiss_avx2{ext}", f"faiss/_swigfaiss_avx2{ext}")
++except Exception as e:
++    print(f"Could not move swigfaiss_avx2.py / {prefix}_swigfaiss_avx2{ext} due to:\n{e!r}")
++    pass
+ 
+ long_description="""
+ Faiss is a library for efficient similarity search and clustering of dense
+-- 
+2.29.2.windows.3
+

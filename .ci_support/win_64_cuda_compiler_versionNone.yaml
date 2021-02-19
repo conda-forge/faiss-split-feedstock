@@ -2,12 +2,10 @@ channel_sources:
 - conda-forge,defaults
 channel_targets:
 - conda-forge main
-cuda_compiler:
-- nvcc
 cuda_compiler_version:
 - None
 cxx_compiler:
-- vs2017
+- vs2019
 libblas:
 - 3.8 *netlib
 liblapack:
