@@ -103,8 +103,6 @@ build:
   number: {{ number }}
   # GPU version for linux64 & win
   skip: true  # [osx and cuda_compiler_version != "None"]
-  # DEBUG: temporarily disable win + cuda
-  skip: true  # [win and cuda_compiler_version != "None"]
 
 requirements:
   build:
