@@ -71,7 +71,7 @@ source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
   sha256: f86d346ac9f409ee30abe37e52f6cce366b7f60d3924d65719f40aa07ceb4bec
   patches:
-    - patches/0001-use-c-14.patch
+    - patches/0001-use-c-14.patch  # [win and cuda_compiler_version != "10.2"]
     # backport of facebookresearch/faiss#1666, can be dropped for ver>1.7.0
     - patches/0002-Add-missing-headers-in-faiss-gpu-CMakeLists.txt-1666.patch
     # update version-guard to build for compute_86, can be dropped for ver>1.7.0
