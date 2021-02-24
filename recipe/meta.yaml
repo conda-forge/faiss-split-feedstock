@@ -116,9 +116,8 @@ outputs:
       commands:
         - exit 0
 
-  # build two separate C++ libs, one for generic x64, and one for AVX2;
-  # do not build AVX2 variant on windows + cuda due to CI time constraints
-  {% for CF_FAISS_BUILD in (["avx2", "generic"] if not win or cuda_compiler_version == None else ["generic"]) %}
+  # build two separate C++ libs, one for generic x64, and one for AVX2
+  {% for CF_FAISS_BUILD in ["avx2", "generic"] %}
   # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
   # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
@@ -193,13 +192,13 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [not win or cuda_compiler_version == None]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [not win or cuda_compiler_version == None]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-proc * {{ faiss_proc_type }}
