@@ -94,6 +94,8 @@ source:
     - patches/0011-Windows-portable-intrinsics-1684.patch
     # adapt header target directory for faiss_avx2
     - patches/0012-adapt-header-target-directory-to-outputname.patch
+    # correctly switch for avx2 in swig-build
+    - patches/0013-switch-correctly-for-AVX2-in-swigfaiss-build.patch
 
 build:
   number: {{ number }}
