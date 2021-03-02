@@ -1,7 +1,7 @@
 From d49343b508f98e48dd34ece4d340f878b4a89d87 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sun, 28 Feb 2021 00:00:57 +0100
-Subject: [PATCH 13/13] switch correctly for AVX2 in swigfaiss-build
+Subject: [PATCH 13/14] switch correctly for AVX2 in swigfaiss-build
 
 ---
  faiss/python/CMakeLists.txt | 4 ++++

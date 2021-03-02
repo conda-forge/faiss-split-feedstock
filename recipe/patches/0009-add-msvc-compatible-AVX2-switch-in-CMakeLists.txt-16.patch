@@ -1,7 +1,7 @@
 From 6b361d39aa12da3cc18b4c75317707bfa67dc1a1 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 17 Feb 2021 14:05:11 -0800
-Subject: [PATCH 09/13] add msvc-compatible AVX2 switch in CMakeLists.txt
+Subject: [PATCH 09/14] add msvc-compatible AVX2 switch in CMakeLists.txt
  (#1680)
 
 Summary:
