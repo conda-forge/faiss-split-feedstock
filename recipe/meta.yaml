@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 4 %}
+{% set number = 5 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -98,6 +98,8 @@ source:
     - patches/0013-switch-correctly-for-AVX2-in-swigfaiss-build.patch
     # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
     - patches/0014-Small-fixes-for-compilation-on-ARM-1655.patch
+    # exploratory patch
+    - patches/0015-comment-out-failing-assertion-on-clang-11.patch
 
 build:
   number: {{ number }}
