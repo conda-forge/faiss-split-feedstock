@@ -34,6 +34,7 @@ if %ERRORLEVEL% neq 0 exit 1
 :: Build version with avx2 support, see build-lib.bat
 cmake -B _build_python_avx2 ^
     -Dfaiss_ROOT=_libfaiss_avx2_stage ^
+    -DFAISS_OPT_LEVEL=avx2 ^
     -DFAISS_ENABLE_GPU=OFF ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
@@ -46,7 +47,7 @@ if %ERRORLEVEL% neq 0 exit 1
 :: copy generated swig module with avx2-support to specifically named file, cf.
 :: https://github.com/facebookresearch/faiss/blob/v1.7.0/faiss/python/setup.py#L25-L26
 copy _build_python_avx2\swigfaiss.py _build_python_generic\swigfaiss_avx2.py
-copy _build_python_avx2\Release\_swigfaiss.pyd _build_python_generic\Release\_swigfaiss_avx2.pyd
+copy _build_python_avx2\Release\_swigfaiss_avx2.pyd _build_python_generic\Release\_swigfaiss_avx2.pyd
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build actual python module.

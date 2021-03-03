@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 3 %}
+{% set number = 4 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -94,6 +94,10 @@ source:
     - patches/0011-Windows-portable-intrinsics-1684.patch
     # adapt header target directory for faiss_avx2
     - patches/0012-adapt-header-target-directory-to-outputname.patch
+    # correctly switch for avx2 in swig-build, see faiss#1717
+    - patches/0013-switch-correctly-for-AVX2-in-swigfaiss-build.patch
+    # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
+    - patches/0014-Small-fixes-for-compilation-on-ARM-1655.patch
 
 build:
   number: {{ number }}
@@ -116,9 +120,8 @@ outputs:
       commands:
         - exit 0
 
-  # build two separate C++ libs, one for generic x64, and one for AVX2;
-  # do not build AVX2 variant on windows + cuda due to CI time constraints
-  {% for CF_FAISS_BUILD in (["avx2", "generic"] if not win or cuda_compiler_version == None else ["generic"]) %}
+  # build two separate C++ libs, one for generic x64, and one for AVX2
+  {% for CF_FAISS_BUILD in ["avx2", "generic"] %}
   # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
   # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
@@ -193,13 +196,13 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [not win or cuda_compiler_version == None]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [not win or cuda_compiler_version == None]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-proc * {{ faiss_proc_type }}
