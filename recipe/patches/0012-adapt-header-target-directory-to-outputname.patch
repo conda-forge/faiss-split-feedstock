@@ -1,7 +1,7 @@
 From 84072b99d78be9d94bf902e66fff396c1b94b21b Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sun, 14 Feb 2021 15:52:27 +0100
-Subject: [PATCH 12/17] adapt header target directory to outputname
+Subject: [PATCH 12/18] adapt header target directory to outputname
 
 ---
  faiss/CMakeLists.txt     | 11 ++++++++---

@@ -104,6 +104,8 @@ source:
     - patches/0016-fix-int32-vs-int64-issue-in-GPU-test.patch
     # patch for avoiding crash in GPU test suite on windows
     - patches/0017-skip-test_stress-for-GPU-on-windows.patch
+    # exploratory patch for long vs. windows in swigfaiss.swig
+    - patches/0018-handle-long-vs.-windows-in-swigfaiss.swig.patch
 
 build:
   number: {{ number }}
