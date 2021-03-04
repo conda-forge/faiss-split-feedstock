@@ -94,10 +94,16 @@ source:
     - patches/0011-Windows-portable-intrinsics-1684.patch
     # adapt header target directory for faiss_avx2
     - patches/0012-adapt-header-target-directory-to-outputname.patch
-    # correctly switch for avx2 in swig-build, see faiss#1717
-    - patches/0013-switch-correctly-for-AVX2-in-swigfaiss-build.patch
+    # backport of facebookresearch/faiss#1717, can be dropped for ver>1.7.0
+    - patches/0013-Fix-swig-vs.-AVX2-1717.patch
     # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
     - patches/0014-Small-fixes-for-compilation-on-ARM-1655.patch
+    # avoid warning on win + cuda >= 11
+    - patches/0015-do-not-overload-__builtin_ctz-for-win-cuda-11.patch
+    # fix GPU test on windows
+    - patches/0016-fix-int32-vs-int64-issue-in-GPU-test.patch
+    # patch for avoiding crash in GPU test suite on windows
+    - patches/0017-skip-test_stress-for-GPU-on-windows.patch
 
 build:
   number: {{ number }}

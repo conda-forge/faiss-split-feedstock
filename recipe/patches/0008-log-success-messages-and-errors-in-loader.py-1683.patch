@@ -1,7 +1,7 @@
 From af260092ea6fb23c61cea1d4b239da0334ad341c Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 12 Feb 2021 10:57:44 -0800
-Subject: [PATCH 08/14] log success messages and errors in loader.py (#1683)
+Subject: [PATCH 08/17] log success messages and errors in loader.py (#1683)
 
 Summary:
 This patch is to provide log information in case of failing to load the AVX2-enabled lib,
