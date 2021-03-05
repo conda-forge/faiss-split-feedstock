@@ -1,7 +1,7 @@
 From 0e4bea421e47414853ff2345bc2438d22769424b Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 17 Feb 2021 08:04:30 -0800
-Subject: [PATCH 10/18] Win+AVX2 compat (#1681)
+Subject: [PATCH 10/19] Win+AVX2 compat (#1681)
 
 Summary:
 Upstreaming patches from conda-forge/faiss-split-feedstock#27, follow-up (sorta) to https://github.com/facebookresearch/faiss/issues/1600.

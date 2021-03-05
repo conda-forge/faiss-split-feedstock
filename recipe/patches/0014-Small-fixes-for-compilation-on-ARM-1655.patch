@@ -1,7 +1,7 @@
 From cab8a50faddf8413322c1646a8326e4c68f52405 Mon Sep 17 00:00:00 2001
 From: Matthijs Douze <matthijs@fb.com>
 Date: Fri, 29 Jan 2021 10:05:07 -0800
-Subject: [PATCH 14/18] Small fixes for compilation on ARM (#1655)
+Subject: [PATCH 14/19] Small fixes for compilation on ARM (#1655)
 
 Summary:
 This PR fixes a few small issues with compilation on ARM.

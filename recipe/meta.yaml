@@ -106,6 +106,8 @@ source:
     - patches/0017-skip-test_stress-for-GPU-on-windows.patch
     # exploratory patch for long vs. windows in swigfaiss.swig
     - patches/0018-handle-long-vs.-windows-in-swigfaiss.swig.patch
+    # exploratory patch for replacing non-portable methods
+    - patches/0019-deprecate-non-portable-Vector-names-and-replace-with.patch
 
 build:
   number: {{ number }}
@@ -253,6 +255,10 @@ outputs:
         - type log.txt            # [win]
         # this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
         - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
+
+        # temporary test for deprecations in patch 0019
+        - python -c "import faiss; a = faiss.LongVector()"
+        - python -c "from faiss import *; a = LongVector()"
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/

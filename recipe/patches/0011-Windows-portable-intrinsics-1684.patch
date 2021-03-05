@@ -1,7 +1,7 @@
 From a987f2cf36de655be6273e7c91867c0dfedf09a9 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 18 Feb 2021 11:27:33 -0800
-Subject: [PATCH 11/18] Windows: portable intrinsics (#1684)
+Subject: [PATCH 11/19] Windows: portable intrinsics (#1684)
 
 Summary:
 Trying to compile windows for AVX2 in https://github.com/conda-forge/faiss-split-feedstock/pull/27
