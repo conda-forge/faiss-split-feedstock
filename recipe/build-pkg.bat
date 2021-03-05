@@ -35,7 +35,7 @@ if %ERRORLEVEL% neq 0 exit 1
 cmake -B _build_python_avx2 ^
     -Dfaiss_ROOT=_libfaiss_avx2_stage ^
     -DFAISS_OPT_LEVEL=avx2 ^
-    -DFAISS_ENABLE_GPU=OFF ^
+    -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
     faiss/python
