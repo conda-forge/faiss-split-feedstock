@@ -1,7 +1,7 @@
 From 95e146d75efbbde1b55d5a9ae8f3957c6574ae5c Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 4 Mar 2021 03:43:07 -0800
-Subject: [PATCH 13/19] Fix swig vs. AVX2 (#1717)
+Subject: [PATCH 13/18] Fix swig vs. AVX2 (#1717)
 
 Summary:
 Towards https://github.com/facebookresearch/faiss/issues/1711. There's still a test [error](https://github.com/facebookresearch/faiss/issues/1711#issuecomment-787509873) that won't be picked up unless an AVX2-specific CI run is added.

@@ -98,16 +98,14 @@ source:
     - patches/0013-Fix-swig-vs.-AVX2-1717.patch
     # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
     - patches/0014-Small-fixes-for-compilation-on-ARM-1655.patch
-    # avoid warning on win + cuda >= 11
-    - patches/0015-do-not-overload-__builtin_ctz-for-win-cuda-11.patch
-    # fix GPU test on windows
-    - patches/0016-fix-int32-vs-int64-issue-in-GPU-test.patch
+    # backport of facebookresearch/faiss#1737-1739 (squashed), can be dropped for ver>1.7.0
+    - patches/0015-roll-up-of-fixes-in-1737-1738-1739.patch
     # patch for avoiding crash in GPU test suite on windows
-    - patches/0017-skip-test_stress-for-GPU-on-windows.patch
+    - patches/0016-skip-test_stress-for-GPU-on-windows.patch
     # exploratory patch for long vs. windows in swigfaiss.swig
-    - patches/0018-handle-long-vs.-windows-in-swigfaiss.swig.patch
+    - patches/0017-handle-long-vs.-windows-in-swigfaiss.swig.patch
     # exploratory patch for replacing non-portable methods
-    - patches/0019-deprecate-non-portable-Vector-names-and-replace-with.patch
+    - patches/0018-deprecate-non-portable-Vector-names-and-replace-with.patch
 
 build:
   number: {{ number }}

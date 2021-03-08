@@ -1,7 +1,7 @@
 From c329c59103f90a9b5fcec98f7a71f1bba4a3edbc Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 3 Feb 2021 08:00:39 -0800
-Subject: [PATCH 06/19] make AVX2-detection platform-independent (#1600)
+Subject: [PATCH 06/18] make AVX2-detection platform-independent (#1600)
 
 Summary:
 In the context of https://github.com/conda-forge/faiss-split-feedstock/issues/23, I discussed with some of the conda-folks how we should support AVX2 (and potentially other builds) for faiss. In the meantime, we'd like to follow the model that faiss itself is using (i.e. build with AVX2 and without and then load the corresponding library at runtime depending on CPU capabilities).

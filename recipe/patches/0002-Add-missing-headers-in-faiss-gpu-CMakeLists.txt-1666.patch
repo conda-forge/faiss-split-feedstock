@@ -1,7 +1,7 @@
 From e4b94c8a5ad0fc7632cf05006865dbd8feac2ed4 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 4 Feb 2021 09:21:21 -0800
-Subject: [PATCH 02/19] Add missing headers in faiss/[gpu/]CMakeLists.txt
+Subject: [PATCH 02/18] Add missing headers in faiss/[gpu/]CMakeLists.txt
  (#1666)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
