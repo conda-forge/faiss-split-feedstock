@@ -20,15 +20,15 @@ if "%cuda_compiler_version%"=="None" (
     REM windows support start with cuda 10.0
     REM %MY_VAR:~0,2% selects first two characters
     if "%cuda_compiler_version:~0,2%"=="10" (
-        set "CMAKE_CUDA_ARCHS=35-virtual;50-virtual;52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;75-real"
+        set "CMAKE_CUDA_ARCHS=35-real;50-real;52-real;60-real;61-real;70-real;75"
     )
     if "%cuda_compiler_version:~0,2%"=="11" (
         if "%cuda_compiler_version:~0,4%"=="11.0" (
             REM cuda 11.0 deprecates arches 35, 50
-            set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;80-real"
+            set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80"
         ) else (
             REM cuda>=11.1 adds arch 86
-            set "CMAKE_CUDA_ARCHS=52-virtual;60-virtual;61-virtual;70-virtual;75-virtual;80-virtual;86-virtual;86-real"
+            set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80-real;86"
         )
     )
 
