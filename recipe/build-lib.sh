@@ -44,6 +44,9 @@ fi
 if [[ $target_platform == osx-* ]] && [[ $CF_FAISS_BUILD == avx2 ]]; then
     # OSX CI has no AVX2 support
     BUILD_TESTING="OFF"
+elif [[ $target_platform == osx-arm64 ]]; then
+    # CI has no osx-arm64 machines; cannot test when only cross-compiling
+    BUILD_TESTING="OFF"
 else
     BUILD_TESTING="ON"
 fi
