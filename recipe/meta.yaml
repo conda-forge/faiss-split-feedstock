@@ -183,12 +183,14 @@ outputs:
     requirements:
       build:
         - {{ compiler('cxx') }}
-        - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
         - swig
         - cmake
-        - make                    # [linux]
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
+        - libgomp                             # [linux]
+        - llvm-openmp                         # [osx]
+        - python                              # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}  # [build_platform != target_platform]
+        - numpy                               # [build_platform != target_platform]
       host:
         - python
         - pip
