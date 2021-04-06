@@ -78,34 +78,30 @@ source:
     - patches/0003-update-util-guard-for-compute_86.patch
     # single commit from facebookresearch/faiss#1610
     - patches/0004-Add-missing-includes-for-std-min-std-max.patch
-    # skip test that fails without GPU drivers on windows
-    - patches/0005-skip-test-that-fails-without-GPU-drivers.patch  # [win]
     # backport of facebookresearch/faiss#1600, can be dropped for ver>1.7.0
-    - patches/0006-make-AVX2-detection-platform-independent-1600.patch
+    - patches/0005-make-AVX2-detection-platform-independent-1600.patch
     # backport of facebookresearch/faiss#1682, can be dropped for ver>1.7.0
-    - patches/0007-make-setup.py-win-avx2-compatible-1682.patch
+    - patches/0006-make-setup.py-win-avx2-compatible-1682.patch
     # backport of facebookresearch/faiss#1683, can be dropped for ver>1.7.0
-    - patches/0008-log-success-messages-and-errors-in-loader.py-1683.patch
+    - patches/0007-log-success-messages-and-errors-in-loader.py-1683.patch
     # backport of facebookresearch/faiss#1680, can be dropped for ver>1.7.0
-    - patches/0009-add-msvc-compatible-AVX2-switch-in-CMakeLists.txt-16.patch
+    - patches/0008-add-msvc-compatible-AVX2-switch-in-CMakeLists.txt-16.patch
     # backport of facebookresearch/faiss#1681, can be dropped for ver>1.7.0
-    - patches/0010-Win-AVX2-compat-1681.patch
+    - patches/0009-Win-AVX2-compat-1681.patch
     # backport of facebookresearch/faiss#1684, can be dropped for ver>1.7.0
-    - patches/0011-Windows-portable-intrinsics-1684.patch
-    # adapt header target directory for faiss_avx2
-    - patches/0012-adapt-header-target-directory-to-outputname.patch
+    - patches/0010-Windows-portable-intrinsics-1684.patch
     # backport of facebookresearch/faiss#1717, can be dropped for ver>1.7.0
-    - patches/0013-Fix-swig-vs.-AVX2-1717.patch
+    - patches/0011-Fix-swig-vs.-AVX2-1717.patch
     # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
-    - patches/0014-Small-fixes-for-compilation-on-ARM-1655.patch
+    - patches/0012-Small-fixes-for-compilation-on-ARM-1655.patch
     # backport of facebookresearch/faiss#1737-1739 (squashed), can be dropped for ver>1.7.0
-    - patches/0015-roll-up-of-fixes-in-1737-1738-1739.patch
+    - patches/0013-roll-up-of-fixes-in-1737-1738-1739.patch
+    # backport of facebookresearch/faiss#1742, can be dropped for ver>1.7.0
+    - patches/0014-Portable-SWIG-Vectors-1742.patch
+    # adapt header target directory for faiss_avx2
+    - patches/0015-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
     - patches/0016-skip-test_stress-for-GPU-on-windows.patch
-    # exploratory patch for long vs. windows in swigfaiss.swig
-    - patches/0017-handle-long-vs.-windows-in-swigfaiss.swig.patch
-    # exploratory patch for replacing non-portable methods
-    - patches/0018-deprecate-non-portable-Vector-names-and-replace-with.patch
 
 build:
   number: {{ number }}
@@ -231,7 +227,10 @@ outputs:
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L48-L60
         - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-        - pytest tests --log-file-level=INFO --log-file=log.txt
+        - pytest tests --log-file-level=INFO --log-file=log.txt                         # [not win]
+        # TestComputeGT switches between CPU & GPU implementation depending on availability;
+        # GPU detection on windows is currently broken in CUDA, and would therefore break the test suite
+        - pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"  # [win]
         # print logfile for completeness (sleep so log has time to print)
         - cat log.txt && sleep 2  # [not win]
         - type log.txt            # [win]
@@ -248,15 +247,12 @@ outputs:
         {% endif %}
         - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
         # rerun test suite again without AVX2 support
-        - pytest tests --log-file-level=INFO --log-file=log.txt
+        - pytest tests --log-file-level=INFO --log-file=log.txt                         # [not win]
+        - pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"  # [win]
         - cat log.txt && sleep 2  # [not win]
         - type log.txt            # [win]
         # this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
         - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
-
-        # temporary test for deprecations in patch 0019
-        - python -c "import faiss; a = faiss.LongVector()"
-        - python -c "from faiss import *; a = LongVector()"
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
