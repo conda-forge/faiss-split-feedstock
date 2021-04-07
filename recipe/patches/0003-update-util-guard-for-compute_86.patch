@@ -1,7 +1,7 @@
 From 84b98debfb92145a55e932aeb74eb0358ed15512 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 17 Feb 2021 18:16:11 +0100
-Subject: [PATCH 03/14] update util-guard for compute_86
+Subject: [PATCH 03/16] update util-guard for compute_86
 
 ---
  faiss/gpu/utils/DeviceDefs.cuh | 2 +-
