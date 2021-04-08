@@ -1,0 +1,625 @@
+From 7d179876225cebf1a1971a2bf295e775ffe9c700 Mon Sep 17 00:00:00 2001
+From: Lucas Hosseini <lucas.hosseini@gmail.com>
+Date: Fri, 26 Mar 2021 14:27:30 -0700
+Subject: [PATCH 15/16] Add separate targets for libfaiss/libfaiss_avx2.
+ (#1772)
+
+Summary:
+This should fix the conda builds.
+
+Pull Request resolved: https://github.com/facebookresearch/faiss/pull/1772
+
+Reviewed By: mdouze
+
+Differential Revision: D27365772
+
+Pulled By: beauby
+
+fbshipit-source-id: 12b9d488d475842030feb1a0452acf26dbe6ac01
+---
+ .circleci/config.yml                 |  7 +++
+ CMakeLists.txt                       |  2 +-
+ conda/faiss-gpu/build-lib.sh         | 24 ++------
+ conda/faiss-gpu/build-pkg.sh         | 20 +------
+ conda/faiss-gpu/meta.yaml            |  3 +
+ conda/faiss-gpu/test_cpu_dispatch.sh | 10 ++++
+ conda/faiss/build-lib.sh             | 25 ++-------
+ conda/faiss/build-pkg.sh             | 20 +------
+ faiss/CMakeLists.txt                 | 59 +++++++++++++-------
+ faiss/gpu/CMakeLists.txt             | 11 ++--
+ faiss/python/CMakeLists.txt          | 83 ++++++++++++++++++----------
+ faiss/python/setup.py                | 25 ++++++---
+ tests/CMakeLists.txt                 | 11 +++-
+ 13 files changed, 162 insertions(+), 138 deletions(-)
+ create mode 100755 conda/faiss-gpu/test_cpu_dispatch.sh
+
+diff --git a/.circleci/config.yml b/.circleci/config.yml
+index 9210adc8..1fb5c6c2 100644
+--- a/.circleci/config.yml
++++ b/.circleci/config.yml
+@@ -18,6 +18,13 @@ jobs:
+             cmake -B build -DBUILD_TESTING=ON -DFAISS_ENABLE_GPU=OFF \
+                   -DCMAKE_BUILD_TYPE=Release -DBLA_VENDOR=Intel10_64_dyn .
+             make -C build -j faiss
++      - when:
++          condition:
++            equal: [ "avx2", << parameters.opt_level >> ]
++          steps:
++            - run:
++                name: Build faiss_avx2 library
++                command: make -C build -j faiss_avx2 swigfaiss_avx2
+       - run:
+           name: Test faiss library
+           command: |
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 98b75cfc..8de262c1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 14)
+ 
+ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+ 
+-# Valid values are "generic", "sse4", "avx2".
++# Valid values are "generic", "avx2".
+ option(FAISS_OPT_LEVEL "" "generic")
+ option(FAISS_ENABLE_GPU "Enable support for GPU indexes." ON)
+ option(FAISS_ENABLE_PYTHON "Build Python extension." ON)
+diff --git a/conda/faiss-gpu/build-lib.sh b/conda/faiss-gpu/build-lib.sh
+index 7893c762..74e4e6e4 100755
+--- a/conda/faiss-gpu/build-lib.sh
++++ b/conda/faiss-gpu/build-lib.sh
+@@ -8,7 +8,7 @@ set -e
+ 
+ 
+ # Build libfaiss_avx2.so.
+-cmake -B _build_avx2 \
++cmake -B _build \
+       -DBUILD_SHARED_LIBS=ON \
+       -DBUILD_TESTING=OFF \
+       -DFAISS_OPT_LEVEL=avx2 \
+@@ -18,23 +18,7 @@ cmake -B _build_avx2 \
+       -DBLA_VENDOR=Intel10_64lp \
+       -DCMAKE_BUILD_TYPE=Release .
+ 
+-cmake --build _build_avx2 -j $CPU_COUNT
++make -C _build -j $CPU_COUNT faiss faiss_avx2
+ 
+-cmake --install _build_avx2 --prefix $PREFIX
+-cmake --install _build_avx2 --prefix _libfaiss_avx2_stage/
+-
+-
+-# Build libfaiss.so.
+-cmake -B _build_generic \
+-      -DBUILD_SHARED_LIBS=ON \
+-      -DBUILD_TESTING=OFF \
+-      -DFAISS_ENABLE_GPU=ON \
+-      -DCMAKE_CUDA_ARCHITECTURES="${CUDA_ARCHS}" \
+-      -DFAISS_ENABLE_PYTHON=OFF \
+-      -DBLA_VENDOR=Intel10_64lp \
+-      -DCMAKE_BUILD_TYPE=Release .
+-
+-cmake --build _build_generic -j $CPU_COUNT
+-
+-cmake --install _build_generic --prefix $PREFIX
+-cmake --install _build_generic --prefix _libfaiss_stage/
++cmake --install _build --prefix $PREFIX
++cmake --install _build --prefix _libfaiss_stage/
+diff --git a/conda/faiss-gpu/build-pkg.sh b/conda/faiss-gpu/build-pkg.sh
+index dfb59425..2233e88a 100755
+--- a/conda/faiss-gpu/build-pkg.sh
++++ b/conda/faiss-gpu/build-pkg.sh
+@@ -7,31 +7,17 @@
+ set -e
+ 
+ 
+-# Build avx2 version.
+-cmake -B _build_python_${PY_VER}_avx2 \
+-      -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
+-      -DFAISS_OPT_LEVEL=avx2 \
+-      -DFAISS_ENABLE_GPU=ON \
+-      -DCMAKE_BUILD_TYPE=Release \
+-      -DPython_EXECUTABLE=$PYTHON \
+-      faiss/python
+-
+-cmake --build _build_python_${PY_VER}_avx2 -j $CPU_COUNT
+-
+-
+-# Build vanilla version (no avx).
++# Build swigfaiss.so/swigfaiss_avx2.so.
+ cmake -B _build_python_${PY_VER} \
+       -Dfaiss_ROOT=_libfaiss_stage/ \
++      -DFAISS_OPT_LEVEL=avx2 \
+       -DFAISS_ENABLE_GPU=ON \
+       -DCMAKE_BUILD_TYPE=Release \
+       -DPython_EXECUTABLE=$PYTHON \
+       faiss/python
+ 
+-cmake --build _build_python_${PY_VER} -j $CPU_COUNT
+-
++make -C _build_python_${PY_VER} -j $CPU_COUNT swigfaiss swigfaiss_avx2
+ 
+ # Build actual python module.
+-cp _build_python_${PY_VER}_avx2/swigfaiss.py _build_python_${PY_VER}/swigfaiss_avx2.py
+-cp _build_python_${PY_VER}_avx2/_swigfaiss_avx2.so _build_python_${PY_VER}/_swigfaiss_avx2.so
+ cd _build_python_${PY_VER}/
+ $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
+diff --git a/conda/faiss-gpu/meta.yaml b/conda/faiss-gpu/meta.yaml
+index b437afc1..2dffac45 100644
+--- a/conda/faiss-gpu/meta.yaml
++++ b/conda/faiss-gpu/meta.yaml
+@@ -79,6 +79,9 @@ outputs:
+       commands:
+         - python -m unittest discover tests/
+         - python -m unittest discover faiss/gpu/test/
++        - sh test_cpu_dispatch.sh  # [linux]
++      files:
++        - test_cpu_dispatch.sh  # [linux]
+       source_files:
+         - tests/
+         - faiss/gpu/test/
+diff --git a/conda/faiss-gpu/test_cpu_dispatch.sh b/conda/faiss-gpu/test_cpu_dispatch.sh
+new file mode 100755
+index 00000000..b2891919
+--- /dev/null
++++ b/conda/faiss-gpu/test_cpu_dispatch.sh
+@@ -0,0 +1,10 @@
++#!/bin/sh
++# Copyright (c) Facebook, Inc. and its affiliates.
++#
++# This source code is licensed under the MIT license found in the
++# LICENSE file in the root directory of this source tree.
++
++set -e
++
++FAISS_DISABLE_CPU_FEATURES=AVX2 LD_DEBUG=libs python -c "import faiss" 2>&1 | grep libfaiss.so
++LD_DEBUG=libs python -c "import faiss" 2>&1 | grep libfaiss_avx2.so
+diff --git a/conda/faiss/build-lib.sh b/conda/faiss/build-lib.sh
+index 004eae98..8b990304 100755
+--- a/conda/faiss/build-lib.sh
++++ b/conda/faiss/build-lib.sh
+@@ -7,8 +7,8 @@
+ set -e
+ 
+ 
+-# Build libfaiss_avx2.so.
+-cmake -B _build_avx2 \
++# Build libfaiss.so/libfaiss_avx2.so.
++cmake -B _build \
+       -DBUILD_SHARED_LIBS=ON \
+       -DBUILD_TESTING=OFF \
+       -DFAISS_OPT_LEVEL=avx2 \
+@@ -17,22 +17,7 @@ cmake -B _build_avx2 \
+       -DBLA_VENDOR=Intel10_64lp \
+       -DCMAKE_BUILD_TYPE=Release .
+ 
+-cmake --build _build_avx2 -j $CPU_COUNT
++make -C _build -j $CPU_COUNT faiss faiss_avx2
+ 
+-cmake --install _build_avx2 --prefix $PREFIX
+-cmake --install _build_avx2 --prefix _libfaiss_avx2_stage/
+-
+-
+-# Build libfaiss.so.
+-cmake -B _build_generic \
+-      -DBUILD_SHARED_LIBS=ON \
+-      -DBUILD_TESTING=OFF \
+-      -DFAISS_ENABLE_GPU=OFF \
+-      -DFAISS_ENABLE_PYTHON=OFF \
+-      -DBLA_VENDOR=Intel10_64lp \
+-      -DCMAKE_BUILD_TYPE=Release .
+-
+-cmake --build _build_generic -j $CPU_COUNT
+-
+-cmake --install _build_generic --prefix $PREFIX
+-cmake --install _build_generic --prefix _libfaiss_stage/
++cmake --install _build --prefix $PREFIX
++cmake --install _build --prefix _libfaiss_stage/
+diff --git a/conda/faiss/build-pkg.sh b/conda/faiss/build-pkg.sh
+index db9b0949..f659da15 100755
+--- a/conda/faiss/build-pkg.sh
++++ b/conda/faiss/build-pkg.sh
+@@ -7,31 +7,17 @@
+ set -e
+ 
+ 
+-# Build avx2 version.
+-cmake -B _build_python_${PY_VER}_avx2 \
+-      -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
+-      -DFAISS_OPT_LEVEL=avx2 \
+-      -DFAISS_ENABLE_GPU=OFF \
+-      -DCMAKE_BUILD_TYPE=Release \
+-      -DPython_EXECUTABLE=$PYTHON \
+-      faiss/python
+-
+-cmake --build _build_python_${PY_VER}_avx2 -j $CPU_COUNT
+-
+-
+-# Build vanilla version (no avx).
++# Build swigfaiss.so/swigfaiss_avx2.so.
+ cmake -B _build_python_${PY_VER} \
+       -Dfaiss_ROOT=_libfaiss_stage/ \
++      -DFAISS_OPT_LEVEL=avx2 \
+       -DFAISS_ENABLE_GPU=OFF \
+       -DCMAKE_BUILD_TYPE=Release \
+       -DPython_EXECUTABLE=$PYTHON \
+       faiss/python
+ 
+-cmake --build _build_python_${PY_VER} -j $CPU_COUNT
+-
++make -C _build_python_${PY_VER} -j $CPU_COUNT swigfaiss swigfaiss_avx2
+ 
+ # Build actual python module.
+-cp _build_python_${PY_VER}_avx2/swigfaiss.py _build_python_${PY_VER}/swigfaiss_avx2.py
+-cp _build_python_${PY_VER}_avx2/_swigfaiss_avx2.so _build_python_${PY_VER}/_swigfaiss_avx2.so
+ cd _build_python_${PY_VER}/
+ $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
+diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
+index 6d2764e2..90f7a023 100644
+--- a/faiss/CMakeLists.txt
++++ b/faiss/CMakeLists.txt
+@@ -4,7 +4,7 @@
+ # This source code is licensed under the BSD-style license found in the
+ # LICENSE file in the root directory of this source tree.
+ 
+-add_library(faiss
++set(FAISS_SRC
+   AutoTune.cpp
+   Clustering.cpp
+   IVFlib.cpp
+@@ -141,57 +141,70 @@ set(FAISS_HEADERS
+   utils/utils.h
+ )
+ 
+-# Export FAISS_HEADERS variable to parent scope.
+-set(FAISS_HEADERS ${FAISS_HEADERS} PARENT_SCOPE)
+-
+ if(NOT WIN32)
+-  target_sources(faiss PRIVATE invlists/OnDiskInvertedLists.cpp)
++  list(APPEND FAISS_SRC invlists/OnDiskInvertedLists.cpp)
+   list(APPEND FAISS_HEADERS invlists/OnDiskInvertedLists.h)
+ endif()
+ 
+-if(FAISS_OPT_LEVEL STREQUAL "avx2")
+-  if(NOT WIN32)
+-    target_compile_options(faiss PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-mavx2 -mfma -mf16c -mpopcnt>)
+-  else()
+-    # MSVC enables FMA with /arch:AVX2; no separate flags for F16C, POPCNT
+-    # Ref. FMA (under /arch:AVX2): https://docs.microsoft.com/en-us/cpp/build/reference/arch-x64
+-    # Ref. F16C (2nd paragraph): https://walbourn.github.io/directxmath-avx2/
+-    # Ref. POPCNT: https://docs.microsoft.com/en-us/cpp/intrinsics/popcnt16-popcnt-popcnt64
+-    target_compile_options(faiss PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/arch:AVX2>)
+-  endif()
+-  set_target_properties(faiss PROPERTIES OUTPUT_NAME "faiss_avx2")
+-elseif(FAISS_OPT_LEVEL STREQUAL "sse4")
+-  target_compile_options(faiss PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-msse4 -mpopcnt>)
+-  set_target_properties(faiss PROPERTIES OUTPUT_NAME "faiss_sse4")
++# Export FAISS_HEADERS variable to parent scope.
++set(FAISS_HEADERS ${FAISS_HEADERS} PARENT_SCOPE)
++
++add_library(faiss ${FAISS_SRC})
++
++add_library(faiss_avx2 ${FAISS_SRC})
++if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
++  set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
++endif()
++if(NOT WIN32)
++  target_compile_options(faiss_avx2 PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-mavx2 -mfma -mf16c -mpopcnt>)
++else()
++  # MSVC enables FMA with /arch:AVX2; no separate flags for F16C, POPCNT
++  # Ref. FMA (under /arch:AVX2): https://docs.microsoft.com/en-us/cpp/build/reference/arch-x64
++  # Ref. F16C (2nd paragraph): https://walbourn.github.io/directxmath-avx2/
++  # Ref. POPCNT: https://docs.microsoft.com/en-us/cpp/intrinsics/popcnt16-popcnt-popcnt64
++  target_compile_options(faiss_avx2 PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/arch:AVX2>)
+ endif()
+ 
+ # Handle `#include <faiss/foo.h>`.
+ target_include_directories(faiss PUBLIC
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
++# Handle `#include <faiss/foo.h>`.
++target_include_directories(faiss_avx2 PUBLIC
++  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
+ 
+ set_target_properties(faiss PROPERTIES
+   POSITION_INDEPENDENT_CODE ON
+   WINDOWS_EXPORT_ALL_SYMBOLS ON
+ )
++set_target_properties(faiss_avx2 PROPERTIES
++  POSITION_INDEPENDENT_CODE ON
++  WINDOWS_EXPORT_ALL_SYMBOLS ON
++)
+ 
+ if(WIN32)
+   target_compile_definitions(faiss PRIVATE FAISS_MAIN_LIB)
++  target_compile_definitions(faiss_avx2 PRIVATE FAISS_MAIN_LIB)
+ endif()
+ 
+ target_compile_definitions(faiss PRIVATE FINTEGER=int)
++target_compile_definitions(faiss_avx2 PRIVATE FINTEGER=int)
+ 
+ find_package(OpenMP REQUIRED)
+ target_link_libraries(faiss PRIVATE OpenMP::OpenMP_CXX)
++target_link_libraries(faiss_avx2 PRIVATE OpenMP::OpenMP_CXX)
+ 
+ find_package(MKL)
+ if(MKL_FOUND)
+   target_link_libraries(faiss PRIVATE ${MKL_LIBRARIES})
++  target_link_libraries(faiss_avx2 PRIVATE ${MKL_LIBRARIES})
+ else()
+   find_package(BLAS REQUIRED)
+   target_link_libraries(faiss PRIVATE ${BLAS_LIBRARIES})
++  target_link_libraries(faiss_avx2 PRIVATE ${BLAS_LIBRARIES})
+ 
+   find_package(LAPACK REQUIRED)
+   target_link_libraries(faiss PRIVATE ${LAPACK_LIBRARIES})
++  target_link_libraries(faiss_avx2 PRIVATE ${LAPACK_LIBRARIES})
+ endif()
+ 
+ install(TARGETS faiss
+@@ -201,6 +214,14 @@ install(TARGETS faiss
+   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+ )
++if(FAISS_OPT_LEVEL STREQUAL "avx2")
++  install(TARGETS faiss_avx2
++    EXPORT faiss-targets
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  )
++endif()
++
+ foreach(header ${FAISS_HEADERS})
+   get_filename_component(dir ${header} DIRECTORY )
+   install(FILES ${header}
+diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
+index d6ff00b7..dccf4c88 100644
+--- a/faiss/gpu/CMakeLists.txt
++++ b/faiss/gpu/CMakeLists.txt
+@@ -4,7 +4,7 @@
+ # This source code is licensed under the BSD-style license found in the
+ # LICENSE file in the root directory of this source tree.
+ 
+-target_sources(faiss PRIVATE
++set(FAISS_GPU_SRC
+   GpuAutoTune.cpp
+   GpuCloner.cpp
+   GpuClonerOptions.cpp
+@@ -181,9 +181,12 @@ set(FAISS_GPU_HEADERS
+   utils/warpselect/WarpSelectImpl.cuh
+ )
+ 
+-# Export FAISS_HEADERS variable to parent scope.
++# Export FAISS_GPU_HEADERS variable to parent scope.
+ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
+ 
++target_sources(faiss PRIVATE ${FAISS_GPU_SRC})
++target_sources(faiss_avx2 PRIVATE ${FAISS_GPU_SRC})
++
+ foreach(header ${FAISS_GPU_HEADERS})
+   get_filename_component(dir ${header} DIRECTORY )
+   install(FILES ${header}
+@@ -192,8 +195,4 @@ foreach(header ${FAISS_GPU_HEADERS})
+ endforeach()
+ 
+ find_package(CUDAToolkit REQUIRED)
+-
+-find_package(OpenMP REQUIRED)
+-target_link_libraries(faiss PRIVATE OpenMP::OpenMP_CXX)
+-
+ target_link_libraries(faiss PRIVATE CUDA::cudart CUDA::cublas)
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+index 2ed9c200..f12a8c33 100644
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -19,37 +19,45 @@ include(${SWIG_USE_FILE})
+ set(UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
+ set(SWIG_SOURCE_FILE_EXTENSIONS swig)
+ 
+-set_source_files_properties(swigfaiss.swig PROPERTIES
+-  CPLUSPLUS ON
+-  USE_TARGET_INCLUDE_DIRECTORIES TRUE
+-)
+-
+-if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT WIN32)
+-  set_source_files_properties(swigfaiss.swig PROPERTIES
+-    SWIG_FLAGS -DSWIGWORDSIZE64
+-  )
+-endif()
+-
+-if(WIN32)
+-  set_source_files_properties(swigfaiss.swig PROPERTIES
+-    SWIG_FLAGS -DSWIGWIN
+-  )
+-endif()
+-
+-if(FAISS_ENABLE_GPU)
+-  set_source_files_properties(swigfaiss.swig PROPERTIES
+-    COMPILE_DEFINITIONS GPU_WRAPPER
++macro(configure_swigfaiss source)
++  set_source_files_properties(${source} PROPERTIES
++    CPLUSPLUS ON
++    USE_TARGET_INCLUDE_DIRECTORIES TRUE
+   )
+-endif()
++  if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND NOT WIN32)
++    set_source_files_properties(${source} PROPERTIES
++      SWIG_FLAGS -DSWIGWORDSIZE64
++    )
++  endif()
++  if(WIN32)
++    set_source_files_properties(${source} PROPERTIES
++      SWIG_FLAGS -DSWIGWIN
++    )
++  endif()
++  if(FAISS_ENABLE_GPU)
++    set_source_files_properties(${source} PROPERTIES
++      COMPILE_DEFINITIONS GPU_WRAPPER
++    )
++  endif()
++endmacro()
++
++# CMake's SWIG wrappers only allow tweaking certain settings at source level, so
++# we duplicate the source in order to override the module name.
++configure_file(swigfaiss.swig ${CMAKE_CURRENT_SOURCE_DIR}/swigfaiss_avx2.swig COPYONLY)
++
++configure_swigfaiss(swigfaiss.swig)
++configure_swigfaiss(swigfaiss_avx2.swig)
+ 
+ if(TARGET faiss)
+   # Manually add headers as extra dependencies of swigfaiss.
+   set(SWIG_MODULE_swigfaiss_EXTRA_DEPS)
+   foreach(h ${FAISS_HEADERS})
+-    list(APPEND SWIG_MODULE_swigfaiss_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/../${h}")
++    list(APPEND SWIG_MODULE_swigfaiss_EXTRA_DEPS "${faiss_SOURCE_DIR}/faiss/${h}")
++    list(APPEND SWIG_MODULE_swigfaiss_avx2_EXTRA_DEPS "${faiss_SOURCE_DIR}/faiss/${h}")
+   endforeach()
+   foreach(h ${FAISS_GPU_HEADERS})
+-    list(APPEND SWIG_MODULE_swigfaiss_EXTRA_DEPS "${PROJECT_SOURCE_DIR}/../gpu/${h}")
++    list(APPEND SWIG_MODULE_swigfaiss_EXTRA_DEPS "${faiss_SOURCE_DIR}/faiss/gpu/${h}")
++    list(APPEND SWIG_MODULE_swigfaiss_avx2_EXTRA_DEPS "${faiss_SOURCE_DIR}/faiss/gpu/${h}")
+   endforeach()
+ else()
+   find_package(faiss REQUIRED)
+@@ -61,18 +69,27 @@ swig_add_library(swigfaiss
+   SOURCES swigfaiss.swig
+ )
+ 
+-if(FAISS_OPT_LEVEL STREQUAL "avx2")
+-  set_target_properties(swigfaiss PROPERTIES OUTPUT_NAME "swigfaiss_avx2")
++set_property(SOURCE swigfaiss_avx2.swig
++  PROPERTY SWIG_MODULE_NAME swigfaiss_avx2)
++swig_add_library(swigfaiss_avx2
++  TYPE SHARED
++  LANGUAGE python
++  SOURCES swigfaiss_avx2.swig
++)
++if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
++  set_target_properties(swigfaiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
+ endif()
+ 
+ if(NOT WIN32)
+   # NOTE: Python does not recognize the dylib extension.
+   set_target_properties(swigfaiss PROPERTIES SUFFIX .so)
++  set_target_properties(swigfaiss_avx2 PROPERTIES SUFFIX .so)
+ endif()
+ 
+ if(FAISS_ENABLE_GPU)
+   find_package(CUDAToolkit REQUIRED)
+   target_link_libraries(swigfaiss PRIVATE CUDA::cudart)
++  target_link_libraries(swigfaiss_avx2 PRIVATE CUDA::cudart)
+ endif()
+ 
+ find_package(OpenMP REQUIRED)
+@@ -84,9 +101,17 @@ target_link_libraries(swigfaiss PRIVATE
+   OpenMP::OpenMP_CXX
+ )
+ 
++target_link_libraries(swigfaiss_avx2 PRIVATE
++  faiss_avx2
++  Python::Module
++  Python::NumPy
++  OpenMP::OpenMP_CXX
++)
++
+ # Hack so that python_callbacks.h can be included as
+ # `#include <faiss/python/python_callbacks.h>`.
+-target_include_directories(swigfaiss PRIVATE ${PROJECT_SOURCE_DIR}/../../)
++target_include_directories(swigfaiss PRIVATE ${PROJECT_SOURCE_DIR}/../..)
++target_include_directories(swigfaiss_avx2 PRIVATE ${PROJECT_SOURCE_DIR}/../..)
+ 
+ find_package(Python REQUIRED
+   COMPONENTS Development NumPy
+@@ -101,11 +126,11 @@ set_property(TARGET faiss_python_callbacks
+ 
+ # Hack so that python_callbacks.h can be included as
+ # `#include <faiss/python/python_callbacks.h>`.
+-target_include_directories(faiss_python_callbacks PRIVATE ${PROJECT_SOURCE_DIR}/../../)
++target_include_directories(faiss_python_callbacks PRIVATE ${PROJECT_SOURCE_DIR}/../..)
+ target_include_directories(faiss_python_callbacks PRIVATE ${Python_INCLUDE_DIRS})
+-target_link_libraries(faiss_python_callbacks PRIVATE faiss)
+ 
+-target_link_libraries(swigfaiss PRIVATE faiss faiss_python_callbacks)
++target_link_libraries(swigfaiss PRIVATE faiss_python_callbacks)
++target_link_libraries(swigfaiss_avx2 PRIVATE faiss_python_callbacks)
+ 
+ configure_file(setup.py setup.py COPYONLY)
+ configure_file(__init__.py __init__.py COPYONLY)
+diff --git a/faiss/python/setup.py b/faiss/python/setup.py
+index d7b77da4..32b155de 100644
+--- a/faiss/python/setup.py
++++ b/faiss/python/setup.py
+@@ -15,18 +15,29 @@ os.mkdir("faiss")
+ shutil.copytree("contrib", "faiss/contrib")
+ shutil.copyfile("__init__.py", "faiss/__init__.py")
+ shutil.copyfile("loader.py", "faiss/loader.py")
+-shutil.copyfile("swigfaiss.py", "faiss/swigfaiss.py")
+ 
+ ext = ".pyd" if platform.system() == 'Windows' else ".so"
+ prefix = "Release/" * (platform.system() == 'Windows')
+-shutil.copyfile(f"{prefix}_swigfaiss{ext}", f"faiss/_swigfaiss{ext}")
+ 
+-try:
++swigfaiss_generic_lib = f"{prefix}_swigfaiss{ext}"
++swigfaiss_avx2_lib = f"{prefix}_swigfaiss_avx2{ext}"
++
++found_swigfaiss_generic = os.path.exists(swigfaiss_generic_lib)
++found_swigfaiss_avx2 = os.path.exists(swigfaiss_avx2_lib)
++
++assert (found_swigfaiss_generic or found_swigfaiss_avx2), \
++    f"Could not find {swigfaiss_generic_lib} or " \
++    f"{swigfaiss_avx2_lib}. Faiss may not be compiled yet."
++
++if found_swigfaiss_generic:
++    print(f"Copying {swigfaiss_generic_lib}")
++    shutil.copyfile("swigfaiss.py", "faiss/swigfaiss.py")
++    shutil.copyfile(swigfaiss_generic_lib, f"faiss/_swigfaiss{ext}")
++
++if found_swigfaiss_avx2:
++    print(f"Copying {swigfaiss_avx2_lib}")
+     shutil.copyfile("swigfaiss_avx2.py", "faiss/swigfaiss_avx2.py")
+-    shutil.copyfile(f"{prefix}_swigfaiss_avx2{ext}", f"faiss/_swigfaiss_avx2{ext}")
+-except Exception as e:
+-    print(f"Could not move swigfaiss_avx2.py / {prefix}_swigfaiss_avx2{ext} due to:\n{e!r}")
+-    pass
++    shutil.copyfile(swigfaiss_avx2_lib, f"faiss/_swigfaiss_avx2{ext}")
+ 
+ long_description="""
+ Faiss is a library for efficient similarity search and clustering of dense
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index 52a864bd..cbbbf732 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -4,7 +4,7 @@
+ # This source code is licensed under the BSD-style license found in the
+ # LICENSE file in the root directory of this source tree.
+ 
+-add_executable(faiss_test
++set(FAISS_TEST_SRC
+   test_binary_flat.cpp
+   test_dealloc_invlists.cpp
+   test_ivfpq_codec.cpp
+@@ -21,6 +21,14 @@ add_executable(faiss_test
+   test_transfer_invlists.cpp
+ )
+ 
++add_executable(faiss_test ${FAISS_TEST_SRC})
++
++if(FAISS_OPT_LEVEL STREQUAL "avx2")
++  target_link_libraries(faiss_test PRIVATE faiss_avx2)
++else()
++  target_link_libraries(faiss_test PRIVATE faiss)
++endif()
++
+ include(FetchContent)
+ FetchContent_Declare(googletest
+   URL "https://github.com/google/googletest/archive/release-1.10.0.tar.gz")
+@@ -31,7 +39,6 @@ FetchContent_MakeAvailable(googletest)
+ find_package(OpenMP REQUIRED)
+ 
+ target_link_libraries(faiss_test PRIVATE
+-  faiss
+   OpenMP::OpenMP_CXX
+   gtest_main
+ )
+-- 
+2.29.2.windows.3
+

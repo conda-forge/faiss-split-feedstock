@@ -98,8 +98,8 @@ source:
     - patches/0013-roll-up-of-fixes-in-1737-1738-1739.patch
     # backport of facebookresearch/faiss#1742, can be dropped for ver>1.7.0
     - patches/0014-Portable-SWIG-Vectors-1742.patch
-    # adapt header target directory for faiss_avx2
-    - patches/0015-adapt-header-target-directory-to-outputname.patch
+    # backport of facebookresearch/faiss#1772, can be dropped for ver>1.7.0
+    - patches/0015-Add-separate-targets-for-libfaiss-libfaiss_avx2.-177.patch
     # patch for avoiding crash in GPU test suite on windows
     - patches/0016-skip-test_stress-for-GPU-on-windows.patch
 
