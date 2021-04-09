@@ -82,5 +82,5 @@ else
 fi
 
 cmake --build _build_${CF_FAISS_BUILD} --target ${TARGET} -j $CPU_COUNT
-cmake --install _build_${CF_FAISS_BUILD} --component ${TARGET} --prefix $PREFIX
-cmake --install _build_${CF_FAISS_BUILD} --component ${TARGET} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
+cmake --install _build_${CF_FAISS_BUILD} --prefix $PREFIX
+cmake --install _build_${CF_FAISS_BUILD} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
