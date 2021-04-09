@@ -16,6 +16,12 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
+if [[ $CF_FAISS_BUILD == avx2 ]]; then
+    TARGET="swigfaiss_avx2"
+else
+    TARGET="swigfaiss_avx2"
+fi
+
 # Build vanilla version (no avx2), see build-lib.sh
 cmake -B _build_python_generic \
       -Dfaiss_ROOT=_libfaiss_generic_stage/ \
@@ -23,7 +29,7 @@ cmake -B _build_python_generic \
       -DCMAKE_BUILD_TYPE=Release \
       -DPython_EXECUTABLE="${PYTHON}" \
       faiss/python
-cmake --build _build_python_generic -j $CPU_COUNT
+cmake --build _build_python_generic --target ${TARGET} -j $CPU_COUNT
 
 # Build version with avx2 support, see build-lib.sh
 cmake -B _build_python_avx2 \
@@ -33,7 +39,7 @@ cmake -B _build_python_avx2 \
       -DCMAKE_BUILD_TYPE=Release \
       -DPython_EXECUTABLE="${PYTHON}" \
       faiss/python
-cmake --build _build_python_avx2 -j $CPU_COUNT
+cmake --build _build_python_avx2 --target ${TARGET} -j $CPU_COUNT
 
 # copy generated swig module with avx2-support to specifically named file, cf.
 # https://github.com/facebookresearch/faiss/blob/v1.7.0/faiss/python/setup.py#L25-L26
