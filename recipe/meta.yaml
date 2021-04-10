@@ -225,6 +225,8 @@ outputs:
       imports:
         - faiss
       commands:
+        # skip test suite on win + cuda 11.1 due to time outs
+        {% if not (win and cuda_compiler_version == "11.1") %}
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L52-L66
@@ -233,6 +235,7 @@ outputs:
         - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx or (linux and py36)]
         - set "HAS_AVX2=YES"  && test-pkg.bat   # [win and not py36]
         - set "HAS_AVX2=NO"   && test-pkg.bat   # [win and py36]
+        {% endif %}
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
