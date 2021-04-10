@@ -217,42 +217,22 @@ outputs:
         - blas =*=mkl
         - scipy
         - pytest
+      files:
+        - test-pkg.bat
+        - test-pkg.sh
       source_files:
         - tests/
       imports:
         - faiss
       commands:
-        {% if not (osx or py36) %}
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
-        # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L48-L60
-        - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-        - pytest tests --log-file-level=INFO --log-file=log.txt                         # [not win]
-        # TestComputeGT switches between CPU & GPU implementation depending on availability;
-        # GPU detection on windows is currently broken in CUDA, and would therefore break the test suite
-        - pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"  # [win]
-        # print logfile for completeness (sleep so log has time to print)
-        - cat log.txt && sleep 2  # [not win]
-        - type log.txt            # [win]
-        # ensure that expected logger-messages from loader.py is present;
-        # avoid final '\n', as well as the first 35 = len('INFO     faiss.loader:loader.py:51 ')
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss with AVX2 support.' in [x[35:-1] for x in q] else 1)"
-        # OTOH, we also want to test the packaged library without AVX2 support;
-        # the advantage of the CPU feature detection in numpy is that it can be
-        # deactivated, see documentation of NPY_DISABLE_CPU_FEATURES upstream;
-        # however, the dict of CPU features is determined (and frozen) upon the
-        # first import, so we cannot run both variants in a single run_test.py
-        - export NPY_DISABLE_CPU_FEATURES=AVX2  # [not win]
-        - set NPY_DISABLE_CPU_FEATURES=AVX2     # [win]
-        {% endif %}
-        - python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-        # rerun test suite again without AVX2 support
-        - pytest tests --log-file-level=INFO --log-file=log.txt                         # [not win]
-        - pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"  # [win]
-        - cat log.txt && sleep 2  # [not win]
-        - type log.txt            # [win]
-        # this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
-        - python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"  # [py>36]
+        # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L52-L66
+        # skip for AVX2+py36 due to NPY_DISABLE_CPU_FEATURES not working (would run AVX2 twice)
+        - export HAS_AVX2=YES && ./test-pkg.sh  # [linux and not py36]
+        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx or (linux and py36)]
+        - set "HAS_AVX2=YES"  && test-pkg.bat   # [win and not py36]
+        - set "HAS_AVX2=NO"   && test-pkg.bat   # [win and py36]
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
