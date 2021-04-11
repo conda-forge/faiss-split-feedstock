@@ -75,7 +75,6 @@ cmake -B _build_${CF_FAISS_BUILD} \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_LIBDIR=lib \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
-      --verbose \
       .
 
 cmake --build _build_${CF_FAISS_BUILD} -j $CPU_COUNT
