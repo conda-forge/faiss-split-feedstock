@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 6 %}
+{% set number = 7 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -157,7 +157,9 @@ outputs:
         - libblas
         - liblapack
       run_constrained:
-        - faiss-proc * {{ faiss_proc_type }}
+        - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
+        - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
+        - faiss-proc =*={{ faiss_proc_type }}
 
     test:
       commands:
@@ -207,7 +209,9 @@ outputs:
         - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
         - {{ pin_compatible('numpy') }}
       run_constrained:
-        - faiss-proc * {{ faiss_proc_type }}
+        - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
+        - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
+        - faiss-proc =*={{ faiss_proc_type }}
 
     test:
       requires:
