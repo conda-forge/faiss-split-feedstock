@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 7 %}
+{% set number = 8 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -143,7 +143,7 @@ outputs:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
         # (matches default arguments/behaviour of `pin_compatible`: min_pin='x.x.x.x.x.x', max_pin='x')
-        - {{ pin_compatible('libfaiss{{ libext }}') }}
+        - {{ pin_compatible('libfaiss%s' % libext) }}
         # additionally, we need to ensure matching proc-type
         - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
     requirements:
