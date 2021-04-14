@@ -208,7 +208,7 @@ outputs:
         # trying to test all blas-variants runs into conda/conda-build#3947
         # - blas * *{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
-        - blas =*=mkl
+        - blas =*=mkl  # [target_platform != "osx-arm64"]
         - scipy
         - pytest
       files:
