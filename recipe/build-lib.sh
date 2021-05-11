@@ -16,19 +16,17 @@ if [ ${cuda_compiler_version} != "None" ]; then
     DEPRECATED_IN_11=(35 50)
     if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
         # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
-        ARCHES=( "${ARCHES[@]}" 75 80 )
         LATEST_ARCH=86
+        # ARCHES does not contain LATEST_ARCH; see usage below
+        ARCHES=( "${ARCHES[@]}" 75 80 )
     elif [ $(version2int $cuda_compiler_version) -ge $(version2int "11.0") ]; then
         # Ampere support for A100 (sm_80) needs cuda >= 11.0
-        ARCHES=( "${ARCHES[@]}" 75 )
         LATEST_ARCH=80
+        ARCHES=( "${ARCHES[@]}" 75 )
     elif [ $(version2int $cuda_compiler_version) -ge $(version2int "10.0") ]; then
         # Turing support (sm_75) needs cuda >= 10.0
-        ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" )
         LATEST_ARCH=75
-    else  # 9.x
         ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" )
-        LATEST_ARCH=70
     fi
     for arch in "${ARCHES[@]}"; do
         CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${arch}-real"
@@ -77,7 +75,12 @@ cmake -B _build_${CF_FAISS_BUILD} \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
       .
 
-cmake --build _build_${CF_FAISS_BUILD} -j $CPU_COUNT
+if [[ $CF_FAISS_BUILD == avx2 ]]; then
+    TARGET="faiss_avx2"
+else
+    TARGET="faiss"
+fi
+
+cmake --build _build_${CF_FAISS_BUILD} --target ${TARGET} -j $CPU_COUNT
 cmake --install _build_${CF_FAISS_BUILD} --prefix $PREFIX
-# will be reused in build-pkg.sh
 cmake --install _build_${CF_FAISS_BUILD} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
