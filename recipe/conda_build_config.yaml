@@ -1,6 +1,6 @@
 cxx_compiler_version:          # [osx]
-  # need to downgrade on osx due to a bug that breaks the test suite
-  - 10                         # [osx]
+  # need newer compiler than default for osx-arm
+  - 12                         # [osx]
 
 c_compiler:                    # [win]
 - vs2019                       # [win]

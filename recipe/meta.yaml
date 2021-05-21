@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 8 %}
+{% set number = 9 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -110,6 +110,9 @@ build:
 
 requirements:
   build:
+    - python                                 # [build_platform != target_platform]
+    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+    - numpy                                  # [build_platform != target_platform]
     - {{ compiler('cxx') }}
 
 outputs:
@@ -122,8 +125,9 @@ outputs:
       commands:
         - exit 0
 
-  # build two separate C++ libs, one for generic x64, and one for AVX2
-  {% for CF_FAISS_BUILD in ["avx2", "generic"] %}
+  # build two separate C++ libs, one for generic x64, and one for AVX2;
+  # on ARM, e.g for osx-arm64, there is of course no AVX2
+  {% for CF_FAISS_BUILD in (["avx2", "generic"] if target_platform != "osx-arm64" else ["generic"]) %}
   # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
   # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
@@ -190,23 +194,26 @@ outputs:
     requirements:
       build:
         - {{ compiler('cxx') }}
-        - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
         - swig
         - cmake
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
+        - libgomp                             # [linux]
+        - llvm-openmp                         # [osx]
+        - python                              # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}  # [build_platform != target_platform]
+        - numpy                               # [build_platform != target_platform]
       host:
         - python
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform != "osx-arm64"]
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform != "osx-arm64"]
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
@@ -218,7 +225,7 @@ outputs:
         # trying to test all blas-variants runs into conda/conda-build#3947
         # - blas * *{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
-        - blas =*=mkl
+        - blas =*=mkl  # [target_platform != "osx-arm64"]
         - scipy
         - pytest
       files:
