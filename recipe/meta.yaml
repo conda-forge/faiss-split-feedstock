@@ -78,6 +78,8 @@ source:
     - patches/0002-skip-test_stress-for-GPU-on-windows.patch
     # enable building libfaiss_avx2 without libfaiss
     - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
+    # add missing headers
+    - patches/0004-add-missing-headers-re-alphabetize.patch
 
 build:
   number: 0
