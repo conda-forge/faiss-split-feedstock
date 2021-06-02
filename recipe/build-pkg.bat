@@ -16,6 +16,12 @@ if "%cuda_compiler_version%"=="None" (
     set "CUDAToolkit_ROOT=%CUDA_PATH%"
 )
 
+if "%CF_FAISS_BUILD%"=="avx2" (
+    set "TARGET=faiss_avx2"
+) else (
+    set "TARGET=faiss"
+)
+
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -B _build_python_generic ^
     -Dfaiss_ROOT=_libfaiss_generic_stage ^
@@ -25,7 +31,7 @@ cmake -B _build_python_generic ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_python_generic --config Release -j %CPU_COUNT%
+cmake --build _build_python_generic --target %TARGET% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build version with avx2 support, see build-lib.bat
@@ -38,12 +44,12 @@ cmake -B _build_python_avx2 ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_python_avx2 --config Release -j %CPU_COUNT%
+cmake --build _build_python_avx2 --target %TARGET% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: copy generated swig module with avx2-support to specifically named file, cf.
-:: https://github.com/facebookresearch/faiss/blob/v1.7.0/faiss/python/setup.py#L25-L26
-copy _build_python_avx2\swigfaiss.py _build_python_generic\swigfaiss_avx2.py
+:: https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/setup.py#L37-L40
+copy _build_python_avx2\swigfaiss_avx2.py _build_python_generic\swigfaiss_avx2.py
 copy _build_python_avx2\Release\_swigfaiss_avx2.pyd _build_python_generic\Release\_swigfaiss_avx2.pyd
 if %ERRORLEVEL% neq 0 exit 1
 

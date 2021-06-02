@@ -63,7 +63,13 @@ cmake -B _build_%CF_FAISS_BUILD% ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_%CF_FAISS_BUILD% --config Release -j %CPU_COUNT%
+if "%CF_FAISS_BUILD%"=="avx2" (
+    set "TARGET=faiss_avx2"
+) else (
+    set "TARGET=faiss"
+)
+
+cmake --build _build_%CF_FAISS_BUILD% --target %TARGET% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
