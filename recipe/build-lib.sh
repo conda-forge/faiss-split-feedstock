@@ -75,7 +75,12 @@ cmake -B _build_${CF_FAISS_BUILD} \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
       .
 
-cmake --build _build_${CF_FAISS_BUILD} -j $CPU_COUNT
+if [[ $CF_FAISS_BUILD == avx2 ]]; then
+    TARGET="faiss_avx2"
+else
+    TARGET="faiss"
+fi
+
+cmake --build _build_${CF_FAISS_BUILD} --target ${TARGET} -j $CPU_COUNT
 cmake --install _build_${CF_FAISS_BUILD} --prefix $PREFIX
-# will be reused in build-pkg.sh
 cmake --install _build_${CF_FAISS_BUILD} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
