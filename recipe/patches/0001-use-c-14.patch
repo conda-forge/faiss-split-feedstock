@@ -1,7 +1,7 @@
-From 1b4e6f16de1bc6e6e7a104647625f45956356df5 Mon Sep 17 00:00:00 2001
+From a2e1ffdca0490b4e377c9aebb5ab5b554669c5fb Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Mon, 26 Oct 2020 22:44:44 +0100
-Subject: [PATCH 01/16] use c++14
+Subject: [PATCH 1/2] use c++14
 
 ---
  CMakeLists.txt              | 2 +-
@@ -9,7 +9,7 @@ Subject: [PATCH 01/16] use c++14
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6ac3b6c5..98b75cfc 100644
+index a7b1fc6c..2c744d16 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -13,7 +13,7 @@ project(faiss
@@ -22,7 +22,7 @@ index 6ac3b6c5..98b75cfc 100644
  list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
  
 diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
-index 001b85f6..40ef40c1 100644
+index dfa5b9d2..f12a8c33 100644
 --- a/faiss/python/CMakeLists.txt
 +++ b/faiss/python/CMakeLists.txt
 @@ -11,7 +11,7 @@ project(pyfaiss
@@ -35,5 +35,5 @@ index 001b85f6..40ef40c1 100644
  find_package(SWIG REQUIRED COMPONENTS python)
  include(${SWIG_USE_FILE})
 -- 
-2.29.2.windows.3
+2.31.1.windows.1
 

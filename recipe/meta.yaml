@@ -72,36 +72,8 @@ source:
   sha256: d676d3107ad41203a49e0afda2630519299dc8666f8d23322cbe1eac0c431871
   patches:
     - patches/0001-use-c-14.patch  # [win and cuda_compiler_version != "10.2"]
-    # backport of facebookresearch/faiss#1666, can be dropped for ver>1.7.0
-    - patches/0002-Add-missing-headers-in-faiss-gpu-CMakeLists.txt-1666.patch
-    # update version-guard to build for compute_86, can be dropped for ver>1.7.0
-    - patches/0003-update-util-guard-for-compute_86.patch
-    # single commit from facebookresearch/faiss#1610
-    - patches/0004-Add-missing-includes-for-std-min-std-max.patch
-    # backport of facebookresearch/faiss#1600, can be dropped for ver>1.7.0
-    - patches/0005-make-AVX2-detection-platform-independent-1600.patch
-    # backport of facebookresearch/faiss#1682, can be dropped for ver>1.7.0
-    - patches/0006-make-setup.py-win-avx2-compatible-1682.patch
-    # backport of facebookresearch/faiss#1683, can be dropped for ver>1.7.0
-    - patches/0007-log-success-messages-and-errors-in-loader.py-1683.patch
-    # backport of facebookresearch/faiss#1680, can be dropped for ver>1.7.0
-    - patches/0008-add-msvc-compatible-AVX2-switch-in-CMakeLists.txt-16.patch
-    # backport of facebookresearch/faiss#1681, can be dropped for ver>1.7.0
-    - patches/0009-Win-AVX2-compat-1681.patch
-    # backport of facebookresearch/faiss#1684, can be dropped for ver>1.7.0
-    - patches/0010-Windows-portable-intrinsics-1684.patch
-    # backport of facebookresearch/faiss#1717, can be dropped for ver>1.7.0
-    - patches/0011-Fix-swig-vs.-AVX2-1717.patch
-    # backport fix for flaky test under AVX2; from faiss#1655, can be dropped for ver>1.7.0
-    - patches/0012-Small-fixes-for-compilation-on-ARM-1655.patch
-    # backport of facebookresearch/faiss#1737-1739 (squashed), can be dropped for ver>1.7.0
-    - patches/0013-roll-up-of-fixes-in-1737-1738-1739.patch
-    # backport of facebookresearch/faiss#1742, can be dropped for ver>1.7.0
-    - patches/0014-Portable-SWIG-Vectors-1742.patch
-    # adapt header target directory for faiss_avx2
-    - patches/0015-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
-    - patches/0016-skip-test_stress-for-GPU-on-windows.patch
+    - patches/0002-skip-test_stress-for-GPU-on-windows.patch
 
 build:
   number: {{ number }}
