@@ -1,0 +1,46 @@
+From c6396047a9f44ee4349bea3da1e903b9019d3d1a Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 2 Jun 2021 22:58:19 +0200
+Subject: [PATCH 3/3] enable building libfaiss_avx2 without libfaiss
+
+---
+ faiss/CMakeLists.txt | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
+index 30d573f0..4231ae9b 100644
+--- a/faiss/CMakeLists.txt
++++ b/faiss/CMakeLists.txt
+@@ -225,18 +225,21 @@ else()
+   target_link_libraries(faiss_avx2 PRIVATE ${LAPACK_LIBRARIES})
+ endif()
+ 
+-install(TARGETS faiss
+-  EXPORT faiss-targets
+-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+-)
+-if(FAISS_OPT_LEVEL STREQUAL "avx2")
++if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
++  install(TARGETS faiss
++    EXPORT faiss-targets
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++  )
++else()
+   install(TARGETS faiss_avx2
+     EXPORT faiss-targets
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+   )
+ endif()
+ 
+-- 
+2.31.1.windows.1
+
