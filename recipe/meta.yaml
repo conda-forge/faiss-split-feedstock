@@ -76,6 +76,8 @@ source:
     - patches/0001-use-c-14.patch  # [win and cuda_compiler_version != "10.2"]
     # patch for avoiding crash in GPU test suite on windows
     - patches/0002-skip-test_stress-for-GPU-on-windows.patch
+    # enable building libfaiss_avx2 without libfaiss
+    - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
 
 build:
   number: 0
