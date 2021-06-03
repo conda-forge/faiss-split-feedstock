@@ -1,5 +1,5 @@
 {% set version = "1.7.0" %}
-{% set number = 8 %}
+{% set number = 9 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -153,6 +153,7 @@ outputs:
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
+        - make                    # [linux]
       host:
         - libblas
         - liblapack
@@ -195,6 +196,7 @@ outputs:
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
+        - make                    # [linux]
       host:
         - python
         - pip
