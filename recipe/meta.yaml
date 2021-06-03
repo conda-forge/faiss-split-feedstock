@@ -74,12 +74,14 @@ source:
   sha256: d676d3107ad41203a49e0afda2630519299dc8666f8d23322cbe1eac0c431871
   patches:
     - patches/0001-use-c-14.patch  # [win and cuda_compiler_version != "10.2"]
+    # adapt header target directory for faiss_avx2
+    - patches/0002-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
-    - patches/0002-skip-test_stress-for-GPU-on-windows.patch
+    - patches/0003-skip-test_stress-for-GPU-on-windows.patch
     # enable building libfaiss_avx2 without libfaiss
-    - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
+    - patches/0004-enable-building-libfaiss_avx2-without-libfaiss.patch
     # add missing headers
-    - patches/0004-add-missing-headers-re-alphabetize.patch
+    - patches/0005-add-missing-headers-re-alphabetize.patch
 
 build:
   number: 0
