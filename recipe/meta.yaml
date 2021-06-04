@@ -82,6 +82,8 @@ source:
     - patches/0004-enable-building-libfaiss_avx2-without-libfaiss.patch
     # add missing headers
     - patches/0005-add-missing-headers-re-alphabetize.patch
+    # missing <algorithm> include
+    - patches/0006-add-missing-algorithm-for-min-max.patch
 
 build:
   number: 0

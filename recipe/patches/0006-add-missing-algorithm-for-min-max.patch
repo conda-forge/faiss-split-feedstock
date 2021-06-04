@@ -1,0 +1,24 @@
+From c64cb2218682b7a36ccf44d33c816fb35b63a14e Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Fri, 4 Jun 2021 19:40:47 +0200
+Subject: [PATCH 6/6] add missing <algorithm> for min/max
+
+---
+ faiss/utils/distances_simd.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/faiss/utils/distances_simd.cpp b/faiss/utils/distances_simd.cpp
+index 5e938da5..776f0b82 100644
+--- a/faiss/utils/distances_simd.cpp
++++ b/faiss/utils/distances_simd.cpp
+@@ -9,6 +9,7 @@
+ 
+ #include <faiss/utils/distances.h>
+ 
++#include <algorithm>
+ #include <cassert>
+ #include <cmath>
+ #include <cstdio>
+-- 
+2.31.1.windows.1
+
