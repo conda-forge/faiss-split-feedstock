@@ -1,7 +1,7 @@
 From fab60729ff0f8166bd13833783d3eb6f5c98ff6e Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 2 Jun 2021 22:58:19 +0200
-Subject: [PATCH 4/5] enable building libfaiss_avx2 without libfaiss
+Subject: [PATCH 4/6] enable building libfaiss_avx2 without libfaiss
 
 ---
  faiss/CMakeLists.txt | 19 +++++++++++--------
