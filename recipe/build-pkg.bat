@@ -16,10 +16,6 @@ if "%cuda_compiler_version%"=="None" (
     set "CUDAToolkit_ROOT=%CUDA_PATH%"
 )
 
-:: for some reason, the image picks up the wrong CMAKE_GENERATOR now (VS2019 on win2017 image)
-set "CMAKE_GENERATOR=Visual Studio 15 2017 Win64"
-set "CMAKE_GENERATOR_PLATFORM="
-
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -B _build_python_generic ^
     -Dfaiss_ROOT=_libfaiss_generic_stage ^

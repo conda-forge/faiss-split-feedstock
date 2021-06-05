@@ -1,4 +1,7 @@
 azure:
+  settings_win:
+    pool:
+      vmImage: windows-2019
   # TODO: remove after debug
   store_build_artifacts: true
 conda_forge_output_validation: true
