@@ -86,6 +86,8 @@ source:
     - patches/0006-add-missing-algorithm-for-min-max.patch
     # increase tolerance for test that occasionally fails marginally
     - patches/0007-increase-tolerance-for-marginally-failing-test.patch
+    # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
+    - patches/0008-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
   number: 0
