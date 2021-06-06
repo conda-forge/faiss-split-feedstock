@@ -47,6 +47,10 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
+:: for some reason, the image picks up the wrong CMAKE_GENERATOR now (VS2019 generator on win2017 image)
+set "CMAKE_GENERATOR=Visual Studio 15 2017 Win64"
+set "CMAKE_GENERATOR_PLATFORM="
+
 :: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
 cmake -B _build_%CF_FAISS_BUILD% ^
     -DBUILD_SHARED_LIBS=ON ^
@@ -63,7 +67,13 @@ cmake -B _build_%CF_FAISS_BUILD% ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build _build_%CF_FAISS_BUILD% --config Release -j %CPU_COUNT%
+if "%CF_FAISS_BUILD%"=="avx2" (
+    set "TARGET=faiss_avx2"
+) else (
+    set "TARGET=faiss"
+)
+
+cmake --build _build_%CF_FAISS_BUILD% --target %TARGET% --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
