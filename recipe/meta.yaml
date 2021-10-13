@@ -92,8 +92,7 @@ source:
 
 build:
   number: 0
-  # GPU version for linux64 & win
-  skip: true  # [osx and cuda_compiler_version != "None"]
+  skip: true  # [py36]
 
 requirements:
   build:
@@ -172,6 +171,7 @@ outputs:
     script: build-pkg.sh          # [not win]
     script: build-pkg.bat         # [win]
     build:
+      skip: true  # [py36]
       string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                  # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
     requirements:
@@ -221,11 +221,9 @@ outputs:
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L52-L66
-        # skip for AVX2+py36 due to NPY_DISABLE_CPU_FEATURES not working (would run AVX2 twice)
-        - export HAS_AVX2=YES && ./test-pkg.sh  # [linux and not py36]
-        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx or (linux and py36)]
-        - set "HAS_AVX2=YES"  && test-pkg.bat   # [win and not py36]
-        - set "HAS_AVX2=NO"   && test-pkg.bat   # [win and py36]
+        - export HAS_AVX2=YES && ./test-pkg.sh  # [linux]
+        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx]
+        - set "HAS_AVX2=YES"  && test-pkg.bat   # [win]
         {% endif %}
 
         # running the following test requires an actual GPU device, which is not available in CI
@@ -234,7 +232,7 @@ outputs:
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
     build:
-      skip: true  # [cuda_compiler_version != "None"]
+      skip: true  # [py36 or cuda_compiler_version != "None"]
     requirements:
       run:
         - faiss ={{ version }}=*_cpu
@@ -244,7 +242,7 @@ outputs:
 
   - name: faiss-gpu
     build:
-      skip: true  # [cuda_compiler_version == "None"]
+      skip: true  # [py36 or cuda_compiler_version == "None"]
     requirements:
       run:
         - faiss ={{ version }}=*_cuda
