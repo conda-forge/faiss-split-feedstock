@@ -34,8 +34,6 @@ pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"
 if %ERRORLEVEL% neq 0 exit 1
 type log.txt
 
-:: this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
-if not "%PY_VER%"=="3.6" (
-    python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"
-    if %ERRORLEVEL% neq 0 exit 1
-)
+:: this should have run without AVX2
+python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"
+if %ERRORLEVEL% neq 0 exit 1

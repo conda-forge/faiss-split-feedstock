@@ -21,7 +21,5 @@ python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Te
 pytest tests --log-file-level=INFO --log-file=log.txt
 cat log.txt && sleep 2
 
-# this should have run without AVX2; skip for py36 due to NPY_DISABLE_CPU_FEATURES not working
-if [[ ${PY_VER} != "3.6" ]]; then
-    python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"
-fi
+# this should have run without AVX2
+python -c "q = open('log.txt').readlines(); import sys; sys.exit(0 if 'Successfully loaded faiss.' in [x[35:-1] for x in q] else 1)"
