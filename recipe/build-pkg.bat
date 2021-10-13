@@ -49,7 +49,7 @@ if %ERRORLEVEL% neq 0 exit 1
 :: copy generated swig module with avx2-support to specifically named file, cf.
 :: https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/setup.py#L37-L40
 copy _build_python_avx2\swigfaiss_avx2.py _build_python_generic\swigfaiss_avx2.py
-copy _build_python_avx2\Release\_swigfaiss_avx2.%EXT_SUFFIX% _build_python_generic\Release\_swigfaiss_avx2.%EXT_SUFFIX%
+copy _build_python_avx2\Release\_swigfaiss_avx2%EXT_SUFFIX% _build_python_generic\Release\_swigfaiss_avx2%EXT_SUFFIX%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build actual python module.
