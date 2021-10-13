@@ -216,13 +216,13 @@ outputs:
       imports:
         - faiss
       commands:
-        # skip test suite on win + cuda 11.1 due to time outs
-        {% if not (win and cuda_compiler_version == "11.1") %}
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
-        # https://github.com/facebookresearch/faiss/blob/master/faiss/python/loader.py#L52-L66
+        # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
         - export HAS_AVX2=YES && ./test-pkg.sh  # [linux]
         - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx]
+        # skip test suite on win + cuda < 11.2 due to time outs (note: "None" >= "11.2")
+        {% if cuda_compiler_version|string >= "11.2" %}
         - set "HAS_AVX2=YES"  && test-pkg.bat   # [win]
         {% endif %}
 
