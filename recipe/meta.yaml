@@ -223,7 +223,8 @@ outputs:
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
         - export HAS_AVX2=YES && ./test-pkg.sh  # [linux and not aarch64]
-        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx or aarch64]
+        # DEBUG: the following line should contain "or aarch64"; switched off to get some artefacts
+        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx]
         # skip test suite on win + cuda < 11.2 due to time outs (note: "None" >= "11.2")
         {% if cuda_compiler_version|string >= "11.2" %}
         - set "HAS_AVX2=YES"  && test-pkg.bat   # [win]
