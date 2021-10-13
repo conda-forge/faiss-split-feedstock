@@ -110,7 +110,7 @@ outputs:
 
   # build two separate C++ libs, one for generic x64, and one for AVX2;
   # on ARM, e.g for osx-arm64, there is of course no AVX2
-  {% for CF_FAISS_BUILD in (["avx2", "generic"] if target_platform != "osx-arm64" else ["generic"]) %}
+  {% for CF_FAISS_BUILD in (["avx2", "generic"] if target_platform not in ("osx-arm64", "linux-aarch64") else ["generic"]) %}
   # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
   # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
@@ -190,13 +190,13 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform != "osx-arm64"]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform not in ("osx-arm64", "linux-aarch64")]
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform != "osx-arm64"]
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [target_platform not in ("osx-arm64", "linux-aarch64")]
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
@@ -208,7 +208,7 @@ outputs:
         # trying to test all blas-variants runs into conda/conda-build#3947
         # - blas * *{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
-        - blas =*=mkl  # [target_platform != "osx-arm64"]
+        - blas =*=mkl  # [target_platform not in ("osx-arm64", "linux-aarch64")]
         - scipy
         - pytest
       files:

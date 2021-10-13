@@ -25,7 +25,7 @@ cmake -B _build_python_generic \
       faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
 
-if [[ "${target_platform}" != osx-arm64 ]]; then
+if [[ "${target_platform}" != osx-arm64 && "${target_platform}" != linux-aarch64 ]]; then
   # Build version with avx2 support, see build-lib.sh;
   # osx-arm is not an x86-64 architecture and never has AVX2 instructions
   cmake -B _build_python_avx2 \
