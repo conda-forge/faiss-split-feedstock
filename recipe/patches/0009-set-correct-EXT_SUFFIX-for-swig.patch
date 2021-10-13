@@ -1,0 +1,54 @@
+From 928574a43a0ba9baae5642d47301352d5f6c709f Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 23 Dec 2020 10:22:30 +0100
+Subject: [PATCH 9/9] set correct EXT_SUFFIX for swig
+
+---
+ faiss/python/CMakeLists.txt | 9 ++++-----
+ faiss/python/setup.py       | 3 ++-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+index 134ab58d..ce02fe24 100644
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -82,11 +82,10 @@ if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
+   set_target_properties(swigfaiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
+ endif()
+ 
+-if(NOT WIN32)
+-  # NOTE: Python does not recognize the dylib extension.
+-  set_target_properties(swigfaiss PROPERTIES SUFFIX .so)
+-  set_target_properties(swigfaiss_avx2 PROPERTIES SUFFIX .so)
+-endif()
++# This is set to the value of sysconfig.get_config_var('EXT_SUFFIX') in build-pkg.{bat|sh}
++# For example, PyPy does not recognize the plain "so"-extension; see https://github.com/swig/swig/issues/1912
++set_target_properties(swigfaiss PROPERTIES SUFFIX $ENV{EXT_SUFFIX})
++set_target_properties(swigfaiss_avx2 PROPERTIES SUFFIX $ENV{EXT_SUFFIX})
+ 
+ if(FAISS_ENABLE_GPU)
+   find_package(CUDAToolkit REQUIRED)
+diff --git a/faiss/python/setup.py b/faiss/python/setup.py
+index 10df658f..24146a1b 100644
+--- a/faiss/python/setup.py
++++ b/faiss/python/setup.py
+@@ -7,6 +7,7 @@ from __future__ import print_function
+ from setuptools import setup, find_packages
+ import os
+ import shutil
++import sysconfig
+ import platform
+ 
+ # make the faiss python package dir
+@@ -16,7 +17,7 @@ shutil.copytree("contrib", "faiss/contrib")
+ shutil.copyfile("__init__.py", "faiss/__init__.py")
+ shutil.copyfile("loader.py", "faiss/loader.py")
+ 
+-ext = ".pyd" if platform.system() == 'Windows' else ".so"
++ext = sysconfig.get_config_var('EXT_SUFFIX')
+ prefix = "Release/" * (platform.system() == 'Windows')
+ 
+ swigfaiss_generic_lib = f"{prefix}_swigfaiss{ext}"
+-- 
+2.32.0.windows.2
+

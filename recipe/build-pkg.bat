@@ -16,6 +16,11 @@ if "%cuda_compiler_version%"=="None" (
     set "CUDAToolkit_ROOT=%CUDA_PATH%"
 )
 
+:: Set EXT_SUFFIX for swig extension (not strictly necessary, but allows uniform handling in patched CMakeLists.txt)
+for /f "delims=" %%i in ('python -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))"') do set "EXT_SUFFIX=%%i"
+echo Setting environment variable EXT_SUFFIX to "%EXT_SUFFIX%" (from python-sysconfig)
+
+
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -B _build_python_generic ^
     -Dfaiss_ROOT=_libfaiss_generic_stage ^

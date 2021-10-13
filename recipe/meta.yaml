@@ -89,6 +89,8 @@ source:
     - patches/0007-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
     - patches/0008-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+    # adaptation for pypy; needs EXT_SUFFIX to be set correctly in build-pkg.{bat|sh}
+    - patches/0009-set-correct-EXT_SUFFIX-for-swig.patch
 
 build:
   number: 0
