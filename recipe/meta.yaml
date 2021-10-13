@@ -139,7 +139,7 @@ outputs:
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
-        - make                    # [linux]
+        - make                    # [linux and aarch64]
       host:
         - libblas
         - liblapack
@@ -183,7 +183,7 @@ outputs:
         - cmake
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
-        - make                    # [linux]
+        - make                    # [linux and aarch64]
       host:
         - python
         - pip
