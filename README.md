@@ -44,34 +44,6 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_cuda_compiler_version10.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version10.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.0</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version11.0" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.1</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version11.1" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=linux&configuration=linux_64_cuda_compiler_version11.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>linux_64_cuda_compiler_versionNone</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
@@ -83,34 +55,6 @@ Current build status
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=osx&configuration=osx_64_" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version10.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=win&configuration=win_64_cuda_compiler_version10.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version11.0</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=win&configuration=win_64_cuda_compiler_version11.0" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version11.1</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=win&configuration=win_64_cuda_compiler_version11.1" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version11.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=master">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=master&jobName=win&configuration=win_64_cuda_compiler_version11.2" alt="variant">
                 </a>
               </td>
             </tr><tr>

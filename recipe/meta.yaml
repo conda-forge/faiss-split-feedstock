@@ -95,6 +95,8 @@ source:
 build:
   number: 0
   skip: true  # [py36]
+  # debug: disable GPU builds for speed
+  skip: true  # [cuda_compiler_version != "None"]
 
 requirements:
   build:
