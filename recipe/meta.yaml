@@ -91,7 +91,7 @@ source:
     - patches/0008-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py36]
 
 requirements:
