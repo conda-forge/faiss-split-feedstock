@@ -1,7 +1,7 @@
-From e80893144a71dd48d829f611bf2708d9372f71bf Mon Sep 17 00:00:00 2001
+From 6ed48ad9a97867cb797b48b008f409ff15904e0e Mon Sep 17 00:00:00 2001
 From: Mo Zhou <cdluminate@gmail.com>
 Date: Tue, 24 Nov 2020 05:44:37 +0000
-Subject: [PATCH 1/2] CMake: use GNUInstallDirs instead of hardcoded paths.
+Subject: [PATCH 1/3] CMake: use GNUInstallDirs instead of hardcoded paths.
 
 ---
  CMakeLists.txt           |  1 +
@@ -10,7 +10,7 @@ Subject: [PATCH 1/2] CMake: use GNUInstallDirs instead of hardcoded paths.
  3 files changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 29b73d8..158712e 100644
+index a05cc9c1..6ac3b6c5 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -11,6 +11,7 @@ project(faiss
@@ -22,10 +22,10 @@ index 29b73d8..158712e 100644
  set(CMAKE_CXX_STANDARD 11)
  
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index 51680fd..3469538 100644
+index d7d9a07b..69034976 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
-@@ -160,15 +160,15 @@ endif()
+@@ -164,15 +164,15 @@ endif()
  
  install(TARGETS faiss
    EXPORT faiss-targets
@@ -46,7 +46,7 @@ index 51680fd..3469538 100644
    )
  endforeach()
  
-@@ -185,9 +185,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
+@@ -189,9 +189,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
  )
  install(FILES ${PROJECT_BINARY_DIR}/cmake/faiss-config.cmake
    ${PROJECT_BINARY_DIR}/cmake/faiss-config-version.cmake
@@ -59,10 +59,10 @@ index 51680fd..3469538 100644
 +  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/faiss
  )
 diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
-index 5b2a957..8041bac 100644
+index 37e5525f..4c4da81f 100644
 --- a/faiss/gpu/CMakeLists.txt
 +++ b/faiss/gpu/CMakeLists.txt
-@@ -173,7 +173,7 @@ set(FAISS_GPU_HEADERS
+@@ -170,7 +170,7 @@ set(FAISS_GPU_HEADERS
  foreach(header ${FAISS_GPU_HEADERS})
    get_filename_component(dir ${header} DIRECTORY )
    install(FILES ${header}
@@ -72,5 +72,5 @@ index 5b2a957..8041bac 100644
  endforeach()
  
 -- 
-2.29.2.windows.3
+2.32.0.windows.2
 

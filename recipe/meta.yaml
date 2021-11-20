@@ -1,5 +1,5 @@
 {% set version = "1.6.5" %}
-{% set number = 0 %}
+{% set number = 1 %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -68,11 +68,10 @@ source:
     # backport of facebookresearch/faiss#1541, can be dropped for ver>1.6.5
     - patches/0001-CMake-use-GNUInstallDirs-instead-of-hardcoded-paths.patch
     - patches/0002-use-c-14.patch
+    - patches/0003-update-util-guard-for-compute_86.patch
 
 build:
   number: {{ number }}
-  # TEMPORARY: skip everything so that new branch can be pushed
-  skip: true
   # GPU version only for linux
   skip: true  # [(win or osx) and cuda_compiler_version != "None"]
 
@@ -167,16 +166,16 @@ outputs:
         # - blas * *{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
         - blas =*=mkl
-        # this is necessary for a single test in the test suite
         - scipy
+        - pytest
       source_files:
         - tests/
       imports:
         - faiss
       commands:
-        - python -m unittest discover tests
+        - pytest tests -v
         # running the following test requires an actual GPU device, which is not available in CI
-        # - python -m unittest discover faiss/gpu/test/
+        # - pytest faiss/gpu/test/ -v
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
