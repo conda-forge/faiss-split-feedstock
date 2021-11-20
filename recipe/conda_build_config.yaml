@@ -1,9 +1,3 @@
-cuda_compiler_version:
-- None                         # [not linux]
-
-cxx_compiler_version:          # [unix]
+cxx_compiler_version:          # [osx]
   # need to downgrade on osx due to a bug that breaks the test suite
   - 10                         # [osx]
-  # need to downgrade on linux due to nvcc 9.2 not being able to deal with gcc>7,
-  # and conda-build not being able to zip this with cuda_compiler_version
-  - 7                          # [linux]
