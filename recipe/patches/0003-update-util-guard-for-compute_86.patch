@@ -1,0 +1,25 @@
+From e0cdf7b094f02eb196b6aed1d506226a70c503a1 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 17 Feb 2021 18:16:11 +0100
+Subject: [PATCH 3/3] update util-guard for compute_86
+
+---
+ faiss/gpu/utils/DeviceDefs.cuh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/faiss/gpu/utils/DeviceDefs.cuh b/faiss/gpu/utils/DeviceDefs.cuh
+index 32cc1ccb..c0f856a1 100644
+--- a/faiss/gpu/utils/DeviceDefs.cuh
++++ b/faiss/gpu/utils/DeviceDefs.cuh
+@@ -18,7 +18,7 @@ namespace faiss { namespace gpu {
+ #endif
+ 
+ #ifdef __CUDA_ARCH__
+-#if __CUDA_ARCH__ <= 800
++#if __CUDA_ARCH__ <= 860
+ constexpr int kWarpSize = 32;
+ #else
+ #error Unknown __CUDA_ARCH__; please define parameters for compute capability
+-- 
+2.32.0.windows.2
+
