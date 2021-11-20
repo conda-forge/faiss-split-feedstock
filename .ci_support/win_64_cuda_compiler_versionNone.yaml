@@ -1,5 +1,5 @@
 channel_sources:
-- conda-forge,defaults
+- conda-forge
 channel_targets:
 - conda-forge main
 cuda_compiler_version:
@@ -11,16 +11,14 @@ libblas:
 liblapack:
 - 3.8 *netlib
 numpy:
-- '1.16'
-- '1.16'
-- '1.16'
+- '1.18'
+- '1.18'
 - '1.19'
 pin_run_as_build:
   python:
     min_pin: x.x
     max_pin: x.x
 python:
-- 3.6.* *_cpython
 - 3.7.* *_cpython
 - 3.8.* *_cpython
 - 3.9.* *_cpython
