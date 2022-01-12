@@ -81,14 +81,10 @@ source:
     - patches/0003-skip-test_stress-for-GPU-on-windows.patch
     # enable building libfaiss_avx2 without libfaiss
     - patches/0004-enable-building-libfaiss_avx2-without-libfaiss.patch
-    # add missing headers; from facebookresearch/faiss#1933; can be dropped for v>1.7.1
-    - patches/0005-add-missing-headers-re-alphabetize.patch
-    # missing <algorithm> include; from facebookresearch/faiss#1933; can be dropped for v>1.7.1
-    - patches/0006-add-missing-algorithm-for-min-max.patch
     # increase tolerance for test that occasionally fails marginally
-    - patches/0007-increase-tolerance-for-marginally-failing-test.patch
+    - patches/0005-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
-    - patches/0008-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+    - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
   number: 0

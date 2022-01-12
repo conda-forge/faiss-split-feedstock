@@ -1,7 +1,7 @@
-From 06fbbdfd9904140e15f7d10969c28c1fc2f8b820 Mon Sep 17 00:00:00 2001
+From 80e64094b0589c856b9faa2f3d80615f3cefb10a Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 19 Feb 2021 14:14:31 +0100
-Subject: [PATCH 3/8] skip test_stress for GPU on windows
+Subject: [PATCH 3/6] skip test_stress for GPU on windows
 
 ---
  faiss/gpu/test/test_gpu_basics.py | 2 ++
@@ -28,5 +28,5 @@ index f8041973..fa944102 100755
          # a mixture of the above, from issue #631
          target = np.random.rand(50, 16).astype('float32')
 -- 
-2.31.1.windows.1
+2.32.0.windows.2
 
