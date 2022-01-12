@@ -1,4 +1,4 @@
-{% set version = "1.7.1" %}
+{% set version = "1.7.2" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -71,7 +71,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: d676d3107ad41203a49e0afda2630519299dc8666f8d23322cbe1eac0c431871
+  sha256: d49b4afd6a7a5b64f260a236ee9b2efb760edb08c33d5ea5610c2f078a5995ec
   patches:
     - patches/0001-use-c-14.patch  # [cuda_compiler_version == "10.2"]
     - patches/0001-use-c-17.patch  # [cuda_compiler_version != "10.2"]
@@ -91,7 +91,7 @@ source:
     - patches/0008-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 1
+  number: 0
   skip: true  # [py36]
 
 requirements:
