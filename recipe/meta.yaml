@@ -199,9 +199,9 @@ outputs:
     test:
       requires:
         # trying to test all blas-variants runs into conda/conda-build#3947
-        # - blas * *{{ blas_impl }}
+        # - libblas =*=*{{ blas_impl }}
         # testing with MKL, as upstream considers this the most important
-        - blas =*=mkl
+        - libblas =*=*mkl
         - scipy
         - pytest
       files:
