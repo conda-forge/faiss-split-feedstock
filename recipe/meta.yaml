@@ -134,6 +134,7 @@ outputs:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - cmake
+        - make                    # [linux]
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
       host:
@@ -176,6 +177,7 @@ outputs:
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         - swig
         - cmake
+        - make                    # [linux]
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
       host:
