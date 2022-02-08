@@ -26,9 +26,6 @@ if "%cuda_compiler_version%"=="None" (
         if "%cuda_compiler_version:~0,4%"=="11.0" (
             REM cuda 11.0 deprecates arches 35, 50
             set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80"
-        ) else if "%cuda_compiler_version:~0,4%"=="11.1" (
-            REM cuda>=11.1 adds arch 86, but we only build that for 11.2+ because 11.1 times out otherwise
-            set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80"
         ) else (
             set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80-real;86"
         )
