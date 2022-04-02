@@ -15,13 +15,13 @@ libblas:
 liblapack:
 - 3.8 *netlib
 llvm_openmp:
-- '11'
+- '12'
 macos_machine:
 - x86_64-apple-darwin13.4.0
 numpy:
 - '1.21'
-- '1.18'
-- '1.18'
+- '1.19'
+- '1.19'
 - '1.19'
 pin_run_as_build:
   python:
