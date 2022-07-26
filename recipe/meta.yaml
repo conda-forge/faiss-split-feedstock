@@ -89,7 +89,7 @@ source:
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 0
+  number: 1
 
 requirements:
   build:
