@@ -1,7 +1,3 @@
-azure:
-  settings_win:
-    pool:
-      vmImage: windows-2019
 conda_forge_output_validation: true
 github:
   branch_name: main
