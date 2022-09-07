@@ -125,8 +125,7 @@ outputs:
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
-        # (matches default arguments/behaviour of `pin_compatible`: min_pin='x.x.x.x.x.x', max_pin='x')
-        - {{ pin_compatible('libfaiss%s' % libext) }}
+        - libfaiss{{ libext }} >={{ version }},<2
         # additionally, we need to ensure matching proc-type
         - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
     requirements:
