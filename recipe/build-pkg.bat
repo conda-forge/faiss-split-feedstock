@@ -6,14 +6,6 @@ if "%cuda_compiler_version%"=="None" (
     set FAISS_ENABLE_GPU="OFF"
 ) else (
     set FAISS_ENABLE_GPU="ON"
-
-    REM See more extensive comment in build-pkg.sh
-    REM TODO: Fix this in nvcc-feedstock or cmake-feedstock.
-    del %BUILD_PREFIX%\bin\nvcc.bat
-
-    REM ... and another workaround just to cover more bases
-    set "CudaToolkitDir=%CUDA_PATH%"
-    set "CUDAToolkit_ROOT=%CUDA_PATH%"
 )
 
 :: Build vanilla version (no avx2), see build-lib.bat

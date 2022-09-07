@@ -31,14 +31,6 @@ if "%cuda_compiler_version%"=="None" (
         )
     )
 
-    REM See more extensive comment in build-lib.sh
-    REM TODO: Fix this in nvcc-feedstock or cmake-feedstock.
-    del %BUILD_PREFIX%\bin\nvcc.bat
-
-    REM ... and another workaround just to cover more bases
-    set "CudaToolkitDir=%CUDA_PATH%"
-    set "CUDAToolkit_ROOT=%CUDA_PATH%"
-
     set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
