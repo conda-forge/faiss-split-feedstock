@@ -45,17 +45,17 @@ if "%cuda_compiler_version%"=="None" (
 )
 
 :: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
-cmake -B _build_%CF_FAISS_BUILD% ^
+cmake %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
     -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
     -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
     -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
+    -B _build_%CF_FAISS_BUILD% ^
     !CUDA_CONFIG_ARGS! ^
     .
 if %ERRORLEVEL% neq 0 exit 1

@@ -64,7 +64,7 @@ else
 fi
 
 # Build version depending on $CF_FAISS_BUILD (either "generic" or "avx2")
-cmake -B _build_${CF_FAISS_BUILD} \
+cmake ${CMAKE_ARGS} \
       -DBUILD_SHARED_LIBS=ON \
       -DBUILD_TESTING=${BUILD_TESTING} \
       -DFAISS_OPT_LEVEL=${CF_FAISS_BUILD} \
@@ -73,6 +73,7 @@ cmake -B _build_${CF_FAISS_BUILD} \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_LIBDIR=lib \
       ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
+      -B _build_${CF_FAISS_BUILD} \
       .
 
 if [[ $CF_FAISS_BUILD == avx2 ]]; then

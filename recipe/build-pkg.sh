@@ -17,21 +17,23 @@ else
 fi
 
 # Build vanilla version (no avx2), see build-lib.sh
-cmake -B _build_python_generic \
+cmake ${CMAKE_ARGS} \
       -Dfaiss_ROOT=_libfaiss_generic_stage/ \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
       -DPython_EXECUTABLE="${PYTHON}" \
+      -B _build_python_generic \
       faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
 
 # Build version with avx2 support, see build-lib.sh
-cmake -B _build_python_avx2 \
+cmake ${CMAKE_ARGS} \
       -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
       -DFAISS_OPT_LEVEL=avx2 \
       -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
       -DCMAKE_BUILD_TYPE=Release \
       -DPython_EXECUTABLE="${PYTHON}" \
+      -B _build_python_avx2 \
       faiss/python
 cmake --build _build_python_avx2 --target swigfaiss_avx2 -j $CPU_COUNT
 
