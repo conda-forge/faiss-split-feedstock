@@ -1,4 +1,5 @@
-set -e
+#!/bin/bash
+set -ex
 
 FAISS_ENABLE_GPU=""
 if [ ${cuda_compiler_version} != "None" ]; then
