@@ -94,6 +94,7 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - make  # [linux]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
