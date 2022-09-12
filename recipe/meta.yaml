@@ -90,6 +90,8 @@ source:
 
 build:
   number: 0
+  # always crashes
+  skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
 
 requirements:
   build:
