@@ -13,8 +13,6 @@ if [ ${cuda_compiler_version} != "None" ]; then
 
     # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
     ARCHES=(52 60 61 70)
-    # cuda 11.0 deprecates arches 35, 50
-    DEPRECATED_IN_11=(35 50)
     if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
         # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
         LATEST_ARCH=86
@@ -24,10 +22,6 @@ if [ ${cuda_compiler_version} != "None" ]; then
         # Ampere support for A100 (sm_80) needs cuda >= 11.0
         LATEST_ARCH=80
         ARCHES=( "${ARCHES[@]}" 75 )
-    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "10.0") ]; then
-        # Turing support (sm_75) needs cuda >= 10.0
-        LATEST_ARCH=75
-        ARCHES=( "${DEPRECATED_IN_11[@]}" "${ARCHES[@]}" )
     fi
     for arch in "${ARCHES[@]}"; do
         CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${arch}-real"
