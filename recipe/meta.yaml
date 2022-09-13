@@ -75,8 +75,11 @@ source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
   sha256: d49b4afd6a7a5b64f260a236ee9b2efb760edb08c33d5ea5610c2f078a5995ec
   patches:
+    - patches/0001-use-c-17.patch
+    # downgrade to C++14 for CUDA 10.2...
     - patches/0001-use-c-14.patch  # [cuda_compiler_version == "10.2"]
-    - patches/0001-use-c-17.patch  # [cuda_compiler_version != "10.2"]
+    # ... resp. CUDA 11.1 on linux
+    - patches/0001-use-c-14.patch  # [linux and (cuda_compiler_version == "11.1")]
     # adapt header target directory for faiss_avx2
     - patches/0002-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -89,11 +92,15 @@ source:
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 0
+  number: 1
+  skip: true  # [linux and cuda_compiler_version == "10.2"]
+  # always crashes
+  skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - make  # [linux]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
@@ -125,8 +132,7 @@ outputs:
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
-        # (matches default arguments/behaviour of `pin_compatible`: min_pin='x.x.x.x.x.x', max_pin='x')
-        - {{ pin_compatible('libfaiss%s' % libext) }}
+        - libfaiss{{ libext }} >={{ version }},<2
         # additionally, we need to ensure matching proc-type
         - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
     requirements:

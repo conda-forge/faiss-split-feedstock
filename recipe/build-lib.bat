@@ -31,31 +31,23 @@ if "%cuda_compiler_version%"=="None" (
         )
     )
 
-    REM See more extensive comment in build-lib.sh
-    REM TODO: Fix this in nvcc-feedstock or cmake-feedstock.
-    del %BUILD_PREFIX%\bin\nvcc.bat
-
-    REM ... and another workaround just to cover more bases
-    set "CudaToolkitDir=%CUDA_PATH%"
-    set "CUDAToolkit_ROOT=%CUDA_PATH%"
-
     set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
 :: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
-cmake -B _build_%CF_FAISS_BUILD% ^
+cmake %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
     -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
     -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
     -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
+    -B _build_%CF_FAISS_BUILD% ^
     !CUDA_CONFIG_ARGS! ^
     .
 if %ERRORLEVEL% neq 0 exit 1

@@ -16,7 +16,7 @@ index a7b1fc6c..2c744d16 100644
    LANGUAGES CXX)
  include(GNUInstallDirs)
  
--set(CMAKE_CXX_STANDARD 11)
+-set(CMAKE_CXX_STANDARD 17)
 +set(CMAKE_CXX_STANDARD 14)
  
  list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -29,7 +29,7 @@ index e403065e..7376cf88 100644
    HOMEPAGE_URL "https://github.com/facebookresearch/faiss"
    LANGUAGES CXX)
  
--set(CMAKE_CXX_STANDARD 11)
+-set(CMAKE_CXX_STANDARD 17)
 +set(CMAKE_CXX_STANDARD 14)
  
  find_package(SWIG REQUIRED COMPONENTS python)

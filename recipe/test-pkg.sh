@@ -1,3 +1,4 @@
+#!/bin/bash
 set -ex
 
 if [[ ${HAS_AVX2} == "YES" ]]; then
