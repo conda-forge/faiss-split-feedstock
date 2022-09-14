@@ -17,6 +17,8 @@ numpy:
 - '1.20'
 - '1.20'
 - '1.20'
+- '1.20'
+- '1.20'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -24,7 +26,9 @@ pin_run_as_build:
 python:
 - 3.10.* *_cpython
 - 3.7.* *_cpython
+- 3.8.* *_73_pypy
 - 3.8.* *_cpython
+- 3.9.* *_73_pypy
 - 3.9.* *_cpython
 target_platform:
 - win-64
