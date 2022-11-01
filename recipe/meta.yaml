@@ -92,7 +92,7 @@ source:
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 2
+  number: 3
   skip: true  # [linux and cuda_compiler_version == "10.2"]
   # always crashes
   skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
