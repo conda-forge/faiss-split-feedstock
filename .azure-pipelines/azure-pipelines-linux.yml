@@ -23,11 +23,11 @@ jobs:
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cuda:11.2
         SHORT_CONFIG: linux_64_cuda_compiler_version11.2c_h0f722a43c2
-      linux_64_cuda_compiler_versionNonecxx_compiler_version10:
-        CONFIG: linux_64_cuda_compiler_versionNonecxx_compiler_version10
+      linux_64_cuda_compiler_versionNonecxx_compiler_version11:
+        CONFIG: linux_64_cuda_compiler_versionNonecxx_compiler_version11
         UPLOAD_PACKAGES: 'True'
         DOCKER_IMAGE: quay.io/condaforge/linux-anvil-cos7-x86_64
-        SHORT_CONFIG: linux_64_cuda_compiler_versionNonec_hd850d28420
+        SHORT_CONFIG: linux_64_cuda_compiler_versionNonec_h60d9c582f7
   timeoutInMinutes: 360
 
   steps:
