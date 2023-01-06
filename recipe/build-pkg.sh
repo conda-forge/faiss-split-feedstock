@@ -18,9 +18,8 @@ cmake ${CMAKE_ARGS} \
     faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
 
-if [[ "${target_platform}" != osx-arm64 ]]; then
-    # Build version with avx2 support, see build-lib.sh;
-    # osx-arm is not an x86-64 architecture and never has AVX2 instructions
+# Build version with avx2 support, see build-lib.sh
+if [[ "${target_platform}" == *-64 ]]; then
     cmake ${CMAKE_ARGS} \
         -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
         -DFAISS_OPT_LEVEL=avx2 \
@@ -42,5 +41,4 @@ pushd _build_python_generic
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
 popd
 # clean up cmake-cache between builds
-rm -r _build_python_generic
-rm -r _build_python_avx2 || true
+rm -r _build_python_*
