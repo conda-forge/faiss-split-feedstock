@@ -92,7 +92,7 @@ source:
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
 
 build:
-  number: 2
+  number: 3
   skip: true  # [linux and cuda_compiler_version == "10.2"]
   # always crashes
   skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
@@ -112,8 +112,10 @@ outputs:
       commands:
         - exit 0
 
-  # build two separate C++ libs, one for generic x64, and one for AVX2
-  {% for CF_FAISS_BUILD in ["avx2", "generic"] %}
+  # build two separate C++ libs, one generic, and one for AVX2 on x86_64
+  {% set CF_FAISS_BUILD_OPTS = ["generic"] %}
+  {% set CF_FAISS_BUILD_OPTS = ["avx2"] + CF_FAISS_BUILD_OPTS %}  # [x86_64]
+  {% for CF_FAISS_BUILD in CF_FAISS_BUILD_OPTS %}
   # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
   # is only used for faiss and not important enough to work-around for this bug
   {% if CF_FAISS_BUILD == "generic" %}
@@ -191,13 +193,13 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [x86_64]
         - libblas
         - liblapack
       run:
         - python
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [x86_64]
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
@@ -208,8 +210,8 @@ outputs:
       requires:
         # trying to test all blas-variants runs into conda/conda-build#3947
         # - libblas =*=*{{ blas_impl }}
-        # testing with MKL, as upstream considers this the most important
-        - libblas =*=*mkl
+        # testing with MKL on x86_64, as upstream considers this the most important
+        - libblas =*=*mkl  # [x86_64]
         - scipy
         - pytest
       files:
@@ -223,8 +225,8 @@ outputs:
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
-        - export HAS_AVX2=YES && ./test-pkg.sh  # [linux]
-        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx]
+        - export HAS_AVX2=YES && ./test-pkg.sh  # [linux and x86_64]
+        - export HAS_AVX2=NO  && ./test-pkg.sh  # [osx or (linux and not x86_64)]
         # skip test suite on win + cuda < 11.2 due to time outs (note: "None" >= "11.2")
         {% if cuda_compiler_version|string >= "11.2" %}
         - set "HAS_AVX2=YES"  && test-pkg.bat   # [win]
