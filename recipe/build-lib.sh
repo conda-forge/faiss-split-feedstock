@@ -11,9 +11,21 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
-    # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
-    ARCHES=(52 60 61 70)
-    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
+    
+    if [ "$(uname -m)" = "aarch64" ]; then
+        # For building aarch64-packages, add arches 53, 62, 72
+        ARCHES=(52 53 60 61 62 70 72)
+    else
+        # Architectures for x86_64
+        ARCHES=(52 60 61 70)
+    fi
+
+    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.8") ]; then
+        # Hopper support for H100 (sm_90) needs cuda >= 11.8
+        LATEST_ARCH=90
+        # ARCHES does not contain LATEST_ARCH; see usage below
+        ARCHES=( "${ARCHES[@]}" 75 80 86)
+    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
         # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
         LATEST_ARCH=86
         # ARCHES does not contain LATEST_ARCH; see usage below
