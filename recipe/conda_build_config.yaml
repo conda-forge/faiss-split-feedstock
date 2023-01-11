@@ -14,3 +14,23 @@ docker_image:
   - quay.io/condaforge/linux-anvil-cuda:11.8           # [linux64]
   - quay.io/condaforge/linux-anvil-ppc64le-cuda:11.8   # [linux and ppc64le]
   - quay.io/condaforge/linux-anvil-aarch64-cuda:11.8   # [linux and aarch64]
+python:
+  # part of a zip_keys: python, python_impl, numpy
+  - 3.8.* *_cpython
+  - 3.9.* *_cpython
+  - 3.10.* *_cpython
+python_impl:
+  # part of a zip_keys: python, python_impl, numpy
+  - cpython
+  - cpython
+  - cpython
+numpy:
+  # part of a zip_keys: python, python_impl, numpy
+  - 1.20
+  - 1.20
+  - 1.21
+zip_keys:
+  -
+    - python
+    - numpy
+    - python_impl
