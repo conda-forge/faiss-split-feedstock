@@ -1,15 +1,17 @@
 MACOSX_DEPLOYMENT_TARGET:
 - '10.9'
+cdt_name:
+- cos7
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 cuda_compiler_version:
-- None
+- '11.8'
 cxx_compiler:
 - clangxx
 cxx_compiler_version:
-- '14'
+- '10'
 libblas:
 - 3.9 *netlib
 liblapack:
