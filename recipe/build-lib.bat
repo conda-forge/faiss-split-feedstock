@@ -37,7 +37,8 @@ if "%cuda_compiler_version%"=="None" (
 )
 
 :: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
-cmake %CMAKE_ARGS% ^
+cmake -G Ninja ^
+    %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
     -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^

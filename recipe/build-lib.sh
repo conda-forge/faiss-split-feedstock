@@ -52,7 +52,8 @@ else
 fi
 
 # Build version depending on $CF_FAISS_BUILD (either "generic" or "avx2")
-cmake ${CMAKE_ARGS} \
+cmake -G Ninja \
+    ${CMAKE_ARGS} \
     -DBUILD_SHARED_LIBS=ON \
     -DBUILD_TESTING=${BUILD_TESTING} \
     -DFAISS_OPT_LEVEL=${CF_FAISS_BUILD} \

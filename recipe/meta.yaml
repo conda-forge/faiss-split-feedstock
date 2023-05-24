@@ -100,7 +100,6 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}
-    - make  # [linux]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
@@ -144,7 +143,7 @@ outputs:
         # necessary for conda-build to build the python bindings per version
         - python                  # [build_platform != target_platform]
         - cmake
-        - make                    # [linux]
+        - ninja
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
       host:
@@ -187,6 +186,7 @@ outputs:
         - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
         - swig
         - cmake
+        - ninja
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
         - python                              # [build_platform != target_platform]

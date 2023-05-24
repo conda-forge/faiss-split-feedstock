@@ -9,7 +9,8 @@ if "%cuda_compiler_version%"=="None" (
 )
 
 :: Build vanilla version (no avx2), see build-lib.bat
-cmake -B _build_python_generic ^
+cmake -G Ninja ^
+    -B _build_python_generic ^
     -Dfaiss_ROOT=_libfaiss_generic_stage ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
@@ -21,7 +22,8 @@ cmake --build _build_python_generic --target swigfaiss --config Release -j %CPU_
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build version with avx2 support, see build-lib.bat
-cmake -B _build_python_avx2 ^
+cmake -G Ninja ^
+    -B _build_python_avx2 ^
     -Dfaiss_ROOT=_libfaiss_avx2_stage ^
     -DFAISS_OPT_LEVEL=avx2 ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
