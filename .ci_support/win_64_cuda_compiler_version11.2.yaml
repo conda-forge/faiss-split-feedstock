@@ -15,8 +15,8 @@ liblapack:
 numpy:
 - '1.21'
 - '1.23'
-- '1.20'
-- '1.20'
+- '1.21'
+- '1.21'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -29,5 +29,7 @@ python:
 target_platform:
 - win-64
 zip_keys:
+- - cuda_compiler
+  - cuda_compiler_version
 - - python
   - numpy
