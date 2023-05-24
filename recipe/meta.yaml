@@ -147,7 +147,7 @@ outputs:
         - make                    # [linux]
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
-        # - python  # [build_platform != target_platform]
+        - python  # [build_platform != target_platform]
       host:
         - libblas
         - liblapack
