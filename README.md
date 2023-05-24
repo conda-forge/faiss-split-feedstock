@@ -1,11 +1,11 @@
-About faiss-split
-=================
+About faiss-split-feedstock
+===========================
+
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/faiss-split-feedstock/blob/main/LICENSE.txt)
 
 Home: https://github.com/facebookresearch/faiss
 
 Package license: MIT
-
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/faiss-split-feedstock/blob/main/LICENSE.txt)
 
 Summary: A library for efficient similarity search and clustering of dense vectors.
 
@@ -72,10 +72,10 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>linux_64_cuda_compiler_versionNonecxx_compiler_version11</td>
+              <td>linux_64_cuda_compiler_versionNonecxx_compiler_version12</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_versionNonecxx_compiler_version11" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_versionNonecxx_compiler_version12" alt="variant">
                 </a>
               </td>
             </tr><tr>
@@ -100,10 +100,10 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>win_64_cuda_compiler_version10.2</td>
+              <td>osx_arm64</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version10.2" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_arm64_" alt="variant">
                 </a>
               </td>
             </tr><tr>

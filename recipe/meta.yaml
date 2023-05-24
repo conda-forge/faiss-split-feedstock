@@ -76,9 +76,7 @@ source:
   sha256: d49b4afd6a7a5b64f260a236ee9b2efb760edb08c33d5ea5610c2f078a5995ec
   patches:
     - patches/0001-use-c-17.patch
-    # downgrade to C++14 for CUDA 10.2...
-    - patches/0001-use-c-14.patch  # [cuda_compiler_version == "10.2"]
-    # ... resp. CUDA 11.1 on linux
+    # downgrade to C++14 for resp. CUDA 11.1 on linux
     - patches/0001-use-c-14.patch  # [linux and (cuda_compiler_version == "11.1")]
     # adapt header target directory for faiss_avx2
     - patches/0002-adapt-header-target-directory-to-outputname.patch
@@ -93,14 +91,13 @@ source:
 
 build:
   number: 3
-  skip: true  # [linux and cuda_compiler_version == "10.2"]
+  skip: true  # [cuda_compiler_version == "10.2"]
   # always crashes
   skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
-    - make  # [linux]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
@@ -141,8 +138,10 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        # necessary for conda-build to build the python bindings per version
+        - python                  # [build_platform != target_platform]
         - cmake
-        - make                    # [linux]
+        - ninja
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
       host:
@@ -182,12 +181,15 @@ outputs:
     requirements:
       build:
         - {{ compiler('cxx') }}
-        - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
         - swig
         - cmake
-        - make                    # [linux]
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
+        - ninja
+        - libgomp                             # [linux]
+        - llvm-openmp                         # [osx]
+        - python                              # [build_platform != target_platform]
+        - cross-python_{{ target_platform }}  # [build_platform != target_platform]
+        - numpy                               # [build_platform != target_platform]
       host:
         - python
         - pip

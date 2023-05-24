@@ -1,4 +1,4 @@
-From bd1e1e261a771bdc9eaf4bd0c15ac4ac56ae7c08 Mon Sep 17 00:00:00 2001
+From 577fa782ea3e41f0d24ec2409d37d2d84b9f52a9 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 2 Jun 2021 22:58:19 +0200
 Subject: [PATCH 4/6] enable building libfaiss_avx2 without libfaiss
@@ -8,12 +8,12 @@ Subject: [PATCH 4/6] enable building libfaiss_avx2 without libfaiss
  1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index c0fea215..ce4677ca 100644
+index a641c300..e772edc8 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
-@@ -240,18 +240,21 @@ endif()
- # to distinguish between faiss and faiss_avx2
- get_target_property(libname faiss OUTPUT_NAME)
+@@ -246,18 +246,21 @@ else()
+   get_target_property(libname faiss OUTPUT_NAME)
+ endif()
  
 -install(TARGETS faiss
 -  EXPORT faiss-targets
@@ -41,6 +41,3 @@ index c0fea215..ce4677ca 100644
    )
  endif()
  
--- 
-2.32.0.windows.2
-
