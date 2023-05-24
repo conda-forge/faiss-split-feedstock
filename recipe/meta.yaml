@@ -96,11 +96,13 @@ build:
   skip: true  # [linux and cuda_compiler_version == "10.2"]
   # always crashes
   skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
+  skip: true  # [not arm64]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
     - make  # [linux]
+    - python  # [build_platform != target_platform]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
@@ -145,6 +147,7 @@ outputs:
         - make                    # [linux]
         - libgomp                 # [linux]
         - llvm-openmp             # [osx]
+        - python  # [build_platform != target_platform]
       host:
         - libblas
         - liblapack
@@ -243,6 +246,8 @@ outputs:
     build:
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
+      build:
+        - python  # [build_platform != target_platform]
       run:
         - faiss ={{ version }}=*_cpu
     test:
