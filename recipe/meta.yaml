@@ -102,7 +102,7 @@ requirements:
   build:
     - {{ compiler('cxx') }}
     - make  # [linux]
-    - python  # [build_platform != target_platform]
+    # - python  # [build_platform != target_platform]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
