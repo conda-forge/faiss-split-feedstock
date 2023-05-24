@@ -30,14 +30,7 @@ Current build status
 ====================
 
 
-<table><tr>
-    <td>Travis</td>
-    <td>
-      <a href="https://app.travis-ci.com/conda-forge/faiss-split-feedstock">
-        <img alt="linux" src="https://img.shields.io/travis/com/conda-forge/faiss-split-feedstock/main.svg?label=Linux">
-      </a>
-    </td>
-  </tr>
+<table>
     
   <tr>
     <td>Azure</td>
@@ -51,80 +44,10 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_cuda_compiler_version11.0cxx_compiler_version9</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_version11.0cxx_compiler_version9" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.1cxx_compiler_version10</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_version11.1cxx_compiler_version10" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.2cxx_compiler_version10</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_version11.2cxx_compiler_version10" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_versionNonecxx_compiler_version12</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_versionNonecxx_compiler_version12" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_aarch64</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_ppc64le</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_ppc64le_" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>osx_64</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>osx_arm64</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_arm64_" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version10.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version10.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_version11.2</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_version11.2" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compiler_versionNone</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compiler_versionNone" alt="variant">
                 </a>
               </td>
             </tr>
@@ -142,10 +65,8 @@ Current release info
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-faiss-green.svg)](https://anaconda.org/conda-forge/faiss) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/faiss.svg)](https://anaconda.org/conda-forge/faiss) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/faiss.svg)](https://anaconda.org/conda-forge/faiss) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/faiss.svg)](https://anaconda.org/conda-forge/faiss) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-faiss--cpu-green.svg)](https://anaconda.org/conda-forge/faiss-cpu) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/faiss-cpu.svg)](https://anaconda.org/conda-forge/faiss-cpu) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/faiss-cpu.svg)](https://anaconda.org/conda-forge/faiss-cpu) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/faiss-cpu.svg)](https://anaconda.org/conda-forge/faiss-cpu) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-faiss--gpu-green.svg)](https://anaconda.org/conda-forge/faiss-gpu) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/faiss-gpu.svg)](https://anaconda.org/conda-forge/faiss-gpu) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/faiss-gpu.svg)](https://anaconda.org/conda-forge/faiss-gpu) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/faiss-gpu.svg)](https://anaconda.org/conda-forge/faiss-gpu) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-faiss--proc-green.svg)](https://anaconda.org/conda-forge/faiss-proc) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/faiss-proc.svg)](https://anaconda.org/conda-forge/faiss-proc) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/faiss-proc.svg)](https://anaconda.org/conda-forge/faiss-proc) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/faiss-proc.svg)](https://anaconda.org/conda-forge/faiss-proc) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libfaiss-green.svg)](https://anaconda.org/conda-forge/libfaiss) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libfaiss.svg)](https://anaconda.org/conda-forge/libfaiss) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libfaiss.svg)](https://anaconda.org/conda-forge/libfaiss) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libfaiss.svg)](https://anaconda.org/conda-forge/libfaiss) |
-| [![Conda Recipe](https://img.shields.io/badge/recipe-libfaiss--avx2-green.svg)](https://anaconda.org/conda-forge/libfaiss-avx2) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libfaiss-avx2.svg)](https://anaconda.org/conda-forge/libfaiss-avx2) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libfaiss-avx2.svg)](https://anaconda.org/conda-forge/libfaiss-avx2) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libfaiss-avx2.svg)](https://anaconda.org/conda-forge/libfaiss-avx2) |
 
 Installing faiss-split
 ======================
@@ -157,16 +78,16 @@ conda config --add channels conda-forge
 conda config --set channel_priority strict
 ```
 
-Once the `conda-forge` channel has been enabled, `faiss, faiss-cpu, faiss-gpu, faiss-proc, libfaiss, libfaiss-avx2` can be installed with `conda`:
+Once the `conda-forge` channel has been enabled, `faiss, faiss-cpu, faiss-proc, libfaiss` can be installed with `conda`:
 
 ```
-conda install faiss faiss-cpu faiss-gpu faiss-proc libfaiss libfaiss-avx2
+conda install faiss faiss-cpu faiss-proc libfaiss
 ```
 
 or with `mamba`:
 
 ```
-mamba install faiss faiss-cpu faiss-gpu faiss-proc libfaiss libfaiss-avx2
+mamba install faiss faiss-cpu faiss-proc libfaiss
 ```
 
 It is possible to list all of the versions of `faiss` available on your platform with `conda`:
