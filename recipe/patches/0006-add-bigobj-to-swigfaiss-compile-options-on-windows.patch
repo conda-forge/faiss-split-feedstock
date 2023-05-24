@@ -1,4 +1,4 @@
-From 64bd319237cb5c881786821f0704c834737d4fa4 Mon Sep 17 00:00:00 2001
+From ed81784736b103017f2edc8f60aad49fc0d079e3 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sat, 5 Jun 2021 16:29:53 +0200
 Subject: [PATCH 6/6] add /bigobj to swigfaiss compile options on windows

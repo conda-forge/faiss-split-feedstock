@@ -1,15 +1,15 @@
-From a08af3cdb271ba60c5a309d801566241e3686619 Mon Sep 17 00:00:00 2001
+From 9f86c0ba09fb1a5ba7c79ca029922fb5115b1329 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sun, 14 Feb 2021 15:52:27 +0100
 Subject: [PATCH 2/6] adapt header target directory to outputname
 
 ---
- faiss/CMakeLists.txt     | 16 ++++++++++++----
- faiss/gpu/CMakeLists.txt |  5 ++++-
- 2 files changed, 16 insertions(+), 5 deletions(-)
+ faiss/CMakeLists.txt     | 20 ++++++++++++++++----
+ faiss/gpu/CMakeLists.txt |  9 ++++++++-
+ 2 files changed, 24 insertions(+), 5 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index 1fbc8492..09b08731 100644
+index 1fbc8492..a641c300 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
 @@ -177,9 +177,14 @@ endif()
@@ -28,17 +28,21 @@ index 1fbc8492..09b08731 100644
    set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
  endif()
  if(NOT WIN32)
-@@ -234,6 +239,9 @@ else()
+@@ -234,6 +239,13 @@ else()
    target_link_libraries(faiss_avx2 PRIVATE ${LAPACK_LIBRARIES})
  endif()
  
 +# to distinguish between faiss and faiss_avx2
-+get_target_property(libname faiss OUTPUT_NAME)
++if(FAISS_OPT_LEVEL STREQUAL "avx2")
++  get_target_property(libname faiss_avx2 OUTPUT_NAME)
++else()
++  get_target_property(libname faiss OUTPUT_NAME)
++endif()
 +
  install(TARGETS faiss
    EXPORT faiss-targets
    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -252,7 +260,7 @@ endif()
+@@ -252,7 +264,7 @@ endif()
  foreach(header ${FAISS_HEADERS})
    get_filename_component(dir ${header} DIRECTORY )
    install(FILES ${header}
@@ -47,7 +51,7 @@ index 1fbc8492..09b08731 100644
    )
  endforeach()
  
-@@ -269,9 +277,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
+@@ -269,9 +281,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
  )
  install(FILES ${PROJECT_BINARY_DIR}/cmake/faiss-config.cmake
    ${PROJECT_BINARY_DIR}/cmake/faiss-config-version.cmake
@@ -60,15 +64,19 @@ index 1fbc8492..09b08731 100644
 +  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${libname}
  )
 diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
-index 17354cb2..d49aa96a 100644
+index 17354cb2..f558c322 100644
 --- a/faiss/gpu/CMakeLists.txt
 +++ b/faiss/gpu/CMakeLists.txt
-@@ -168,10 +168,13 @@ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
+@@ -168,10 +168,17 @@ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
  target_sources(faiss PRIVATE ${FAISS_GPU_SRC})
  target_sources(faiss_avx2 PRIVATE ${FAISS_GPU_SRC})
  
 +# to distinguish between faiss and faiss_avx2
-+get_target_property(libname faiss OUTPUT_NAME)
++if(FAISS_OPT_LEVEL STREQUAL "avx2")
++  get_target_property(libname faiss_avx2 OUTPUT_NAME)
++else()
++  get_target_property(libname faiss OUTPUT_NAME)
++endif()
 +
  foreach(header ${FAISS_GPU_HEADERS})
    get_filename_component(dir ${header} DIRECTORY )
