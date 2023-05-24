@@ -141,6 +141,8 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        # necessary for conda-build to build the python bindings per version
+        - python                  # [build_platform != target_platform]
         - cmake
         - make                    # [linux]
         - libgomp                 # [linux]
