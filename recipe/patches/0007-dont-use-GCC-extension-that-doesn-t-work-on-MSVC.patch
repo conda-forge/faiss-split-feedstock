@@ -1,0 +1,23 @@
+From c2bb24bbc47b2041acaf795bbbba71bea8c3d341 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 25 May 2023 12:24:52 +1100
+Subject: [PATCH 7/7] dont use GCC extension that doesn't work on MSVC
+
+see https://stackoverflow.com/a/68939636
+---
+ faiss/IndexIVFPQ.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/faiss/IndexIVFPQ.cpp b/faiss/IndexIVFPQ.cpp
+index a5b79335..9fc5e623 100644
+--- a/faiss/IndexIVFPQ.cpp
++++ b/faiss/IndexIVFPQ.cpp
+@@ -931,7 +931,7 @@ struct IVFPQScannerT : QueryTables {
+             for (m = 0; m < pqM16 * 16; m += 16) {
+                 // load 16 uint8 values
+                 const __m128i mm1 =
+-                        _mm_loadu_si128((const __m128i_u*)(code + m));
++                        _mm_loadu_si128((const __m128i*)(code + m));
+                 {
+                     // convert uint8 values (low part of __m128i) to int32
+                     // values

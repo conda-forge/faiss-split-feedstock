@@ -88,6 +88,8 @@ source:
     - patches/0005-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+    # patch out use of non-portable GCC SIMD extension
+    - patches/0007-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
 
 build:
   number: 0
