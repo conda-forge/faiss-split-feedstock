@@ -1,7 +1,7 @@
 From c2bb24bbc47b2041acaf795bbbba71bea8c3d341 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 12:24:52 +1100
-Subject: [PATCH 7/8] dont use GCC extension that doesn't work on MSVC
+Subject: [PATCH 7/9] dont use GCC extension that doesn't work on MSVC
 
 see https://stackoverflow.com/a/68939636
 ---

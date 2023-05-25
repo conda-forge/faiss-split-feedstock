@@ -1,7 +1,7 @@
 From 496a3026cf19ea6ec99c08914f8bca2ca74903fa Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 15:26:05 +1100
-Subject: [PATCH 8/8] ensure _mm_prefetch gets char, not float, as first arg
+Subject: [PATCH 8/9] ensure _mm_prefetch gets char, not float, as first arg
 
 ---
  faiss/utils/distances.cpp      | 10 ++++++----

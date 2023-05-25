@@ -92,6 +92,8 @@ source:
     - patches/0007-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
     # the _mm_prefetch of MSVC is stricter about which types it accepts
     - patches/0008-ensure-_mm_prefetch-gets-char-not-float-as-first-arg.patch
+    # due to switch to ninja
+    - patches/0009-no-more-Release-subfolder.patch
 
 build:
   number: 0
