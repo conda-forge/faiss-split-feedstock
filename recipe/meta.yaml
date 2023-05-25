@@ -90,6 +90,8 @@ source:
     - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
     # patch out use of non-portable GCC SIMD extension
     - patches/0007-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
+    # the _mm_prefetch of MSVC is stricter about which types it accepts
+    - patches/0008-ensure-_mm_prefetch-gets-char-not-float-as-first-arg.patch
 
 build:
   number: 0
