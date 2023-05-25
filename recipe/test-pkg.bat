@@ -8,8 +8,7 @@ if "%HAS_AVX2%"=="NO" (
 
 :AVX2
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-:: run test suite with AVX2 support
-pytest tests --log-file-level=INFO --log-file=log.txt -k "not (%SKIPS%)"
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not %SKIPS%"
 if %ERRORLEVEL% neq 0 exit 1
 :: print logfile for completeness
 type log.txt
@@ -29,7 +28,7 @@ set NPY_DISABLE_CPU_FEATURES=AVX2
 
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
 :: rerun test suite again without AVX2 support
-pytest tests --log-file-level=INFO --log-file=log.txt -k "not (%SKIPS%)"
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not %SKIPS%"
 if %ERRORLEVEL% neq 0 exit 1
 type log.txt
 
