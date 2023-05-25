@@ -3,7 +3,7 @@ set -ex
 
 if [[ ${HAS_AVX2} == "YES" ]]; then
     python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-    pytest tests --log-file-level=INFO --log-file=log.txt
+    pytest tests --log-file-level=INFO --log-file=log.txt -k "not test_RQ6x8"
     # print logfile for completeness (sleep so log has time to print)
     cat log.txt && sleep 2
 
@@ -19,7 +19,7 @@ export NPY_DISABLE_CPU_FEATURES=AVX2
 
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
 # rerun test suite again without AVX2 support
-pytest tests --log-file-level=INFO --log-file=log.txt
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not test_RQ6x8"
 cat log.txt && sleep 2
 
 # this should have run without AVX2

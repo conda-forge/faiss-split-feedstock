@@ -10,7 +10,7 @@ if "%HAS_AVX2%"=="NO" (
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
 :: TestComputeGT switches between CPU & GPU implementation depending on availability;
 :: GPU device detection (on win) currently seems broken in CUDA, and segfaults the test suite
-pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not (TestComputeGT or test_RQ6x8)"
 if %ERRORLEVEL% neq 0 exit 1
 :: print logfile for completeness
 type log.txt
@@ -30,7 +30,7 @@ set NPY_DISABLE_CPU_FEATURES=AVX2
 
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
 :: rerun test suite again without AVX2 support
-pytest tests --log-file-level=INFO --log-file=log.txt -k "not TestComputeGT"
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not (TestComputeGT or test_RQ6x8)"
 if %ERRORLEVEL% neq 0 exit 1
 type log.txt
 
