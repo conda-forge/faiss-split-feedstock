@@ -1,4 +1,4 @@
-From e43fbebe96d9704ff071637a9a105999f670c18e Mon Sep 17 00:00:00 2001
+From 98034cf71a7c5d79e188176fee0463fe47681cb8 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 19 Feb 2021 14:14:31 +0100
 Subject: [PATCH 3/9] skip test_stress for GPU on windows
@@ -8,7 +8,7 @@ Subject: [PATCH 3/9] skip test_stress for GPU on windows
  1 file changed, 2 insertions(+)
 
 diff --git a/faiss/gpu/test/test_gpu_basics.py b/faiss/gpu/test/test_gpu_basics.py
-index f8041973..fa944102 100755
+index 0fa7acbb..a9b0c1ea 100755
 --- a/faiss/gpu/test/test_gpu_basics.py
 +++ b/faiss/gpu/test/test_gpu_basics.py
 @@ -6,6 +6,7 @@
@@ -18,8 +18,8 @@ index f8041973..fa944102 100755
 +import sys
  import numpy as np
  import faiss
- from common_faiss_tests import get_dataset_2
-@@ -85,6 +86,7 @@ class ReferencedObject(unittest.TestCase):
+ import random
+@@ -86,6 +87,7 @@ class ReferencedObject(unittest.TestCase):
  
              assert ref == new
  

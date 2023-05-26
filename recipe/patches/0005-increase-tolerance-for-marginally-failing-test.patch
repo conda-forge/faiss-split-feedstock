@@ -1,4 +1,4 @@
-From ec4bb09cbefadf6b7cfa72f415ce841a7e3bb467 Mon Sep 17 00:00:00 2001
+From 9759c4c1b3528a1fcf93e39699606c0021459a75 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sat, 5 Jun 2021 01:45:14 +0200
 Subject: [PATCH 5/9] increase tolerance for marginally failing test
@@ -8,7 +8,7 @@ Subject: [PATCH 5/9] increase tolerance for marginally failing test
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tests/test_residual_quantizer.py b/tests/test_residual_quantizer.py
-index a9079388..d92670ea 100644
+index a7752baf..090354aa 100644
 --- a/tests/test_residual_quantizer.py
 +++ b/tests/test_residual_quantizer.py
 @@ -682,7 +682,7 @@ class TestAdditiveQuantizerWithLUT(unittest.TestCase):

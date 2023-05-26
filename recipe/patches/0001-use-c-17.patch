@@ -1,4 +1,4 @@
-From 5154e61bed009182f683e03af8c8d4e3fff9e399 Mon Sep 17 00:00:00 2001
+From 73f15b10b90d16ec080bd352780295439b46fa86 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Mon, 26 Oct 2020 22:44:44 +0100
 Subject: [PATCH 1/9] use c++17
@@ -9,7 +9,7 @@ Subject: [PATCH 1/9] use c++17
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7430aacf..f34b4ecf 100644
+index fa1e3124..2bb0d5dd 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -13,7 +13,7 @@ project(faiss
