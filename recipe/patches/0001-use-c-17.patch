@@ -1,7 +1,7 @@
 From 73f15b10b90d16ec080bd352780295439b46fa86 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Mon, 26 Oct 2020 22:44:44 +0100
-Subject: [PATCH 1/9] use c++17
+Subject: [PATCH 01/11] use c++17
 
 ---
  CMakeLists.txt              | 2 +-

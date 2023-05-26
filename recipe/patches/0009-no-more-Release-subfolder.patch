@@ -1,7 +1,7 @@
 From 30089f4ce08f77c72a3c5b841a3e57d075e8822d Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 22:29:29 +1100
-Subject: [PATCH 9/9] no more Release/ subfolder
+Subject: [PATCH 09/11] no more Release/ subfolder
 
 ---
  faiss/python/setup.py | 5 ++---

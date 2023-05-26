@@ -1,7 +1,7 @@
 From 98034cf71a7c5d79e188176fee0463fe47681cb8 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 19 Feb 2021 14:14:31 +0100
-Subject: [PATCH 3/9] skip test_stress for GPU on windows
+Subject: [PATCH 03/11] skip test_stress for GPU on windows
 
 ---
  faiss/gpu/test/test_gpu_basics.py | 2 ++
