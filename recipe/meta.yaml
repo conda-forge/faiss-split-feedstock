@@ -244,6 +244,8 @@ outputs:
         # TestComputeGT switches between CPU & GPU implementation depending on availability;
         # GPU device detection (on win) currently seems broken in CUDA, and segfaults the test suite
         {% set skips = skips + " or TestComputeGT" %}                                      # [win]
+        # test relies on linux-isms
+        {% set skips = skips + " or (test_contrib and test_checkpoint)" %}                 # [win]
         # two failing tests on on aarch (test_index_accuracy & test_index_accuracy2)
         {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
