@@ -17,7 +17,7 @@ if "%cuda_compiler_version%"=="None" (
     REM this is to support PTX JIT compilation; see first link above or cf.
     REM devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
-    set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80-real;86"
+    set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86"
 
     set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
