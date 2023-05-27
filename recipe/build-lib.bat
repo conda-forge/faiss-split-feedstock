@@ -18,6 +18,8 @@ if "%cuda_compiler_version%"=="None" (
     REM devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
     set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86"
+    REM turn off _extremely_ noisy nvcc warnings
+    set "CUDAFLAGS=-w"
 
     set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info
