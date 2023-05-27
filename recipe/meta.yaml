@@ -1,4 +1,4 @@
-{% set version = "1.7.3" %}
+{% set version = "1.7.4" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -17,17 +17,18 @@
     'IndexIVFFastScan.h', 'IndexIVFFlat.h', 'IndexIVFPQ.h', 'IndexIVFPQFastScan.h', 'IndexIVFPQR.h',
     'IndexIVFSpectralHash.h', 'IndexLSH.h', 'IndexLattice.h', 'IndexNNDescent.h', 'IndexNSG.h',
     'IndexPQ.h', 'IndexPQFastScan.h', 'IndexPreTransform.h', 'IndexRefine.h', 'IndexReplicas.h',
-    'IndexRowwiseMinMax.h', 'IndexScalarQuantizer.h', 'IndexShards.h', 'MatrixStats.h',
-    'MetaIndexes.h', 'MetricType.h', 'VectorTransform.h',
+    'IndexRowwiseMinMax.h', 'IndexScalarQuantizer.h', 'IndexShards.h', 'IndexShardsIVF.h',
+    'MatrixStats.h', 'MetaIndexes.h', 'MetricType.h', 'VectorTransform.h',
     'clone_index.h', 'index_factory.h', 'index_io.h',
-    'impl/AdditiveQuantizer.h', 'impl/AuxIndexStructures.h', 'impl/DistanceComputer.h',
-    'impl/FaissAssert.h', 'impl/FaissException.h', 'impl/HNSW.h', 'impl/IDSelector.h',
-    'impl/LocalSearchQuantizer.h', 'impl/LookupTableScaler.h', 'impl/NNDescent.h', 'impl/NSG.h',
-    'impl/PolysemousTraining.h', 'impl/ProductAdditiveQuantizer.h', 'impl/ProductQuantizer-inl.h',
-    'impl/ProductQuantizer.h', 'impl/Quantizer.h', 'impl/ResidualQuantizer.h', 'impl/ResultHandler.h',
-    'impl/ScalarQuantizer.h', 'impl/ThreadedIndex-inl.h', 'impl/ThreadedIndex.h', 'impl/io.h',
-    'impl/io_macros.h', 'impl/kmeans1d.h', 'impl/lattice_Zn.h', 'impl/platform_macros.h',
-    'impl/pq4_fast_scan.h', 'impl/simd_result_handlers.h',
+    'impl/AdditiveQuantizer.h', 'impl/AuxIndexStructures.h', 'impl/CodePacker.h',
+    'impl/DistanceComputer.h', 'impl/FaissAssert.h', 'impl/FaissException.h', 'impl/HNSW.h',
+    'impl/IDSelector.h', 'impl/LocalSearchQuantizer.h', 'impl/LookupTableScaler.h', 'impl/NNDescent.h',
+    'impl/NSG.h', 'impl/PolysemousTraining.h', 'impl/ProductAdditiveQuantizer.h',
+    'impl/ProductQuantizer-inl.h', 'impl/ProductQuantizer.h', 'impl/Quantizer.h',
+    'impl/ResidualQuantizer.h', 'impl/ResultHandler.h', 'impl/ScalarQuantizer.h',
+    'impl/ThreadedIndex-inl.h', 'impl/ThreadedIndex.h', 'impl/io.h', 'impl/io_macros.h',
+    'impl/kmeans1d.h', 'impl/lattice_Zn.h', 'impl/platform_macros.h', 'impl/pq4_fast_scan.h',
+    'impl/simd_result_handlers.h',
     'invlists/BlockInvertedLists.h', 'invlists/DirectMap.h', 'invlists/InvertedLists.h',
     'invlists/InvertedListsIOHook.h',
     'utils/AlignedTable.h', 'utils/Heap.h', 'utils/WorkerThread.h', 'utils/distances.h',
@@ -35,7 +36,7 @@
     'utils/fp16-inl.h', 'utils/fp16.h', 'utils/hamming-inl.h', 'utils/hamming.h',
     'utils/ordered_key_value.h', 'utils/partitioning.h', 'utils/quantize_lut.h',
     'utils/random.h', 'utils/simdlib.h', 'utils/simdlib_avx2.h', 'utils/simdlib_emulated.h',
-    'utils/simdlib_neon.h', 'utils/utils.h',
+    'utils/simdlib_neon.h', 'utils/sorting.h', 'utils/utils.h',
 ] + (not win) * [
     'invlists/OnDiskInvertedLists.h'
 ] + (cuda_compiler_version != "None") * [
@@ -77,7 +78,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: dda1b031957789e6a6f3b37d48ad135b9557a33c5013c1c245ef4bced2d787de
+  sha256: d9a7b31bf7fd6eb32c10b7ea7ff918160eed5be04fe63bb7b4b4b5f2bbde01ad
   patches:
     - patches/0001-use-c-17.patch
     # downgrade to C++14 for resp. CUDA 11.1 on linux
@@ -98,6 +99,9 @@ source:
     - patches/0008-ensure-_mm_prefetch-gets-char-not-float-as-first-arg.patch
     # due to switch to ninja
     - patches/0009-no-more-Release-subfolder.patch
+    # more fixes
+    - patches/0010-fix-index-type-in-openmp-loop.patch
+    - patches/0011-add-missing-headers.patch
 
 build:
   number: 0
@@ -240,6 +244,8 @@ outputs:
         # TestComputeGT switches between CPU & GPU implementation depending on availability;
         # GPU device detection (on win) currently seems broken in CUDA, and segfaults the test suite
         {% set skips = skips + " or TestComputeGT" %}                                      # [win]
+        # test relies on linux-isms
+        {% set skips = skips + " or (test_contrib and test_checkpoint)" %}                 # [win]
         # two failing tests on on aarch (test_index_accuracy & test_index_accuracy2)
         {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,

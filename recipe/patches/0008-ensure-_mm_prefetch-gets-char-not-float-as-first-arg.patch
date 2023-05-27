@@ -1,18 +1,35 @@
-From 496a3026cf19ea6ec99c08914f8bca2ca74903fa Mon Sep 17 00:00:00 2001
+From f46ebfe1faacef2d6ef9129279bd4bf47a0c0cf1 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 15:26:05 +1100
-Subject: [PATCH 8/9] ensure _mm_prefetch gets char, not float, as first arg
+Subject: [PATCH 08/11] ensure _mm_prefetch gets char, not float, as first arg
 
 ---
- faiss/utils/distances.cpp      | 10 ++++++----
- faiss/utils/distances_simd.cpp | 31 ++++++++++++++++++-------------
- 2 files changed, 24 insertions(+), 17 deletions(-)
+ faiss/impl/LocalSearchQuantizer.cpp           |  3 ++-
+ faiss/utils/distances.cpp                     | 10 ++++++----
+ faiss/utils/distances_fused/avx512.cpp        |  3 ++-
+ faiss/utils/distances_fused/simdlib_based.cpp |  3 ++-
+ faiss/utils/distances_simd.cpp                | 18 +++++++++++-------
+ 5 files changed, 23 insertions(+), 14 deletions(-)
 
+diff --git a/faiss/impl/LocalSearchQuantizer.cpp b/faiss/impl/LocalSearchQuantizer.cpp
+index abbfe749..ba2fce6e 100644
+--- a/faiss/impl/LocalSearchQuantizer.cpp
++++ b/faiss/impl/LocalSearchQuantizer.cpp
+@@ -628,7 +628,8 @@ void LocalSearchQuantizer::icm_encode_step(
+                         {
+                             size_t binary_idx = (other_m + 1) * M * K * K +
+                                     m * K * K + code2 * K + code;
+-                            _mm_prefetch(binaries + binary_idx, _MM_HINT_T0);
++                            // MSVC enforces signature: _mm_prefetch(char const*, int)
++                            _mm_prefetch((char const*)(binaries + binary_idx), _MM_HINT_T0);
+                         }
+                     }
+ #endif
 diff --git a/faiss/utils/distances.cpp b/faiss/utils/distances.cpp
-index 037f86b7..038e1c4e 100644
+index 5e025f93..e82b881e 100644
 --- a/faiss/utils/distances.cpp
 +++ b/faiss/utils/distances.cpp
-@@ -376,8 +376,9 @@ void exhaustive_L2sqr_blas<SingleBestResultHandler<CMax<float, int64_t>>>(
+@@ -388,8 +388,9 @@ void exhaustive_L2sqr_blas_cmax_avx2(
              for (int64_t i = i0; i < i1; i++) {
                  float* ip_line = ip_block.get() + (i - i0) * (j1 - j0);
  
@@ -24,7 +41,7 @@ index 037f86b7..038e1c4e 100644
  
                  // constant
                  const __m256 mul_minus2 = _mm256_set1_ps(-2);
-@@ -404,8 +405,9 @@ void exhaustive_L2sqr_blas<SingleBestResultHandler<CMax<float, int64_t>>>(
+@@ -416,8 +417,9 @@ void exhaustive_L2sqr_blas_cmax_avx2(
  
                  // process 16 elements per loop
                  for (; idx_j < (count / 16) * 16; idx_j += 16, ip_line += 16) {
@@ -36,11 +53,39 @@ index 037f86b7..038e1c4e 100644
  
                      // load values for norms
                      const __m256 y_norm_0 =
+diff --git a/faiss/utils/distances_fused/avx512.cpp b/faiss/utils/distances_fused/avx512.cpp
+index 6ae8cb04..d27a181c 100644
+--- a/faiss/utils/distances_fused/avx512.cpp
++++ b/faiss/utils/distances_fused/avx512.cpp
+@@ -78,7 +78,8 @@ void kernel(
+     const float* const __restrict xd_0 = x + i * DIM;
+ 
+     // prefetch the next point
+-    _mm_prefetch(xd_0 + DIM * sizeof(float), _MM_HINT_NTA);
++    // MSVC enforces signature: _mm_prefetch(char const*, int)
++    _mm_prefetch((char const*)(xd_0 + DIM * sizeof(float)), _MM_HINT_NTA);
+ 
+     // load a single point from x
+     // load -2 * value
+diff --git a/faiss/utils/distances_fused/simdlib_based.cpp b/faiss/utils/distances_fused/simdlib_based.cpp
+index 97ededd2..4e915fa6 100644
+--- a/faiss/utils/distances_fused/simdlib_based.cpp
++++ b/faiss/utils/distances_fused/simdlib_based.cpp
+@@ -73,7 +73,8 @@ void kernel(
+ 
+     // prefetch the next point
+ #if defined(__AVX2__)
+-    _mm_prefetch(xd_0 + DIM * sizeof(float), _MM_HINT_NTA);
++    // MSVC enforces signature: _mm_prefetch(char const*, int)
++    _mm_prefetch((char const*)(xd_0 + DIM * sizeof(float)), _MM_HINT_NTA);
+ #endif
+ 
+     // load a single point from x
 diff --git a/faiss/utils/distances_simd.cpp b/faiss/utils/distances_simd.cpp
-index ec757bd3..af9bc711 100644
+index 39195d62..72ecc9d0 100644
 --- a/faiss/utils/distances_simd.cpp
 +++ b/faiss/utils/distances_simd.cpp
-@@ -342,8 +342,9 @@ void fvec_op_ny_D4<ElementOpIP>(
+@@ -343,8 +343,9 @@ void fvec_op_ny_D4<ElementOpIP>(
  
      if (ny8 > 0) {
          // process 8 D4-vectors per loop.
@@ -52,19 +97,7 @@ index ec757bd3..af9bc711 100644
  
          // m0 = (x[0], x[0], x[0], x[0], x[0], x[0], x[0], x[0])
          const __m256 m0 = _mm256_set1_ps(x[0]);
-@@ -358,8 +359,9 @@ void fvec_op_ny_D4<ElementOpIP>(
-                 _mm256_setr_epi32(0, 16, 32, 48, 64, 80, 96, 112);
- 
-         for (i = 0; i < ny8 * 8; i += 8) {
--            _mm_prefetch(y + 32, _MM_HINT_NTA);
--            _mm_prefetch(y + 48, _MM_HINT_NTA);
-+            // MSVC enforces signature: _mm_prefetch(char const*, int)
-+            _mm_prefetch((char const*)(y + 32), _MM_HINT_NTA);
-+            _mm_prefetch((char const*)(y + 48), _MM_HINT_NTA);
- 
-             // collect dim 0 for 8 D4-vectors.
-             // v0 = (y[(i * 8 + 0) * 4 + 0], ..., y[(i * 8 + 7) * 4 + 0])
-@@ -420,8 +422,9 @@ void fvec_op_ny_D4<ElementOpL2>(
+@@ -413,8 +414,9 @@ void fvec_op_ny_D4<ElementOpL2>(
  
      if (ny8 > 0) {
          // process 8 D4-vectors per loop.
@@ -76,40 +109,25 @@ index ec757bd3..af9bc711 100644
  
          // m0 = (x[0], x[0], x[0], x[0], x[0], x[0], x[0], x[0])
          const __m256 m0 = _mm256_set1_ps(x[0]);
-@@ -436,8 +439,9 @@ void fvec_op_ny_D4<ElementOpL2>(
-                 _mm256_setr_epi32(0, 16, 32, 48, 64, 80, 96, 112);
- 
-         for (i = 0; i < ny8 * 8; i += 8) {
--            _mm_prefetch(y + 32, _MM_HINT_NTA);
--            _mm_prefetch(y + 48, _MM_HINT_NTA);
-+            // MSVC enforces signature: _mm_prefetch(char const*, int)
-+            _mm_prefetch((char const*)(y + 32), _MM_HINT_NTA);
-+            _mm_prefetch((char const*)(y + 48), _MM_HINT_NTA);
- 
-             // collect dim 0 for 8 D4-vectors.
-             // v0 = (y[(i * 8 + 0) * 4 + 0], ..., y[(i * 8 + 7) * 4 + 0])
-@@ -609,9 +613,9 @@ size_t fvec_L2sqr_ny_nearest_D4(
-         __m256i current_indices = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
-         const __m256i indices_increment = _mm256_set1_epi32(8);
- 
--        //
--        _mm_prefetch(y, _MM_HINT_NTA);
--        _mm_prefetch(y + 16, _MM_HINT_NTA);
+@@ -697,8 +699,9 @@ size_t fvec_L2sqr_ny_nearest_D2(
+     // process 8 D2-vectors per loop.
+     const size_t ny8 = ny / 8;
+     if (ny8 > 0) {
+-        _mm_prefetch(y, _MM_HINT_T0);
+-        _mm_prefetch(y + 16, _MM_HINT_T0);
 +        // MSVC enforces signature: _mm_prefetch(char const*, int)
-+        _mm_prefetch((char const*)y, _MM_HINT_NTA);
-+        _mm_prefetch((char const*)(y + 16), _MM_HINT_NTA);
++        _mm_prefetch((char const*)y, _MM_HINT_T0);
++        _mm_prefetch((char const*)(y + 16), _MM_HINT_T0);
  
-         // m0 = (x[0], x[0], x[0], x[0], x[0], x[0], x[0], x[0])
-         const __m256 m0 = _mm256_set1_ps(x[0]);
-@@ -626,8 +630,9 @@ size_t fvec_L2sqr_ny_nearest_D4(
-                 _mm256_setr_epi32(0, 16, 32, 48, 64, 80, 96, 112);
+         // track min distance and the closest vector independently
+         // for each of 8 AVX2 components.
+@@ -713,7 +716,8 @@ size_t fvec_L2sqr_ny_nearest_D2(
+         const __m256 m1 = _mm256_set1_ps(x[1]);
  
          for (; i < ny8 * 8; i += 8) {
--            _mm_prefetch(y + 32, _MM_HINT_NTA);
--            _mm_prefetch(y + 48, _MM_HINT_NTA);
+-            _mm_prefetch(y + 32, _MM_HINT_T0);
 +            // MSVC enforces signature: _mm_prefetch(char const*, int)
-+            _mm_prefetch((char const*)(y + 32), _MM_HINT_NTA);
-+            _mm_prefetch((char const*)(y + 48), _MM_HINT_NTA);
++            _mm_prefetch((char const*)(y + 32), _MM_HINT_T0);
  
-             // collect dim 0 for 8 D4-vectors.
-             // v0 = (y[(i * 8 + 0) * 4 + 0], ..., y[(i * 8 + 7) * 4 + 0])
+             __m256 v0;
+             __m256 v1;

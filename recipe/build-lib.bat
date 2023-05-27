@@ -17,19 +17,9 @@ if "%cuda_compiler_version%"=="None" (
     REM this is to support PTX JIT compilation; see first link above or cf.
     REM devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
-    REM windows support start with cuda 10.0
-    REM %MY_VAR:~0,2% selects first two characters
-    if "%cuda_compiler_version:~0,2%"=="10" (
-        set "CMAKE_CUDA_ARCHS=35-real;50-real;52-real;60-real;61-real;70-real;75"
-    )
-    if "%cuda_compiler_version:~0,2%"=="11" (
-        if "%cuda_compiler_version:~0,4%"=="11.0" (
-            REM cuda 11.0 deprecates arches 35, 50
-            set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80"
-        ) else (
-            set "CMAKE_CUDA_ARCHS=52-real;60-real;61-real;70-real;75-real;80-real;86"
-        )
-    )
+    set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86"
+    REM turn off _extremely_ noisy nvcc warnings
+    set "CUDAFLAGS=-w"
 
     set CUDA_CONFIG_ARGS=-DCMAKE_CUDA_ARCHITECTURES=!CMAKE_CUDA_ARCHS!
     REM cmake does not generate output for the call below; echo some info

@@ -1,7 +1,7 @@
-From 6e79b32c1bc15a2f7824ed4c4eaca696233d1d6c Mon Sep 17 00:00:00 2001
+From 70bb4d8697ef9f60f38172d71de4e2ea55489c6b Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sun, 14 Feb 2021 15:52:27 +0100
-Subject: [PATCH 2/9] adapt header target directory to outputname
+Subject: [PATCH 02/11] adapt header target directory to outputname
 
 ---
  faiss/CMakeLists.txt     | 20 ++++++++++++++++----
@@ -9,10 +9,10 @@ Subject: [PATCH 2/9] adapt header target directory to outputname
  2 files changed, 24 insertions(+), 5 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index fd3ddb30..2fbf67b1 100644
+index 1fea676c..72e063ab 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
-@@ -198,9 +198,14 @@ endif()
+@@ -222,9 +222,14 @@ endif()
  set(FAISS_HEADERS ${FAISS_HEADERS} PARENT_SCOPE)
  
  add_library(faiss ${FAISS_SRC})
@@ -28,7 +28,7 @@ index fd3ddb30..2fbf67b1 100644
    set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
  endif()
  if(NOT WIN32)
-@@ -257,6 +262,13 @@ else()
+@@ -281,6 +286,13 @@ else()
    target_link_libraries(faiss_avx2 PRIVATE ${LAPACK_LIBRARIES})
  endif()
  
@@ -42,7 +42,7 @@ index fd3ddb30..2fbf67b1 100644
  install(TARGETS faiss
    EXPORT faiss-targets
    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-@@ -275,7 +287,7 @@ endif()
+@@ -299,7 +311,7 @@ endif()
  foreach(header ${FAISS_HEADERS})
    get_filename_component(dir ${header} DIRECTORY )
    install(FILES ${header}
@@ -51,7 +51,7 @@ index fd3ddb30..2fbf67b1 100644
    )
  endforeach()
  
-@@ -292,9 +304,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
+@@ -316,9 +328,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/faiss-config.cmake.in
  )
  install(FILES ${PROJECT_BINARY_DIR}/cmake/faiss-config.cmake
    ${PROJECT_BINARY_DIR}/cmake/faiss-config-version.cmake
@@ -64,10 +64,10 @@ index fd3ddb30..2fbf67b1 100644
 +  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${libname}
  )
 diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
-index 5a8c4555..a46c2caa 100644
+index 6fb69476..a17b4b1d 100644
 --- a/faiss/gpu/CMakeLists.txt
 +++ b/faiss/gpu/CMakeLists.txt
-@@ -170,10 +170,17 @@ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
+@@ -169,10 +169,17 @@ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
  target_sources(faiss PRIVATE ${FAISS_GPU_SRC})
  target_sources(faiss_avx2 PRIVATE ${FAISS_GPU_SRC})
  

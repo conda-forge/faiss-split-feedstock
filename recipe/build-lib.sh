@@ -11,8 +11,7 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
-    # the following are all the x86-relevant gpu arches; for building aarch64-packages, add: 53, 62, 72
-    ARCHES=(52 60 61 70)
+    ARCHES=(53 62 72)
     if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
         # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
         LATEST_ARCH=86
