@@ -44,20 +44,6 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_cuda_compiler_version11.0cxx_compiler_version9</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_version11.0cxx_compiler_version9" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>linux_64_cuda_compiler_version11.1cxx_compiler_version10</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compiler_version11.1cxx_compiler_version10" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>linux_64_cuda_compiler_version11.2cxx_compiler_version10</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
