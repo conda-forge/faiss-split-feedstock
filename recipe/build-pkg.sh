@@ -15,6 +15,7 @@ cmake -G Ninja \
     -DFAISS_ENABLE_GPU:BOOL=${FAISS_ENABLE_GPU} \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DPython_EXECUTABLE:PATH="${PYTHON}" \
+    -DPython_ROOT_DIR:PATH="${PREFIX}" \
     -B _build_python_generic \
     faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
@@ -28,6 +29,7 @@ if [[ "${target_platform}" == *-64 ]]; then
         -DFAISS_ENABLE_GPU:BOOL=${FAISS_ENABLE_GPU} \
         -DCMAKE_BUILD_TYPE:STRING=Release \
         -DPython_EXECUTABLE:PATH="${PYTHON}" \
+        -DPython_ROOT_DIR:PATH="${PREFIX}" \
         -B _build_python_avx2 \
         faiss/python
     cmake --build _build_python_avx2 --target swigfaiss_avx2 -j $CPU_COUNT
