@@ -11,10 +11,10 @@ fi
 # Build vanilla version (no avx2), see build-lib.sh
 cmake -G Ninja \
     ${CMAKE_ARGS} \
-    -Dfaiss_ROOT=_libfaiss_generic_stage/ \
-    -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DPython_EXECUTABLE="${PYTHON}" \
+    -Dfaiss_ROOT:PATH=_libfaiss_generic_stage/ \
+    -DFAISS_ENABLE_GPU:BOOL=${FAISS_ENABLE_GPU} \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DPython_EXECUTABLE:PATH="${PYTHON}" \
     -B _build_python_generic \
     faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
@@ -23,11 +23,11 @@ cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
 if [[ "${target_platform}" == *-64 ]]; then
     cmake -G Ninja \
         ${CMAKE_ARGS} \
-        -Dfaiss_ROOT=_libfaiss_avx2_stage/ \
-        -DFAISS_OPT_LEVEL=avx2 \
-        -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DPython_EXECUTABLE="${PYTHON}" \
+        -Dfaiss_ROOT:PATH=_libfaiss_avx2_stage/ \
+        -DFAISS_OPT_LEVEL:STRING=avx2 \
+        -DFAISS_ENABLE_GPU:BOOL=${FAISS_ENABLE_GPU} \
+        -DCMAKE_BUILD_TYPE:STRING=Release \
+        -DPython_EXECUTABLE:PATH="${PYTHON}" \
         -B _build_python_avx2 \
         faiss/python
     cmake --build _build_python_avx2 --target swigfaiss_avx2 -j $CPU_COUNT

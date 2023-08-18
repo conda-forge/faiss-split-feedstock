@@ -11,10 +11,10 @@ if "%cuda_compiler_version%"=="None" (
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -G Ninja ^
     -B _build_python_generic ^
-    -Dfaiss_ROOT=_libfaiss_generic_stage ^
-    -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
-    -DCMAKE_BUILD_TYPE=Release ^
-    -DPython_EXECUTABLE="%PYTHON%" ^
+    -Dfaiss_ROOT:PATH=_libfaiss_generic_stage ^
+    -DFAISS_ENABLE_GPU:BOOL=!FAISS_ENABLE_GPU! ^
+    -DCMAKE_BUILD_TYPE:STRING=Release ^
+    -DPYTHON_EXECUTABLE:FILEPATH="%PYTHON%"      ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
@@ -24,11 +24,11 @@ if %ERRORLEVEL% neq 0 exit 1
 :: Build version with avx2 support, see build-lib.bat
 cmake -G Ninja ^
     -B _build_python_avx2 ^
-    -Dfaiss_ROOT=_libfaiss_avx2_stage ^
-    -DFAISS_OPT_LEVEL=avx2 ^
-    -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
-    -DCMAKE_BUILD_TYPE=Release ^
-    -DPython_EXECUTABLE="%PYTHON%" ^
+    -Dfaiss_ROOT:PATH=_libfaiss_avx2_stage ^
+    -DFAISS_OPT_LEVEL:STRING=avx2 ^
+    -DFAISS_ENABLE_GPU:BOOL=!FAISS_ENABLE_GPU! ^
+    -DCMAKE_BUILD_TYPE:STRING=Release ^
+    -DPYTHON_EXECUTABLE:FILEPATH="%PYTHON%"      ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
