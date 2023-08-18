@@ -15,8 +15,6 @@ cmake -G Ninja ^
     -DFAISS_ENABLE_GPU:BOOL=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE:STRING=Release ^
     -DPython_EXECUTABLE:FILEPATH="%PYTHON%" ^
-    -DPYTHON_LIBRARY:FILEPATH="%PYTHON_LIBRARY%" ^
-    -DPYTHON_INCLUDE_DIR:PATH="%PREFIX%\include" ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
@@ -31,8 +29,6 @@ cmake -G Ninja ^
     -DFAISS_ENABLE_GPU:BOOL=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE:STRING=Release ^
     -DPython_EXECUTABLE:FILEPATH="%PYTHON%" ^
-    -DPYTHON_LIBRARY:FILEPATH="%PYTHON_LIBRARY%" ^
-    -DPYTHON_INCLUDE_DIR:PATH="%PREFIX%\include" ^
     faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
