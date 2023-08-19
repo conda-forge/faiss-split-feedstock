@@ -20,6 +20,8 @@ cmake -G Ninja \
     -DPython_INCLUDE_DIRS:PATH=$(${PYTHON} -c 'from sysconfig import get_paths; print(get_paths()["include"])') \
     -DPython_LIBRARY:PATH="${PREFIX}/lib/libpython${PY_VER}.dylib" \
     -DPython_LIBRARIES:PATH="${PREFIX}/lib/libpython${PY_VER}.dylib" \
+    -DPython_NumPy_INCLUDE_DIR:PATH=$(${PYTHON} -c 'import numpy; print(numpy.get_include())') \
+    -DPython_NumPy_INCLUDE_DIRS:PATH=$(${PYTHON} -c 'import numpy; print(numpy.get_include())') \
     -B _build_python_generic \
     faiss/python
 cmake --build _build_python_generic --target swigfaiss -j $CPU_COUNT
@@ -38,6 +40,8 @@ if [[ "${target_platform}" == *-64 ]]; then
         -DPython_INCLUDE_DIRS:PATH=$(${PYTHON} -c 'from sysconfig import get_paths; print(get_paths()["include"])') \
         -DPython_LIBRARY:PATH="${PREFIX}/lib/libpython${PY_VER}.dylib" \
         -DPython_LIBRARIES:PATH="${PREFIX}/lib/libpython${PY_VER}.dylib" \
+        -DPython_NumPy_INCLUDE_DIR:PATH=$(${PYTHON} -c 'import numpy; print(numpy.get_include())') \
+        -DPython_NumPy_INCLUDE_DIRS:PATH=$(${PYTHON} -c 'import numpy; print(numpy.get_include())') \
         -B _build_python_avx2 \
         faiss/python
     cmake --build _build_python_avx2 --target swigfaiss_avx2 -j $CPU_COUNT
