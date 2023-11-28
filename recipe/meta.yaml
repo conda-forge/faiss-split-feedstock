@@ -105,9 +105,6 @@ source:
 
 build:
   number: 1
-  skip: true  # [cuda_compiler_version == "10.2"]
-  # always crashes
-  skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
 
 requirements:
   build:
