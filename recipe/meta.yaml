@@ -106,7 +106,7 @@ source:
 build:
   number: 1
   # CUDA arch builds timeout at the moment. Skip them for now.
-  skip: true  # [(aarch64 or ppc64le) and cuda_compiler != "None"]
+  skip: true  # [(aarch64 or ppc64le) and (cuda_compiler or "None") != "None"]
 
 requirements:
   build:
