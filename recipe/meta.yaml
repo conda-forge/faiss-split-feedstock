@@ -102,6 +102,7 @@ source:
     # more fixes
     - patches/0010-fix-index-type-in-openmp-loop.patch
     - patches/0011-add-missing-headers.patch
+    - patches/0012-relax_test_ivf_train_2level_threshold.patch
 
 build:
   number: 1
