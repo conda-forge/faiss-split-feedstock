@@ -1,0 +1,29 @@
+From 689028d76588135dda0ecaed80652247c1e56925 Mon Sep 17 00:00:00 2001
+From: Gergely Szilvasy <gsz@meta.com>
+Date: Mon, 26 Jun 2023 03:19:42 -0700
+Subject: [PATCH] relax test_ivf_train_2level threshold (#2927)
+
+Summary: Pull Request resolved: https://github.com/facebookresearch/faiss/pull/2927
+
+Reviewed By: mlomeli1
+
+Differential Revision: D47017009
+
+fbshipit-source-id: c475890ced18df91690d72becda710b02e7f1a0b
+---
+ tests/test_contrib.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/test_contrib.py b/tests/test_contrib.py
+index 528c779c15..898e7315fd 100644
+--- a/tests/test_contrib.py
++++ b/tests/test_contrib.py
+@@ -521,7 +521,7 @@ def test_ivf_train_2level(self):
+ 
+         # normally 47 / 200 differences
+         ndiff = (Iref != Inew).sum()
+-        self.assertLess(ndiff, 50)
++        self.assertLess(ndiff, 51)
+ 
+ 
+ class TestBigBatchSearch(unittest.TestCase):

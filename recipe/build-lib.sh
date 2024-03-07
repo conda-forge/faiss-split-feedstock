@@ -12,7 +12,12 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
     ARCHES=(53 62 72)
-    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
+    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.8") ]; then
+        # Hopper support for H100 (sm_90) needs cuda >= 11.8
+        LATEST_ARCH=90
+        # ARCHES does not contain LATEST_ARCH; see usage below
+        ARCHES=( "${ARCHES[@]}" 75 80 86)
+    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
         # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
         LATEST_ARCH=86
         # ARCHES does not contain LATEST_ARCH; see usage below

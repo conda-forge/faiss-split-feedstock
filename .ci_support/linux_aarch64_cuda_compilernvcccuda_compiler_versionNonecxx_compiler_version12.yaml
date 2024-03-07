@@ -11,13 +11,13 @@ channel_targets:
 cuda_compiler:
 - nvcc
 cuda_compiler_version:
-- '11.2'
+- None
 cxx_compiler:
 - gxx
 cxx_compiler_version:
-- '10'
+- '12'
 docker_image:
-- quay.io/condaforge/linux-anvil-aarch64-cuda:11.2
+- quay.io/condaforge/linux-anvil-aarch64
 libblas:
 - 3.9 *netlib
 liblapack:

@@ -102,12 +102,12 @@ source:
     # more fixes
     - patches/0010-fix-index-type-in-openmp-loop.patch
     - patches/0011-add-missing-headers.patch
+    - patches/0012-relax_test_ivf_train_2level_threshold.patch
 
 build:
   number: 1
-  skip: true  # [cuda_compiler_version == "10.2"]
-  # always crashes
-  skip: true  # [win and cuda_compiler_version in ("11.0", "11.1")]
+  # CUDA arch builds timeout at the moment. Skip them for now.
+  skip: true  # [not (linux64 or win64) and cuda_compiler != "None"]
 
 requirements:
   build:
