@@ -7,7 +7,7 @@ language: generic
 
 matrix:
   include:
-    - env: CONFIG=linux_aarch64_cuda_compilerNonecuda_compiler_versionNonecxx_compiler_version12 UPLOAD_PACKAGES=True PLATFORM=linux-aarch64 DOCKER_IMAGE=quay.io/condaforge/linux-anvil-aarch64
+    - env: CONFIG=linux_aarch64_cuda_compilernvcccuda_compiler_versionNonecxx_compiler_version12 UPLOAD_PACKAGES=True PLATFORM=linux-aarch64 DOCKER_IMAGE=quay.io/condaforge/linux-anvil-aarch64
       os: linux
       arch: arm64
       dist: focal
