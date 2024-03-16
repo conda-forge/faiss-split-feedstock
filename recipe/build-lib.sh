@@ -31,11 +31,10 @@ if [ ${cuda_compiler_version} != "None" ]; then
     CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${LATEST_ARCH}"
 
     FAISS_ENABLE_GPU="ON"
-    CUDA_CONFIG_ARGS+=(
-        -DCMAKE_CUDA_ARCHITECTURES="${CMAKE_CUDA_ARCHS}"
-    )
+    EXTRA="-DCMAKE_CUDA_ARCHITECTURES="${CMAKE_CUDA_ARCHS}" -DCUDA_TOOLKIT_ROOT_DIR=${CUDA_HOME} -DCMAKE_LIBRARY_PATH=${CONDA_BUILD_SYSROOT}/lib"
     # cmake does not generate output for the call below; echo some info
-    echo "Set up extra cmake-args: CUDA_CONFIG_ARGS=${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"}"
+    echo "Set up extra cmake-args: $EXTRA"
+    CMAKE_ARGS="$CMAKE_ARGS $EXTRA"
 else
     FAISS_ENABLE_GPU="OFF"
 fi
@@ -53,14 +52,13 @@ fi
 # Build version depending on $CF_FAISS_BUILD (either "generic" or "avx2")
 cmake -G Ninja \
     ${CMAKE_ARGS} \
-    -DBUILD_SHARED_LIBS=ON \
-    -DBUILD_TESTING=${BUILD_TESTING} \
-    -DFAISS_OPT_LEVEL=${CF_FAISS_BUILD} \
-    -DFAISS_ENABLE_PYTHON=OFF \
-    -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_LIBDIR=lib \
-    ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
+    -DBUILD_SHARED_LIBS:BOOL=ON \
+    -DBUILD_TESTING:BOOL=${BUILD_TESTING} \
+    -DFAISS_OPT_LEVEL:STRING=${CF_FAISS_BUILD} \
+    -DFAISS_ENABLE_PYTHON:BOOL=OFF \
+    -DFAISS_ENABLE_GPU:BOOL=${FAISS_ENABLE_GPU} \
+    -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DCMAKE_INSTALL_LIBDIR:PATH=lib \
     -B _build_${CF_FAISS_BUILD} \
     .
 
