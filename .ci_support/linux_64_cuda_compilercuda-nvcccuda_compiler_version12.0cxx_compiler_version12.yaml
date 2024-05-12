@@ -1,13 +1,13 @@
 cdt_name:
-- cos6
+- cos7
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 cuda_compiler:
-- None
+- cuda-nvcc
 cuda_compiler_version:
-- None
+- '12.0'
 cxx_compiler:
 - gxx
 cxx_compiler_version:
@@ -19,10 +19,10 @@ libblas:
 liblapack:
 - 3.9 *netlib
 numpy:
-- '1.21'
+- '1.22'
 - '1.23'
-- '1.21'
-- '1.21'
+- '1.22'
+- '1.22'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -36,9 +36,9 @@ target_platform:
 - linux-64
 zip_keys:
 - - cxx_compiler_version
+  - cdt_name
   - cuda_compiler
   - cuda_compiler_version
-  - cdt_name
   - docker_image
 - - python
   - numpy

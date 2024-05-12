@@ -1,25 +1,17 @@
-MACOSX_DEPLOYMENT_TARGET:
-- '11.0'
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 cuda_compiler:
-- None
+- nvcc
 cuda_compiler_version:
-- None
+- '11.2'
 cxx_compiler:
-- clangxx
-cxx_compiler_version:
-- '16'
+- vs2019
 libblas:
 - 3.9 *netlib
 liblapack:
 - 3.9 *netlib
-llvm_openmp:
-- '16'
-macos_machine:
-- arm64-apple-darwin20.0.0
 numpy:
 - '1.22'
 - '1.23'
@@ -35,7 +27,9 @@ python:
 - 3.8.* *_cpython
 - 3.9.* *_cpython
 target_platform:
-- osx-arm64
+- win-64
 zip_keys:
+- - cuda_compiler
+  - cuda_compiler_version
 - - python
   - numpy
