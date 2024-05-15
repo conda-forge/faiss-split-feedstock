@@ -1,4 +1,4 @@
-{% set version = "1.7.4" %}
+{% set version = "1.8.0" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -78,7 +78,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: d9a7b31bf7fd6eb32c10b7ea7ff918160eed5be04fe63bb7b4b4b5f2bbde01ad
+  sha256: 56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c
   patches:
     - patches/0001-use-c-17.patch
     # downgrade to C++14 for resp. CUDA 11.1 on linux
