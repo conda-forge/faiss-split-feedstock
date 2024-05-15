@@ -80,28 +80,22 @@ source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
   sha256: 56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c
   patches:
-    - patches/0001-use-c-17.patch
-    # downgrade to C++14 for resp. CUDA 11.1 on linux
-    - patches/0001-use-c-14.patch  # [linux and (cuda_compiler_version == "11.1")]
-    # adapt header target directory for faiss_avx2
-    - patches/0002-adapt-header-target-directory-to-outputname.patch
+    - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
-    - patches/0003-skip-test_stress-for-GPU-on-windows.patch
+    - patches/0002-skip-test_stress-for-GPU-on-windows.patch
     # enable building libfaiss_avx2 without libfaiss
-    - patches/0004-enable-building-libfaiss_avx2-without-libfaiss.patch
+    - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
     # increase tolerance for test that occasionally fails marginally
-    - patches/0005-increase-tolerance-for-marginally-failing-test.patch
+    - patches/0004-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
-    - patches/0006-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+    - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
     # patch out use of non-portable GCC SIMD extension
-    - patches/0007-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
-    # the _mm_prefetch of MSVC is stricter about which types it accepts
-    - patches/0008-ensure-_mm_prefetch-gets-char-not-float-as-first-arg.patch
+    - patches/0006-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
     # due to switch to ninja
-    - patches/0009-no-more-Release-subfolder.patch
+    - patches/0007-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0010-fix-index-type-in-openmp-loop.patch
-    - patches/0011-add-missing-headers.patch
+    - patches/0008-fix-index-type-in-openmp-loop.patch
+    - patches/0009-add-missing-headers.patch
 
 build:
   number: 0
