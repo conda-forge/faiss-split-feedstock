@@ -59,6 +59,7 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
@@ -97,6 +98,7 @@ outputs:
         - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
         # necessary for conda-build to build the python bindings per version
@@ -141,6 +143,7 @@ outputs:
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
         - swig
