@@ -8,6 +8,11 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
+# see https://github.com/swig/swig/issues/568
+if [[ "${target_platform}" == linux-* ]]; then
+    export CXXFLAGS="$CXXFLAGS -DSWIGWORDSIZE64"
+fi
+
 # Build vanilla version (no avx2), see build-lib.sh
 cmake -G Ninja \
     ${CMAKE_ARGS} \
