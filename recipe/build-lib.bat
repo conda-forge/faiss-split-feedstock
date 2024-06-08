@@ -17,7 +17,11 @@ if "%cuda_compiler_version%"=="None" (
     REM this is to support PTX JIT compilation; see first link above or cf.
     REM devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
-    set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86"
+    if "%cuda_compiler_version%"=="11.8" (
+        set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89"
+    ) else if "%cuda_compiler_version%"=="12.0" (
+        set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
+    )
     REM turn off _extremely_ noisy nvcc warnings
     set "CUDAFLAGS=-w"
 
