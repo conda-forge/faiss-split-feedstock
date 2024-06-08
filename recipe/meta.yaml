@@ -58,8 +58,9 @@ build:
 
 requirements:
   build:
-    - {{ compiler('cxx') }}
     - {{ stdlib('c') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
 
 outputs:
   # A meta-package to select CPU or GPU build for faiss.
