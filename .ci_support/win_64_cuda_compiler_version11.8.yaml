@@ -1,23 +1,15 @@
 c_stdlib:
-- sysroot
-c_stdlib_version:
-- '2.17'
-cdt_name:
-- cos7
+- vs
 channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
 cuda_compiler:
-- None
+- nvcc
 cuda_compiler_version:
-- None
+- '11.8'
 cxx_compiler:
-- gxx
-cxx_compiler_version:
-- '12'
-docker_image:
-- quay.io/condaforge/linux-anvil-cos7-x86_64
+- vs2019
 libblas:
 - 3.9 *netlib
 liblapack:
@@ -25,6 +17,7 @@ liblapack:
 numpy:
 - '1.22'
 - '1.23'
+- '1.26'
 - '1.22'
 - '1.22'
 pin_run_as_build:
@@ -34,16 +27,13 @@ pin_run_as_build:
 python:
 - 3.10.* *_cpython
 - 3.11.* *_cpython
+- 3.12.* *_cpython
 - 3.8.* *_cpython
 - 3.9.* *_cpython
 target_platform:
-- linux-ppc64le
+- win-64
 zip_keys:
-- - cxx_compiler_version
-  - c_stdlib_version
-  - cdt_name
-  - cuda_compiler
+- - cuda_compiler
   - cuda_compiler_version
-  - docker_image
 - - python
   - numpy
