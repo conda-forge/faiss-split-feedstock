@@ -1,9 +1,6 @@
 #!/bin/bash
 set -ex
 
-# function for facilitate version comparison; cf. https://stackoverflow.com/a/37939589
-function version2int { echo "$@" | awk -F. '{ printf("%d%02d\n", $1, $2); }'; }
-
 declare -a CUDA_CONFIG_ARGS
 if [ ${cuda_compiler_version} != "None" ]; then
     # for documentation see e.g.
@@ -11,24 +8,15 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-feature-list
 
-    ARCHES=(53 62 72)
-    if [ $(version2int $cuda_compiler_version) -ge $(version2int "11.1") ]; then
-        # Ampere support for GeForce 30 (sm_86) needs cuda >= 11.1
-        LATEST_ARCH=86
-        # ARCHES does not contain LATEST_ARCH; see usage below
-        ARCHES=( "${ARCHES[@]}" 75 80 )
-    elif [ $(version2int $cuda_compiler_version) -ge $(version2int "11.0") ]; then
-        # Ampere support for A100 (sm_80) needs cuda >= 11.0
-        LATEST_ARCH=80
-        ARCHES=( "${ARCHES[@]}" 75 )
-    fi
-    for arch in "${ARCHES[@]}"; do
-        CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${arch}-real"
-    done
     # for -real vs. -virtual, see cmake.org/cmake/help/latest/prop_tgt/CUDA_ARCHITECTURES.html
     # this is to support PTX JIT compilation; see first link above or cf.
     # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
-    CMAKE_CUDA_ARCHS="${CMAKE_CUDA_ARCHS+${CMAKE_CUDA_ARCHS};}${LATEST_ARCH}"
+
+    if [[ ${cuda_compiler_version} == 11.8 ]]; then
+        export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89"
+    elif [[ ${cuda_compiler_version} == 12.0 ]]; then
+        export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
+    fi
 
     FAISS_ENABLE_GPU="ON"
     CUDA_CONFIG_ARGS+=(
