@@ -219,6 +219,20 @@ outputs:
         {% set skips = skips + " or (TestPCA and test_pca)" %}                             # [aarch64]
         {% set skips = skips + " or test_PQ4_speed" %}                                     # [aarch64]
         {% set skips = skips + " or test_update_codebooks" %}                              # [aarch64]
+        # a test run in emulation takes ~2.5h on the fastest agents,
+        # and over 5h on a slow one; we need to skip some of the
+        # longest-running tests to have a chance of finishing
+        {% if aarch64 or ppc64le %}
+            # test modules that may take 2h or more on a slow agent
+            {% set skips = skips + " or test_index_accuracy.py" %}
+            {% set skips = skips + " or test_fast_scan.py" %}
+            # other really slow tests
+            {% set skips = skips + " or (test_merge_index.py and TestMerge1)" %}
+            {% set skips = skips + " or (test_meta_index.py and IDRemap)" %}
+            {% set skips = skips + " or (TestClone and AdditiveQuantizer)" %}
+            {% set skips = skips + " or (TestIndexProduct and test_accuracy1)" %}
+            {% set skips = skips + " or test_wrapped_quantizer_HNSW" %}
+        {% endif %}
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
