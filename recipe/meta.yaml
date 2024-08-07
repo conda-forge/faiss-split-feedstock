@@ -57,7 +57,8 @@ source:
     - patches/0007-no-more-Release-subfolder.patch
     # more fixes
     - patches/0008-fix-index-type-in-openmp-loop.patch
-    - patches/0009-add-missing-headers.patch
+    # compare https://github.com/facebookresearch/faiss/pull/2927
+    - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
 
 build:
   number: 0
