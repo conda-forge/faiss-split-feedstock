@@ -2,6 +2,12 @@
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
+{% if cuda_compiler_version != "None" %}
+{% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0] | int %}
+{% else %}
+{% set cuda_major = 0 %}
+{% endif %}
+
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
 # see https://github.com/facebookresearch/faiss/blob/v{{ version }}/faiss/CMakeLists.txt;
 # gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'.
@@ -88,16 +94,30 @@ outputs:
       build:
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
-        - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
+        - {{ compiler('cuda') }}    # [cuda_compiler_version != "None"]
         # necessary for conda-build to build the python bindings per version
-        - python                  # [build_platform != target_platform]
+        - python                    # [build_platform != target_platform]
         - cmake
         - ninja
+        {% if cuda_major >= 12 %}
+        - cuda-version {{ cuda_compiler_version }}  # [build_platform != target_platform]
+        - cuda-cudart-dev           # [build_platform != target_platform]
+        - cuda-profiler-api         # [build_platform != target_platform]
+        - libcublas-dev             # [build_platform != target_platform]
+        - libcurand-dev             # [build_platform != target_platform]
+        {% endif %}
       host:
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
         - libblas
         - liblapack
+        {% if cuda_major >= 12 %}
+        - cuda-version {{ cuda_compiler_version }}
+        - cuda-cudart-dev
+        - cuda-profiler-api
+        - libcublas-dev
+        - libcurand-dev
+        {% endif %}
       run_constrained:
         - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
         - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
@@ -148,6 +168,10 @@ outputs:
         - liblapack
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
+        {% if cuda_major >= 12 %}
+        - cuda-version {{ cuda_compiler_version }}
+        - libcublas-dev                       # [win]
+        {% endif %}
       run:
         - python
         - packaging
