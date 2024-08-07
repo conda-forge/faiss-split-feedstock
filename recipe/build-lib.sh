@@ -28,7 +28,7 @@ else
     FAISS_ENABLE_GPU="OFF"
 fi
 
-if [[ $target_platform == osx-* ]] && [[ $CF_FAISS_BUILD == avx2 ]]; then
+if [[ $target_platform == osx-* ]]; then
     # OSX CI has no AVX2 support
     BUILD_TESTING="OFF"
 elif [[ $target_platform == osx-arm64 ]]; then
@@ -43,21 +43,14 @@ cmake -G Ninja \
     ${CMAKE_ARGS} \
     -DBUILD_SHARED_LIBS=ON \
     -DBUILD_TESTING=${BUILD_TESTING} \
-    -DFAISS_OPT_LEVEL=${CF_FAISS_BUILD} \
     -DFAISS_ENABLE_PYTHON=OFF \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
-    -B _build_${CF_FAISS_BUILD} \
+    -B _build \
     .
 
-if [[ $CF_FAISS_BUILD == avx2 ]]; then
-    TARGET="faiss_avx2"
-else
-    TARGET="faiss"
-fi
-
-cmake --build _build_${CF_FAISS_BUILD} --target ${TARGET} -j $CPU_COUNT
-cmake --install _build_${CF_FAISS_BUILD} --prefix $PREFIX
-cmake --install _build_${CF_FAISS_BUILD} --prefix _libfaiss_${CF_FAISS_BUILD}_stage/
+cmake --build _build --target "faiss" -j $CPU_COUNT
+cmake --install _build --prefix $PREFIX
+cmake --install _build --prefix _libfaiss_stage/

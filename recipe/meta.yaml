@@ -72,31 +72,18 @@ outputs:
       commands:
         - exit 0
 
-  # build two separate C++ libs, one generic, and one for AVX2 on x86_64
-  {% set CF_FAISS_BUILD_OPTS = ["generic"] %}
-  {% set CF_FAISS_BUILD_OPTS = ["avx2"] + CF_FAISS_BUILD_OPTS %}  # [x86_64]
-  {% for CF_FAISS_BUILD in CF_FAISS_BUILD_OPTS %}
-  # order libfaiss last in loop due to conda/conda-build#4090; libfaiss-avx2
-  # is only used for faiss and not important enough to work-around for this bug
-  {% if CF_FAISS_BUILD == "generic" %}
   - name: libfaiss
-  {% else %}
-  - name: libfaiss-avx2
-  {% endif %}
-  {% set libext = "_avx2" if CF_FAISS_BUILD == "avx2" else "" %}
-    # only one main build script build-lib.{bat|sh}, with the only difference
-    # through CF_FAISS_BUILD={generic,avx2} that's set in the wrappers
-    script: build-lib-{{ CF_FAISS_BUILD }}.sh   # [not win]
-    script: build-lib-{{ CF_FAISS_BUILD }}.bat  # [win]
+    script: build-lib.sh    # [unix]
+    script: build-lib.bat   # [win]
     build:
       string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
-        - libfaiss{{ libext }} >={{ version }},<2
+        - libfaiss >={{ version }},<2
         # additionally, we need to ensure matching proc-type
-        - libfaiss{{ libext }} =*=*_{{ faiss_proc_type }}
+        - libfaiss =*=*_{{ faiss_proc_type }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -119,22 +106,21 @@ outputs:
     test:
       commands:
         # shared
-        - test -f $PREFIX/lib/libfaiss{{ libext }}.so               # [linux]
-        - test -f $PREFIX/lib/libfaiss{{ libext }}.dylib            # [osx]
-        - if not exist %LIBRARY_BIN%\faiss{{ libext }}.dll exit 1   # [win]
+        - test -f $PREFIX/lib/libfaiss.so               # [linux]
+        - test -f $PREFIX/lib/libfaiss.dylib            # [osx]
+        - if not exist %LIBRARY_BIN%\faiss.dll exit 1   # [win]
         # On windows, faiss.lib is an "import library";
         # Deleting it breaks the faiss-builds
-        - if not exist %LIBRARY_LIB%\faiss{{ libext }}.lib exit 1   # [win]
+        - if not exist %LIBRARY_LIB%\faiss.lib exit 1   # [win]
 
         # absence of static libraries
-        - test ! -f $PREFIX/lib/libfaiss{{ libext }}.a              # [not win]
+        - test ! -f $PREFIX/lib/libfaiss.a              # [unix]
 
         # headers
         {% for each_header in headers %}
-        - test -f $PREFIX/include/faiss{{ libext }}/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
-        - if not exist %LIBRARY_INC%\faiss{{ libext }}\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
+        - test -f $PREFIX/include/faiss/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
+        - if not exist %LIBRARY_INC%\faiss\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
         {% endfor %}
-  {% endfor %}
 
   - name: faiss
     script: build-pkg.sh          # [not win]
@@ -160,14 +146,12 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [x86_64]
         - libblas
         - liblapack
       run:
         - python
         - packaging
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libfaiss-avx2 ={{ version }}=*_{{ faiss_proc_type }}  # [x86_64]
         - {{ pin_compatible('numpy') }}
       run_constrained:
         - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
@@ -205,9 +189,8 @@ outputs:
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
-        - export HAS_AVX2=YES && export SKIPS="({{ skips }})" && ./test-pkg.sh  # [linux and x86_64]
-        - export HAS_AVX2=NO  && export SKIPS="({{ skips }})" && ./test-pkg.sh  # [osx or (linux and not x86_64)]
-        - set "HAS_AVX2=YES"  && set "SKIPS=({{ skips }})"    && test-pkg.bat   # [win]
+        - export SKIPS="({{ skips }})" && ./test-pkg.sh  # [unix]
+        - set "SKIPS=({{ skips }})"    && test-pkg.bat   # [win]
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/

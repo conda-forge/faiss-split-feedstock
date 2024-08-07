@@ -35,29 +35,23 @@ cmake -G Ninja ^
     %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
-    -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
     -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
     -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
-    -B _build_%CF_FAISS_BUILD% ^
+    -B _build ^
     !CUDA_CONFIG_ARGS! ^
     .
 if %ERRORLEVEL% neq 0 exit 1
 
-if "%CF_FAISS_BUILD%"=="avx2" (
-    set "TARGET=faiss_avx2"
-) else (
-    set "TARGET=faiss"
-)
 
-cmake --build _build_%CF_FAISS_BUILD% --target %TARGET% --config Release -j %CPU_COUNT%
+cmake --build _build --target faiss --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
+cmake --install _build --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
 :: will be reused in build-pkg.bat
-cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix _libfaiss_%CF_FAISS_BUILD%_stage
+cmake --install _build --config Release --prefix _libfaiss_stage
 if %ERRORLEVEL% neq 0 exit 1
