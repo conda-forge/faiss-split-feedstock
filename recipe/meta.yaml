@@ -183,6 +183,10 @@ outputs:
         - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
+    {% if not (aarch64 or ppc64le) or py == 311 %}
+    # only run the full test suite for one python version when in emulation
+    # (each run can take up to 5h!); there's essentially zero divergence
+    # in behaviour across python versions anyway
     test:
       requires:
         # trying to test all blas-variants runs into conda/conda-build#3947
@@ -219,6 +223,7 @@ outputs:
 
         # running the following test requires an actual GPU device, which is not available in CI
         # - pytest faiss/gpu/test/
+    {% endif %}
 
   # for compatibility with (& ease of migration from) existing packages in the pytorch channel
   - name: faiss-cpu
