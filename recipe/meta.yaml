@@ -93,9 +93,9 @@ outputs:
         - python                  # [build_platform != target_platform]
         - cmake
         - ninja
-        - libgomp                 # [linux]
-        - llvm-openmp             # [osx]
       host:
+        - libgomp                   # [linux]
+        - llvm-openmp               # [osx]
         - libblas
         - liblapack
       run_constrained:
@@ -136,8 +136,6 @@ outputs:
         - swig
         - cmake
         - ninja
-        - libgomp                             # [linux]
-        - llvm-openmp                         # [osx]
         - python                              # [build_platform != target_platform]
         - cross-python_{{ target_platform }}  # [build_platform != target_platform]
         - numpy                               # [build_platform != target_platform]
@@ -148,6 +146,8 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libblas
         - liblapack
+        - libgomp                             # [linux]
+        - llvm-openmp                         # [osx]
       run:
         - python
         - packaging
