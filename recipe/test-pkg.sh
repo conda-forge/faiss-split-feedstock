@@ -2,7 +2,7 @@
 set -ex
 
 python -c "from numpy.core._multiarray_umath import __cpu_features__; print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))"
-pytest tests --log-file-level=INFO --log-file=log.txt -k "not $SKIPS"
+pytest tests --log-file-level=INFO --log-file=log.txt -k "not $SKIPS" --durations=50
 cat log.txt && sleep 2
 
 # this should have run without AVX2
