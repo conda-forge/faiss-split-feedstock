@@ -59,6 +59,7 @@ source:
     - patches/0008-fix-index-type-in-openmp-loop.patch
     # compare https://github.com/facebookresearch/faiss/pull/2927
     - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
+    - patches/0010-don-t-hide-faiss-gpu-symbols-temporaril-install-fais.patch   # [win]
 
 build:
   number: 0
@@ -130,12 +131,12 @@ outputs:
         - test -f $PREFIX/lib/libfaiss.so               # [linux]
         - test -f $PREFIX/lib/libfaiss.dylib            # [osx]
         - if not exist %LIBRARY_BIN%\faiss.dll exit 1   # [win]
-        # On windows, faiss.lib is an "import library";
-        # Deleting it breaks the faiss-builds
         - if not exist %LIBRARY_LIB%\faiss.lib exit 1   # [win]
 
         # absence of static libraries
         - test ! -f $PREFIX/lib/libfaiss.a              # [unix]
+        - test ! -f $PREFIX/lib/libfaiss_gpu.a          # [unix]
+        - if exist %LIBRARY_LIB%\faiss_gpu.lib exit 1   # [win]
 
         # headers
         {% for each_header in headers %}

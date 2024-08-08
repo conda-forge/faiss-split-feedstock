@@ -52,6 +52,14 @@ if %ERRORLEVEL% neq 0 exit 1
 
 cmake --install . --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
+
+:: we patched the CMake build to install faiss_gpu.lib, but we only want this for
+:: _libfaiss_stage, not the actual output; normally, this library is supposed to
+:: be consumed completely, however due to the way that `LINK_LIBRARY:WHOLE_ARCHIVE`
+:: works on windows, it still needs to be available when we want to link swigfaiss; c.f.
+:: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#link-features
+del %LIBRARY_LIB%\faiss_gpu.lib
+
 :: will be reused in build-pkg.bat
 cmake --install . --config Release --prefix _libfaiss_stage
 if %ERRORLEVEL% neq 0 exit 1
