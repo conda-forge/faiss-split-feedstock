@@ -112,8 +112,8 @@ outputs:
       host:
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
-        - libblas
-        - liblapack
+        - libblas                   # [not osx]
+        - liblapack                 # [not osx]
         {% if cuda_major >= 12 %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -122,8 +122,8 @@ outputs:
         - libcurand-dev
         {% endif %}
       run_constrained:
-        - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
-        - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
+        - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
+        - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
     test:
@@ -167,8 +167,6 @@ outputs:
         - pip
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libblas
-        - liblapack
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
         {% if cuda_major >= 12 %}
@@ -179,10 +177,9 @@ outputs:
         - python
         - packaging
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - {{ pin_compatible('numpy') }}
       run_constrained:
-        - faiss-cpu ==9999999999  # [cuda_compiler_version != "None"]
-        - faiss-gpu ==9999999999  # [cuda_compiler_version == "None"]
+        - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
+        - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
     {% if not (aarch64 or ppc64le) or py == 311 %}
