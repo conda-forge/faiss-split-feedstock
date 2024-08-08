@@ -1,7 +1,7 @@
 From 3f4f89cfdd6d5dcb1c63d7f797df61040710232d Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sat, 5 Jun 2021 16:29:53 +0200
-Subject: [PATCH 5/9] add /bigobj to swigfaiss compile options on windows
+Subject: [PATCH 05/10] add /bigobj to swigfaiss compile options on windows
 
 ---
  faiss/python/CMakeLists.txt | 2 ++
