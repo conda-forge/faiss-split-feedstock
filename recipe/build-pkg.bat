@@ -11,6 +11,9 @@ if "%cuda_compiler_version%"=="None" (
 mkdir build_python
 pushd build_python
 
+:: for picking up faiss_gpu.lib from _libfaiss_stage, see build-lib.bat
+set "LDFLAGS=%LDFLAGS% /LIBPATH:%SRC_DIR:\=/%/build/_libfaiss_stage"
+
 :: Build vanilla version (no avx2), see build-lib.bat
 cmake -G Ninja ^
     -Dfaiss_ROOT=_libfaiss_stage ^
