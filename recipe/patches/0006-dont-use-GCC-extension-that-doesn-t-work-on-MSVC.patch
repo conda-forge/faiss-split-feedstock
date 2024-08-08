@@ -1,0 +1,102 @@
+From b49b58f8de1a926a65ac9db07aa69c42d8e07bdd Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 25 May 2023 12:24:52 +1100
+Subject: [PATCH 06/11] dont use GCC extension that doesn't work on MSVC
+
+see https://stackoverflow.com/a/68939636
+---
+ faiss/impl/code_distance/code_distance-avx2.h   | 10 +++++-----
+ faiss/impl/code_distance/code_distance_avx512.h |  8 ++++----
+ faiss/utils/hamming_distance/avx2-inl.h         | 12 ++++++------
+ 3 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/faiss/impl/code_distance/code_distance-avx2.h b/faiss/impl/code_distance/code_distance-avx2.h
+index 0aa1535b..081844b0 100644
+--- a/faiss/impl/code_distance/code_distance-avx2.h
++++ b/faiss/impl/code_distance/code_distance-avx2.h
+@@ -283,7 +283,7 @@ typename std::enable_if<std::is_same<PQDecoderT, PQDecoder8>::value, float>::
+         // loop
+         for (m = 0; m < pqM16 * 16; m += 16) {
+             // load 16 uint8 values
+-            const __m128i mm1 = _mm_loadu_si128((const __m128i_u*)(code + m));
++            const __m128i mm1 = _mm_loadu_si128((const __m128i*)(code + m));
+             {
+                 // convert uint8 values (low part of __m128i) to int32
+                 // values
+@@ -451,10 +451,10 @@ distance_four_codes_avx2(
+         for (m = 0; m < pqM16 * 16; m += 16) {
+             // load 16 uint8 values
+             __m128i mm1[N];
+-            mm1[0] = _mm_loadu_si128((const __m128i_u*)(code0 + m));
+-            mm1[1] = _mm_loadu_si128((const __m128i_u*)(code1 + m));
+-            mm1[2] = _mm_loadu_si128((const __m128i_u*)(code2 + m));
+-            mm1[3] = _mm_loadu_si128((const __m128i_u*)(code3 + m));
++            mm1[0] = _mm_loadu_si128((const __m128i*)(code0 + m));
++            mm1[1] = _mm_loadu_si128((const __m128i*)(code1 + m));
++            mm1[2] = _mm_loadu_si128((const __m128i*)(code2 + m));
++            mm1[3] = _mm_loadu_si128((const __m128i*)(code3 + m));
+ 
+             // process first 8 codes
+             for (intptr_t j = 0; j < N; j++) {
+diff --git a/faiss/impl/code_distance/code_distance_avx512.h b/faiss/impl/code_distance/code_distance_avx512.h
+index 296e0df1..7673491c 100644
+--- a/faiss/impl/code_distance/code_distance_avx512.h
++++ b/faiss/impl/code_distance/code_distance_avx512.h
+@@ -48,10 +48,10 @@
+ // //         for (m = 0; m < pqM16 * 16; m += 16) {
+ // //             // load 16 uint8 values
+ // //             __m128i mm1[N];
+-// //             mm1[0] = _mm_loadu_si128((const __m128i_u*)(code0 + m));
+-// //             mm1[1] = _mm_loadu_si128((const __m128i_u*)(code1 + m));
+-// //             mm1[2] = _mm_loadu_si128((const __m128i_u*)(code2 + m));
+-// //             mm1[3] = _mm_loadu_si128((const __m128i_u*)(code3 + m));
++// //             mm1[0] = _mm_loadu_si128((const __m128i*)(code0 + m));
++// //             mm1[1] = _mm_loadu_si128((const __m128i*)(code1 + m));
++// //             mm1[2] = _mm_loadu_si128((const __m128i*)(code2 + m));
++// //             mm1[3] = _mm_loadu_si128((const __m128i*)(code3 + m));
+ 
+ // //             // process first 8 codes
+ // //             for (intptr_t j = 0; j < N; j++) {
+diff --git a/faiss/utils/hamming_distance/avx2-inl.h b/faiss/utils/hamming_distance/avx2-inl.h
+index 5cdc6a2b..7937adc6 100644
+--- a/faiss/utils/hamming_distance/avx2-inl.h
++++ b/faiss/utils/hamming_distance/avx2-inl.h
+@@ -382,11 +382,11 @@ struct GenHammingComputer16 {
+ 
+     GenHammingComputer16(const uint8_t* a8, int code_size) {
+         assert(code_size == 16);
+-        a = _mm_loadu_si128((const __m128i_u*)a8);
++        a = _mm_loadu_si128((const __m128i*)a8);
+     }
+ 
+     inline int hamming(const uint8_t* b8) const {
+-        const __m128i b = _mm_loadu_si128((const __m128i_u*)b8);
++        const __m128i b = _mm_loadu_si128((const __m128i*)b8);
+         const __m128i cmp = _mm_cmpeq_epi8(a, b);
+         const auto movemask = _mm_movemask_epi8(cmp);
+         return 16 - popcount32(movemask);
+@@ -402,11 +402,11 @@ struct GenHammingComputer32 {
+ 
+     GenHammingComputer32(const uint8_t* a8, int code_size) {
+         assert(code_size == 32);
+-        a = _mm256_loadu_si256((const __m256i_u*)a8);
++        a = _mm256_loadu_si256((const __m256i*)a8);
+     }
+ 
+     inline int hamming(const uint8_t* b8) const {
+-        const __m256i b = _mm256_loadu_si256((const __m256i_u*)b8);
++        const __m256i b = _mm256_loadu_si256((const __m256i*)b8);
+         const __m256i cmp = _mm256_cmpeq_epi8(a, b);
+         const uint32_t movemask = _mm256_movemask_epi8(cmp);
+         return 32 - popcount32(movemask);
+@@ -440,8 +440,8 @@ struct GenHammingComputerM8 {
+         int i = 0;
+         int n4 = (n / 4) * 4;
+         for (; i < n4; i += 4) {
+-            const __m256i av = _mm256_loadu_si256((const __m256i_u*)(a + i));
+-            const __m256i bv = _mm256_loadu_si256((const __m256i_u*)(b + i));
++            const __m256i av = _mm256_loadu_si256((const __m256i*)(a + i));
++            const __m256i bv = _mm256_loadu_si256((const __m256i*)(b + i));
+             const __m256i cmp = _mm256_cmpeq_epi8(av, bv);
+             const uint32_t movemask = _mm256_movemask_epi8(cmp);
+             accu += 32 - popcount32(movemask);
