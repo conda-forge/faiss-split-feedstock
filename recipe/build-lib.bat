@@ -30,7 +30,9 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
-:: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+mkdir build
+cd build
+
 cmake -G Ninja ^
     %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
@@ -41,17 +43,15 @@ cmake -G Ninja ^
     -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
     -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
     -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
-    -B _build ^
     !CUDA_CONFIG_ARGS! ^
-    .
+    ..
 if %ERRORLEVEL% neq 0 exit 1
 
-
-cmake --build _build --target faiss --config Release -j %CPU_COUNT%
+cmake --build . --target faiss --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build --config Release --prefix %PREFIX%
+cmake --install . --config Release --prefix %PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
 :: will be reused in build-pkg.bat
-cmake --install _build --config Release --prefix _libfaiss_stage
+cmake --install . --config Release --prefix _libfaiss_stage
 if %ERRORLEVEL% neq 0 exit 1

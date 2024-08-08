@@ -13,19 +13,22 @@ if [[ "${target_platform}" == linux-* ]]; then
     export CXXFLAGS="$CXXFLAGS -DSWIGWORDSIZE64"
 fi
 
+mkdir build_python
+pushd build_python
+
 # Build vanilla version (no avx2), see build-lib.sh
 cmake -G Ninja \
     ${CMAKE_ARGS} \
     -Dfaiss_ROOT=_libfaiss_stage/ \
     -DCMAKE_BUILD_TYPE=Release \
     -DPython_NumPy_INCLUDE_DIR=$SP_DIR/numpy/core/include \
-    -B _build_python \
-    faiss/python
-cmake --build _build_python --target swigfaiss -j $CPU_COUNT
+    ../faiss/python
+
+cmake --build . --target swigfaiss -j $CPU_COUNT
 
 # Build actual python module.
-pushd _build_python
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
+
 popd
 # clean up cmake-cache between builds
-rm -r _build_python
+rm -r build_python

@@ -38,7 +38,9 @@ else
     BUILD_TESTING="ON"
 fi
 
-# Build version depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+mkdir build
+cd build
+
 cmake -G Ninja \
     ${CMAKE_ARGS} \
     -DBUILD_SHARED_LIBS=ON \
@@ -48,9 +50,8 @@ cmake -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
-    -B _build \
-    .
+    ..
 
-cmake --build _build --target "faiss" -j $CPU_COUNT
-cmake --install _build --prefix $PREFIX
-cmake --install _build --prefix _libfaiss_stage/
+cmake --build . --target "faiss" -j $CPU_COUNT
+cmake --install . --prefix $PREFIX
+cmake --install . --prefix _libfaiss_stage/
