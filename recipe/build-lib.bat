@@ -40,9 +40,6 @@ cmake -G Ninja ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
-    -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
-    -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
     !CUDA_CONFIG_ARGS! ^
     ..
 if %ERRORLEVEL% neq 0 exit 1
@@ -50,7 +47,7 @@ if %ERRORLEVEL% neq 0 exit 1
 cmake --build . --target faiss --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install . --config Release --prefix %PREFIX%
+cmake --install . --config Release --prefix %LIBRARY_PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: we patched the CMake build to install faiss_gpu.lib, but we only want this for
