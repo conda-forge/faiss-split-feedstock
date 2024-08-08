@@ -1,0 +1,23 @@
+From ad02763ac9a39cc3dcc89a88c05d35f4e8b1dd60 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Wed, 7 Aug 2024 16:21:52 +1100
+Subject: [PATCH 09/11] loosen test tolerance in test_ivf_train_2level
+
+compare https://github.com/facebookresearch/faiss/commit/391601dc3f4793e10aaf9d21f5bbe2a94ecf4f50
+---
+ tests/test_contrib.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/test_contrib.py b/tests/test_contrib.py
+index 84b90a4e..75be43b0 100644
+--- a/tests/test_contrib.py
++++ b/tests/test_contrib.py
+@@ -551,7 +551,7 @@ class TestClustering(unittest.TestCase):
+ 
+         # normally 47 / 200 differences
+         ndiff = (Iref != Inew).sum()
+-        self.assertLess(ndiff, 51)
++        self.assertLess(ndiff, 53)
+ 
+ 
+ class TestBigBatchSearch(unittest.TestCase):

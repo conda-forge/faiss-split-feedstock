@@ -17,7 +17,11 @@ if "%cuda_compiler_version%"=="None" (
     REM this is to support PTX JIT compilation; see first link above or cf.
     REM devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
-    set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86"
+    if "%cuda_compiler_version%"=="11.8" (
+        set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89"
+    ) else if "%cuda_compiler_version%"=="12.0" (
+        set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
+    )
     REM turn off _extremely_ noisy nvcc warnings
     set "CUDAFLAGS=-w"
 
@@ -26,34 +30,33 @@ if "%cuda_compiler_version%"=="None" (
     echo Set up extra cmake-args: CUDA_CONFIG_ARGS=!CUDA_CONFIG_ARGS!
 )
 
-:: Build faiss.dll depending on $CF_FAISS_BUILD (either "generic" or "avx2")
+mkdir build
+cd build
+
 cmake -G Ninja ^
     %CMAKE_ARGS% ^
     -DBUILD_SHARED_LIBS=ON ^
     -DBUILD_TESTING=OFF ^
-    -DFAISS_OPT_LEVEL=%CF_FAISS_BUILD% ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_BINDIR="%LIBRARY_BIN%" ^
-    -DCMAKE_INSTALL_LIBDIR="%LIBRARY_LIB%" ^
-    -DCMAKE_INSTALL_INCLUDEDIR="%LIBRARY_INC%" ^
-    -B _build_%CF_FAISS_BUILD% ^
     !CUDA_CONFIG_ARGS! ^
-    .
+    ..
 if %ERRORLEVEL% neq 0 exit 1
 
-if "%CF_FAISS_BUILD%"=="avx2" (
-    set "TARGET=faiss_avx2"
-) else (
-    set "TARGET=faiss"
-)
-
-cmake --build _build_%CF_FAISS_BUILD% --target %TARGET% --config Release -j %CPU_COUNT%
+cmake --build . --target faiss --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix %PREFIX%
+cmake --install . --config Release --prefix %LIBRARY_PREFIX%
 if %ERRORLEVEL% neq 0 exit 1
+
+:: we patched the CMake build to install faiss_gpu.lib, but we only want this for
+:: _libfaiss_stage, not the actual output; normally, this library is supposed to
+:: be consumed completely, however due to the way that `LINK_LIBRARY:WHOLE_ARCHIVE`
+:: works on windows, it still needs to be available when we want to link swigfaiss; c.f.
+:: https://cmake.org/cmake/help/latest/manual/cmake-generator-expressions.7.html#link-features
+del %LIBRARY_LIB%\faiss_gpu.lib
+
 :: will be reused in build-pkg.bat
-cmake --install _build_%CF_FAISS_BUILD% --config Release --prefix _libfaiss_%CF_FAISS_BUILD%_stage
+cmake --install . --config Release --prefix _libfaiss_stage
 if %ERRORLEVEL% neq 0 exit 1
