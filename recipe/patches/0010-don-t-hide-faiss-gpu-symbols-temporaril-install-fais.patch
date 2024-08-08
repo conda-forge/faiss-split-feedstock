@@ -1,7 +1,7 @@
 From 9e0f9152e06b0b4dc644de13978c0b6a4b3d4ad7 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 8 Aug 2024 08:26:56 +1100
-Subject: [PATCH 10/10] don't hide faiss::gpu symbols; temporaril install
+Subject: [PATCH 10/11] don't hide faiss::gpu symbols; temporaril install
  faiss_gpu.lib
 
 this is a windows-only patch; we need to faiss_gpu.lib to be able

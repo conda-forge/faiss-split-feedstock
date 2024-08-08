@@ -60,6 +60,7 @@ source:
     # compare https://github.com/facebookresearch/faiss/pull/2927
     - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
     - patches/0010-don-t-hide-faiss-gpu-symbols-temporaril-install-fais.patch   # [win]
+    - patches/0011-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
 
 build:
   number: 0
