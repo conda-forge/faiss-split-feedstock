@@ -49,6 +49,7 @@ cmake -G Ninja \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_INSTALL_DATAROOTDIR="${PREFIX}/lib/cmake" \
     ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
     ..
 

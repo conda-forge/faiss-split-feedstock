@@ -40,6 +40,7 @@ cmake -G Ninja ^
     -DFAISS_ENABLE_PYTHON=OFF ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
     -DCMAKE_BUILD_TYPE=Release ^
+    -DCMAKE_INSTALL_DATAROOTDIR="%LIBRARY_PREFIX:\=/%/lib/cmake" ^
     !CUDA_CONFIG_ARGS! ^
     ..
 if %ERRORLEVEL% neq 0 exit 1

@@ -63,7 +63,7 @@ source:
     - patches/0011-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
 
 build:
-  number: 0
+  number: 1
 
 requirements:
   build:
@@ -144,6 +144,10 @@ outputs:
         - test -f $PREFIX/include/faiss/{{ each_header }} || (echo "{{ each_header }} not found" && exit 1)  # [unix]
         - if not exist %LIBRARY_INC%\faiss\{{ "\\".join(each_header.split("/")) }} exit 1                    # [win]
         {% endfor %}
+
+        # CMake metadata
+        - test -f $PREFIX/lib/cmake/faiss/faiss-targets.cmake                # [unix]
+        - if not exist %LIBRARY_LIB%\cmake\faiss\faiss-targets.cmake exit 1  # [win]
 
   - name: faiss
     script: build-pkg.sh          # [not win]
