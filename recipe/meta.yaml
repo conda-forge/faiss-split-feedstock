@@ -169,6 +169,7 @@ outputs:
       host:
         - python
         - pip
+        - setuptools
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]
