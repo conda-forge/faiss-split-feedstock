@@ -52,18 +52,16 @@ source:
     - patches/0004-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
     - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
-    # patch out use of non-portable GCC SIMD extension
-    - patches/0006-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
     # due to switch to ninja
-    - patches/0007-no-more-Release-subfolder.patch
+    - patches/0006-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0008-fix-index-type-in-openmp-loop.patch
+    - patches/0007-fix-index-type-in-openmp-loop.patch
     # compare https://github.com/facebookresearch/faiss/pull/2927
-    - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
-    - patches/0010-don-t-hide-faiss-gpu-symbols-temporaril-install-fais.patch   # [win]
-    - patches/0011-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0008-loosen-test-tolerance-in-test_ivf_train_2level.patch
+    - patches/0009-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
+    - patches/0010-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0012-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
 
 build:
   number: 0

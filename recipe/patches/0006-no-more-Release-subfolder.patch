@@ -1,0 +1,22 @@
+From f155504480573b6e66cc97f4bd665f0590a653bb Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 25 May 2023 22:29:29 +1100
+Subject: [PATCH 06/11] no more Release/ subfolder
+
+---
+ faiss/python/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/faiss/python/setup.py b/faiss/python/setup.py
+index 46cacc051..68945531a 100644
+--- a/faiss/python/setup.py
++++ b/faiss/python/setup.py
+@@ -21,7 +21,7 @@ shutil.copyfile("extra_wrappers.py", "faiss/extra_wrappers.py")
+ shutil.copyfile("array_conversions.py", "faiss/array_conversions.py")
+ 
+ ext = ".pyd" if platform.system() == 'Windows' else ".so"
+-prefix = "Release/" * (platform.system() == 'Windows')
++prefix = ""
+ 
+ swigfaiss_generic_lib = f"{prefix}_swigfaiss{ext}"
+ swigfaiss_avx2_lib = f"{prefix}_swigfaiss_avx2{ext}"
