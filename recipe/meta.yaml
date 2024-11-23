@@ -23,16 +23,16 @@
     'IndexIDMap.h', 'IndexIVF.h', 'IndexIVFAdditiveQuantizer.h', 'IndexIVFAdditiveQuantizerFastScan.h',
     'IndexIVFFastScan.h', 'IndexIVFFlat.h', 'IndexIVFIndependentQuantizer.h', 'IndexIVFPQ.h',
     'IndexIVFPQFastScan.h', 'IndexIVFPQR.h', 'IndexIVFSpectralHash.h', 'IndexLSH.h', 'IndexLattice.h',
-    'IndexNNDescent.h', 'IndexNSG.h', 'IndexPQ.h', 'IndexPQFastScan.h', 'IndexPreTransform.h',
-    'IndexRefine.h', 'IndexReplicas.h', 'IndexRowwiseMinMax.h', 'IndexScalarQuantizer.h',
-    'IndexShards.h', 'IndexShardsIVF.h', 'MatrixStats.h', 'MetaIndexes.h', 'MetricType.h',
-    'VectorTransform.h', 'clone_index.h', 'index_factory.h', 'index_io.h',
+    'IndexNNDescent.h', 'IndexNSG.h', 'IndexNeuralNetCodec.h', 'IndexPQ.h', 'IndexPQFastScan.h',
+    'IndexPreTransform.h', 'IndexRefine.h', 'IndexReplicas.h', 'IndexRowwiseMinMax.h',
+    'IndexScalarQuantizer.h', 'IndexShards.h', 'IndexShardsIVF.h', 'MatrixStats.h', 'MetaIndexes.h',
+    'MetricType.h', 'VectorTransform.h', 'clone_index.h', 'index_factory.h', 'index_io.h'
 ] + (cuda_compiler_version != "None") * [
     'gpu/GpuAutoTune.h', 'gpu/GpuCloner.h', 'gpu/GpuClonerOptions.h', 'gpu/GpuDistance.h',
     'gpu/GpuFaissAssert.h', 'gpu/GpuIcmEncoder.h', 'gpu/GpuIndex.h', 'gpu/GpuIndexBinaryFlat.h',
-    'gpu/GpuIndexFlat.h', 'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h', 'gpu/GpuIndexIVFPQ.h',
-    'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h', 'gpu/GpuResources.h',
-    'gpu/StandardGpuResources.h',
+    'gpu/GpuIndexCagra.h', 'gpu/GpuIndexFlat.h', 'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h',
+    'gpu/GpuIndexIVFPQ.h', 'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h',
+    'gpu/GpuResources.h', 'gpu/StandardGpuResources.h'
 ] %}
 
 package:
