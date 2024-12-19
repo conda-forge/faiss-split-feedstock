@@ -1,7 +1,7 @@
 From c26cefc4fc7923596057eb8afc1eb030cc63834f Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 7 Aug 2024 16:21:52 +1100
-Subject: [PATCH 08/12] loosen test tolerance in test_ivf_train_2level
+Subject: [PATCH 08/13] loosen test tolerance in test_ivf_train_2level
 
 compare https://github.com/facebookresearch/faiss/commit/391601dc3f4793e10aaf9d21f5bbe2a94ecf4f50
 ---

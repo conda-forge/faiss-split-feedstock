@@ -64,6 +64,9 @@ source:
     - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
     # backport https://github.com/facebookresearch/faiss/pull/4010 for missing headers
     - patches/0012-Some-chore-fixes-4010.patch
+    # disable library dispatch based on detected CPU instruction sets;
+    # revisit this after (or when) #23 is fixed
+    - patches/0013-disable-loading-different-library-flavours-based-on-.patch
 
 build:
   number: 0
