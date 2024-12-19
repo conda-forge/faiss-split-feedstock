@@ -1,14 +1,14 @@
 From 1f2e0874d8696c6e9560510c2038fc2408c3e81b Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Wed, 2 Jun 2021 22:58:19 +0200
-Subject: [PATCH 03/11] enable building libfaiss_avx2 without libfaiss
+Subject: [PATCH 03/12] enable building libfaiss_avx2 without libfaiss
 
 ---
  faiss/CMakeLists.txt | 19 +++++++++++--------
  1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index 5b6d7652..cfb2b9b9 100644
+index 5b6d76523..cfb2b9b9a 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
 @@ -328,18 +328,21 @@ else()

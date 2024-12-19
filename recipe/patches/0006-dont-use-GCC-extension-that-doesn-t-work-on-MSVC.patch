@@ -1,7 +1,7 @@
 From b49b58f8de1a926a65ac9db07aa69c42d8e07bdd Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 12:24:52 +1100
-Subject: [PATCH 06/11] dont use GCC extension that doesn't work on MSVC
+Subject: [PATCH 06/12] dont use GCC extension that doesn't work on MSVC
 
 see https://stackoverflow.com/a/68939636
 ---
@@ -11,7 +11,7 @@ see https://stackoverflow.com/a/68939636
  3 files changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/faiss/impl/code_distance/code_distance-avx2.h b/faiss/impl/code_distance/code_distance-avx2.h
-index 0aa1535b..081844b0 100644
+index 0aa1535b2..081844b06 100644
 --- a/faiss/impl/code_distance/code_distance-avx2.h
 +++ b/faiss/impl/code_distance/code_distance-avx2.h
 @@ -283,7 +283,7 @@ typename std::enable_if<std::is_same<PQDecoderT, PQDecoder8>::value, float>::
@@ -39,7 +39,7 @@ index 0aa1535b..081844b0 100644
              // process first 8 codes
              for (intptr_t j = 0; j < N; j++) {
 diff --git a/faiss/impl/code_distance/code_distance_avx512.h b/faiss/impl/code_distance/code_distance_avx512.h
-index 296e0df1..7673491c 100644
+index 296e0df1b..7673491ce 100644
 --- a/faiss/impl/code_distance/code_distance_avx512.h
 +++ b/faiss/impl/code_distance/code_distance_avx512.h
 @@ -48,10 +48,10 @@
@@ -58,7 +58,7 @@ index 296e0df1..7673491c 100644
  // //             // process first 8 codes
  // //             for (intptr_t j = 0; j < N; j++) {
 diff --git a/faiss/utils/hamming_distance/avx2-inl.h b/faiss/utils/hamming_distance/avx2-inl.h
-index 5cdc6a2b..7937adc6 100644
+index 5cdc6a2b4..7937adc66 100644
 --- a/faiss/utils/hamming_distance/avx2-inl.h
 +++ b/faiss/utils/hamming_distance/avx2-inl.h
 @@ -382,11 +382,11 @@ struct GenHammingComputer16 {
