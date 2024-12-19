@@ -30,9 +30,9 @@
 ] + (cuda_compiler_version != "None") * [
     'gpu/GpuAutoTune.h', 'gpu/GpuCloner.h', 'gpu/GpuClonerOptions.h', 'gpu/GpuDistance.h',
     'gpu/GpuFaissAssert.h', 'gpu/GpuIcmEncoder.h', 'gpu/GpuIndex.h', 'gpu/GpuIndexBinaryFlat.h',
-    'gpu/GpuIndexCagra.h', 'gpu/GpuIndexFlat.h', 'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h',
-    'gpu/GpuIndexIVFPQ.h', 'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h',
-    'gpu/GpuResources.h', 'gpu/StandardGpuResources.h'
+    'gpu/GpuIndexFlat.h', 'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h', 'gpu/GpuIndexIVFPQ.h',
+    'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h', 'gpu/GpuResources.h',
+    'gpu/StandardGpuResources.h'
 ] %}
 
 package:
