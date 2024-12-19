@@ -1,0 +1,32 @@
+From b72fb895e85eaf323d16bca39b179daaf0a42c50 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 19 Dec 2024 20:21:14 +1100
+Subject: [PATCH 12/12] fix a MSVC problem
+
+see https://github.com/facebookresearch/faiss/issues/2985
+---
+ faiss/gpu/impl/PQCodeDistances-inl.cuh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/faiss/gpu/impl/PQCodeDistances-inl.cuh b/faiss/gpu/impl/PQCodeDistances-inl.cuh
+index a05143e9d..da9b68f36 100644
+--- a/faiss/gpu/impl/PQCodeDistances-inl.cuh
++++ b/faiss/gpu/impl/PQCodeDistances-inl.cuh
+@@ -503,7 +503,7 @@ void runPQCodeDistancesMM(
+     // Transpose (sub q)(q * c)(code) to (q * c)(sub q)(code) (which
+     // is where we build our output distances). L2 version of this has an added
+     // -2 multiplicative factor
+-    auto outCodeDistancesView = outCodeDistancesF.view<3>(
++    auto outCodeDistancesView = outCodeDistancesF.template view<3>(
+             {coarseIndices.getSize(0) * coarseIndices.getSize(1),
+              outCodeDistances.getSize(2),
+              outCodeDistances.getSize(3)});
+@@ -538,7 +538,7 @@ void runPQCodeDistancesMM(
+ 
+         // View output as (q * c)(sub q * code), and add centroid norm to
+         // each row
+-        auto outDistancesCodeViewCols = outCodeDistancesView.view<2>(
++        auto outDistancesCodeViewCols = outCodeDistancesView.template view<2>(
+                 {coarseIndices.getSize(0) * coarseIndices.getSize(1),
+                  outCodeDistances.getSize(2) * outCodeDistances.getSize(3)});
+ 

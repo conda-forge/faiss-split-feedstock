@@ -1,7 +1,7 @@
 From 97f3a3e52af6031fe0980ca07da13c402978443f Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sun, 14 Feb 2021 15:52:27 +0100
-Subject: [PATCH 01/11] adapt header target directory to outputname
+Subject: [PATCH 01/12] adapt header target directory to outputname
 
 ---
  faiss/CMakeLists.txt     | 20 ++++++++++++++++----
@@ -9,7 +9,7 @@ Subject: [PATCH 01/11] adapt header target directory to outputname
  2 files changed, 24 insertions(+), 5 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
-index a890a46f..5b6d7652 100644
+index a890a46f1..5b6d76523 100644
 --- a/faiss/CMakeLists.txt
 +++ b/faiss/CMakeLists.txt
 @@ -230,9 +230,14 @@ endif()
@@ -64,7 +64,7 @@ index a890a46f..5b6d7652 100644
 +  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${libname}
  )
 diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
-index 126cbe50..ef40ad02 100644
+index 126cbe504..ef40ad02b 100644
 --- a/faiss/gpu/CMakeLists.txt
 +++ b/faiss/gpu/CMakeLists.txt
 @@ -293,10 +293,17 @@ target_link_libraries(faiss PRIVATE  "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")

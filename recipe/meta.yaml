@@ -6,6 +6,7 @@
 {% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0] | int %}
 {% else %}
 {% set cuda_major = 0 %}
+{% set cuda_compiler_version = "None" %}
 {% endif %}
 
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
@@ -61,9 +62,11 @@ source:
     - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
     - patches/0010-don-t-hide-faiss-gpu-symbols-temporaril-install-fais.patch   # [win]
     - patches/0011-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    # workaround for https://github.com/facebookresearch/faiss/issues/2985
+    - patches/0012-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
 
 build:
-  number: 1
+  number: 2
 
 requirements:
   build:
@@ -85,8 +88,8 @@ outputs:
     script: build-lib.sh    # [unix]
     script: build-lib.bat   # [win]
     build:
-      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                  # [cuda_compiler_version == "None"]
-      string: "cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
@@ -153,8 +156,8 @@ outputs:
     script: build-pkg.sh          # [not win]
     script: build-pkg.bat         # [win]
     build:
-      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                  # [cuda_compiler_version == "None"]
-      string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version|replace(".", "") }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -169,6 +172,7 @@ outputs:
       host:
         - python
         - pip
+        - setuptools
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]

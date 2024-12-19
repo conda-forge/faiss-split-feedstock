@@ -1,7 +1,7 @@
 From 3646fbc2d41f85f61a7f32481c243cb1f55ae8d1 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 8 Aug 2024 15:40:34 +1100
-Subject: [PATCH 11/11] don't rely on luck for initialization order on win+CUDA
+Subject: [PATCH 11/12] don't rely on luck for initialization order on win+CUDA
 
 ---
  faiss/gpu/GpuIndex.cu | 16 ----------------
@@ -9,7 +9,7 @@ Subject: [PATCH 11/11] don't rely on luck for initialization order on win+CUDA
  2 files changed, 4 insertions(+), 18 deletions(-)
 
 diff --git a/faiss/gpu/GpuIndex.cu b/faiss/gpu/GpuIndex.cu
-index d667ae14..39626d9c 100644
+index d667ae149..39626d9c9 100644
 --- a/faiss/gpu/GpuIndex.cu
 +++ b/faiss/gpu/GpuIndex.cu
 @@ -526,20 +526,4 @@ bool isGpuIndexImplemented(faiss::Index* index) {
@@ -34,7 +34,7 @@ index d667ae14..39626d9c 100644
 -
  } // namespace faiss
 diff --git a/faiss/utils/utils.cpp b/faiss/utils/utils.cpp
-index dc6fadda..3c2b8a94 100644
+index dc6faddaf..3c2b8a94b 100644
 --- a/faiss/utils/utils.cpp
 +++ b/faiss/utils/utils.cpp
 @@ -103,8 +103,10 @@ int sgemv_(
