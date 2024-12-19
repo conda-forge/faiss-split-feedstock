@@ -1,7 +1,7 @@
 From d47fbe5168ec7c1b5732f3c945bd907de055bbbb Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sat, 5 Jun 2021 01:45:14 +0200
-Subject: [PATCH 04/11] increase tolerance for marginally failing test
+Subject: [PATCH 04/12] increase tolerance for marginally failing test
 
 ---
  tests/test_residual_quantizer.py | 2 +-

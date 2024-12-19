@@ -62,6 +62,8 @@ source:
     - patches/0010-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
     - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    # backport https://github.com/facebookresearch/faiss/pull/4010 for missing headers
+    - patches/0012-Some-chore-fixes-4010.patch
 
 build:
   number: 0

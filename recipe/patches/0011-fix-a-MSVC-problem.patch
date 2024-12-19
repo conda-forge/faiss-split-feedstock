@@ -1,7 +1,7 @@
 From d05531f39dd8204338046f8e72ed306a98ecca09 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 19 Dec 2024 20:21:14 +1100
-Subject: [PATCH 11/11] fix a MSVC problem
+Subject: [PATCH 11/12] fix a MSVC problem
 
 see https://github.com/facebookresearch/faiss/issues/2985
 ---
