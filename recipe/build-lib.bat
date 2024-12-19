@@ -19,7 +19,7 @@ if "%cuda_compiler_version%"=="None" (
 
     if "%cuda_compiler_version%"=="11.8" (
         set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89"
-    ) else if "%cuda_compiler_version%"=="12.0" (
+    ) else if "%cuda_compiler_version:~0,2%"=="12" (
         set "CMAKE_CUDA_ARCHS=53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
     )
     REM turn off _extremely_ noisy nvcc warnings
