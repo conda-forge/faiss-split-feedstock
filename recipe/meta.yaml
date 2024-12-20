@@ -1,4 +1,4 @@
-{% set version = "1.8.0" %}
+{% set version = "1.9.0" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -41,7 +41,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c
+  sha256: f6721f1a479b0bdd8547e5bb0dbfa872643e7ea37686c6bf6fc99fb933b3fe4f
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -66,7 +66,7 @@ source:
     - patches/0012-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
 
 build:
-  number: 2
+  number: 0
 
 requirements:
   build:
@@ -85,10 +85,10 @@ outputs:
         - exit 0
 
   - name: libfaiss
-    script: build-lib.sh    # [unix]
-    script: build-lib.bat   # [win]
+    script: build-lib.sh  # [unix]
+    script: build-lib.bat  # [win]
     build:
-      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
@@ -153,10 +153,10 @@ outputs:
         - if not exist %LIBRARY_LIB%\cmake\faiss\faiss-targets.cmake exit 1  # [win]
 
   - name: faiss
-    script: build-pkg.sh          # [not win]
-    script: build-pkg.bat         # [win]
+    script: build-pkg.sh  # [not win]
+    script: build-pkg.bat  # [win]
     build:
-      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
