@@ -1,0 +1,26 @@
+From a111d1873d60680e3c4febfdb27e618aac6329af Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 19 Dec 2024 23:00:58 +1100
+Subject: [PATCH 13/13] disable loading different library flavours based on
+ available instruction sets
+
+the code in question ends up calling `numpy.distutils` which doesn't exist on
+python >=3.12, but more importantly, we're currently not building any additional
+flavours (i.e. avx2, avx512, sve) of libraries that could be loaded in any case.
+---
+ faiss/python/loader.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/faiss/python/loader.py b/faiss/python/loader.py
+index 977ada1d9..20f4d986b 100644
+--- a/faiss/python/loader.py
++++ b/faiss/python/loader.py
+@@ -85,7 +85,7 @@ opt_level = os.environ.get(opt_env_variable_name, None)
+ if opt_level is None:
+     logger.debug(f"Environment variable {opt_env_variable_name} is not set, " \
+                 "so let's pick the instruction set according to the current CPU")
+-    instruction_sets = supported_instruction_sets()
++    instruction_sets = set()
+ else:
+     logger.debug(f"Using {opt_level} as an instruction set.")
+     instruction_sets = set()

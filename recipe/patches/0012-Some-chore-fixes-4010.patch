@@ -1,0 +1,113 @@
+From eed58fa49efdaef6584789523af82cc3f886da59 Mon Sep 17 00:00:00 2001
+From: Shengqi Chen <harry-chen@outlook.com>
+Date: Tue, 19 Nov 2024 16:48:35 -0800
+Subject: [PATCH 12/13] Some chore fixes (#4010)
+
+Summary:
+- Fix a typo in comment
+- Add missing header files to `FAISS_HEADERS` in CMake config
+
+There should be some check against the inconsistency between `FAISS_HEADERS` and actual files, e.g. test compiling with installed headers and shared library (otherwise it always succeeds in the source dir).
+
+This is not the first time that headers are missing (https://github.com/facebookresearch/faiss/issues/3218).
+
+Pull Request resolved: https://github.com/facebookresearch/faiss/pull/4010
+
+Reviewed By: junjieqi
+
+Differential Revision: D65630647
+
+Pulled By: kuarora
+
+fbshipit-source-id: 2efcfc4bbd0b2d29efa817e1ff9371942c15d30a
+
+conda-forge cherry-pick note:
+Minus impl/code_distance/code_distance-sve.h, which doesn't exist in 1.9.0
+---
+ faiss/CMakeLists.txt           | 8 ++++++++
+ faiss/impl/ResidualQuantizer.h | 2 +-
+ tests/test_graph_based.py      | 2 +-
+ 3 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
+index 53e27d3f1..5d9162f18 100644
+--- a/faiss/CMakeLists.txt
++++ b/faiss/CMakeLists.txt
+@@ -126,6 +126,7 @@ set(FAISS_HEADERS
+   IndexIVFPQR.h
+   IndexIVFSpectralHash.h
+   IndexLSH.h
++  IndexNeuralNetCodec.h
+   IndexLattice.h
+   IndexNNDescent.h
+   IndexNSG.h
+@@ -169,6 +170,7 @@ set(FAISS_HEADERS
+   impl/ScalarQuantizer.h
+   impl/ThreadedIndex-inl.h
+   impl/ThreadedIndex.h
++  impl/index_read_utils.h
+   impl/io.h
+   impl/io_macros.h
+   impl/kmeans1d.h
+@@ -180,13 +182,16 @@ set(FAISS_HEADERS
+   impl/code_distance/code_distance.h
+   impl/code_distance/code_distance-generic.h
+   impl/code_distance/code_distance-avx2.h
++  impl/code_distance/code_distance-avx512.h
+   invlists/BlockInvertedLists.h
+   invlists/DirectMap.h
+   invlists/InvertedLists.h
+   invlists/InvertedListsIOHook.h
++  invlists/OnDiskInvertedLists.h
+   utils/AlignedTable.h
+   utils/bf16.h
+   utils/Heap.h
++  utils/NeuralNet.h
+   utils/WorkerThread.h
+   utils/distances.h
+   utils/extra_distances-inl.h
+@@ -205,8 +210,10 @@ set(FAISS_HEADERS
+   utils/sorting.h
+   utils/simdlib.h
+   utils/simdlib_avx2.h
++  utils/simdlib_avx512.h
+   utils/simdlib_emulated.h
+   utils/simdlib_neon.h
++  utils/simdlib_ppc64.h
+   utils/utils.h
+   utils/distances_fused/avx512.h
+   utils/distances_fused/distances_fused.h
+@@ -217,6 +224,7 @@ set(FAISS_HEADERS
+   utils/approx_topk/mode.h
+   utils/approx_topk_hamming/approx_topk_hamming.h
+   utils/transpose/transpose-avx2-inl.h
++  utils/transpose/transpose-avx512-inl.h
+   utils/hamming_distance/common.h
+   utils/hamming_distance/generic-inl.h
+   utils/hamming_distance/hamdis-inl.h
+diff --git a/faiss/impl/ResidualQuantizer.h b/faiss/impl/ResidualQuantizer.h
+index 004f7cabd..b62525d9a 100644
+--- a/faiss/impl/ResidualQuantizer.h
++++ b/faiss/impl/ResidualQuantizer.h
+@@ -112,7 +112,7 @@ struct ResidualQuantizer : AdditiveQuantizer {
+ 
+     /** lower-level encode function
+      *
+-     * @param n              number of vectors to hanlde
++     * @param n              number of vectors to handle
+      * @param residuals      vectors to encode, size (n, beam_size, d)
+      * @param beam_size      input beam size
+      * @param new_beam_size  output beam size (should be <= K * beam_size)
+diff --git a/tests/test_graph_based.py b/tests/test_graph_based.py
+index 81786efdf..2724447d0 100644
+--- a/tests/test_graph_based.py
++++ b/tests/test_graph_based.py
+@@ -335,7 +335,7 @@ class TestNSG(unittest.TestCase):
+         """Make some invalid entries in the input knn graph.
+ 
+         It would cause a warning but IndexNSG should be able
+-        to handel this.
++        to handle this.
+         """
+         knn_graph = self.make_knn_graph(faiss.METRIC_L2)
+         knn_graph[:100, 5] = -111

@@ -1,0 +1,68 @@
+From 2adc5bcc2c3f88f38fd47ba2d66ea2d2487b7c44 Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 8 Aug 2024 08:26:56 +1100
+Subject: [PATCH 09/13] don't hide faiss::gpu symbols; temporarily install
+ faiss_gpu.lib
+
+this is a windows-only patch; we need to faiss_gpu.lib to be able
+to link swigfaiss for the python bindings, and LINK_LIBRARY:WHOLE_ARCHIVE
+does not work on windows like it does on unix, so we need the library to
+be present later. We install this target here _only_ for that purpose, and
+it should not actually make it into the final package.
+
+We also need to mark the symbols PUBLIC that faiss_gpu needs itself, e.g.
+from cuBLAS.
+---
+ faiss/gpu/CMakeLists.txt    | 13 +++++++++----
+ faiss/python/CMakeLists.txt |  8 ++++----
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
+index 8a3cc36ef..fd8475dad 100644
+--- a/faiss/gpu/CMakeLists.txt
++++ b/faiss/gpu/CMakeLists.txt
+@@ -301,10 +301,15 @@ endif()
+ # Export FAISS_GPU_HEADERS variable to parent scope.
+ set(FAISS_GPU_HEADERS ${FAISS_GPU_HEADERS} PARENT_SCOPE)
+ 
+-target_link_libraries(faiss PRIVATE  "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
+-target_link_libraries(faiss_avx2 PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
+-target_link_libraries(faiss_avx512 PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
+-target_link_libraries(faiss_sve PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
++target_link_libraries(faiss PUBLIC  "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
++target_link_libraries(faiss_avx2 PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
++target_link_libraries(faiss_avx512 PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
++target_link_libraries(faiss_sve PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,faiss_gpu>")
++
++install(TARGETS faiss_gpu
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ # to distinguish between faiss and faiss_avx2
+ if(FAISS_OPT_LEVEL STREQUAL "avx2")
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+index 298725701..98fa53731 100644
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -178,16 +178,16 @@ if(FAISS_ENABLE_GPU)
+     if(FAISS_ENABLE_RAFT)
+       find_package(raft COMPONENTS compiled distributed)
+     endif()
+-    target_link_libraries(swigfaiss PRIVATE CUDA::cudart
++    target_link_libraries(swigfaiss PRIVATE CUDA::cudart CUDA::cublas
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:raft::raft>
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:nvidia::cutlass::cutlass>)
+-    target_link_libraries(swigfaiss_avx2 PRIVATE CUDA::cudart
++    target_link_libraries(swigfaiss_avx2 PRIVATE CUDA::cudart CUDA::cublas
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:raft::raft>
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:nvidia::cutlass::cutlass>)
+-    target_link_libraries(swigfaiss_avx512 PRIVATE CUDA::cudart
++    target_link_libraries(swigfaiss_avx512 PRIVATE CUDA::cudart CUDA::cublas
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:raft::raft>
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:nvidia::cutlass::cutlass>)
+-    target_link_libraries(swigfaiss_sve PRIVATE CUDA::cudart
++    target_link_libraries(swigfaiss_sve PRIVATE CUDA::cudart CUDA::cublas
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:raft::raft>
+       $<$<BOOL:${FAISS_ENABLE_RAFT}>:nvidia::cutlass::cutlass>)
+   endif()

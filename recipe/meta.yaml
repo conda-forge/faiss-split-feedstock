@@ -1,4 +1,4 @@
-{% set version = "1.8.0" %}
+{% set version = "1.9.0" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -23,16 +23,16 @@
     'IndexIDMap.h', 'IndexIVF.h', 'IndexIVFAdditiveQuantizer.h', 'IndexIVFAdditiveQuantizerFastScan.h',
     'IndexIVFFastScan.h', 'IndexIVFFlat.h', 'IndexIVFIndependentQuantizer.h', 'IndexIVFPQ.h',
     'IndexIVFPQFastScan.h', 'IndexIVFPQR.h', 'IndexIVFSpectralHash.h', 'IndexLSH.h', 'IndexLattice.h',
-    'IndexNNDescent.h', 'IndexNSG.h', 'IndexPQ.h', 'IndexPQFastScan.h', 'IndexPreTransform.h',
-    'IndexRefine.h', 'IndexReplicas.h', 'IndexRowwiseMinMax.h', 'IndexScalarQuantizer.h',
-    'IndexShards.h', 'IndexShardsIVF.h', 'MatrixStats.h', 'MetaIndexes.h', 'MetricType.h',
-    'VectorTransform.h', 'clone_index.h', 'index_factory.h', 'index_io.h',
+    'IndexNNDescent.h', 'IndexNSG.h', 'IndexNeuralNetCodec.h', 'IndexPQ.h', 'IndexPQFastScan.h',
+    'IndexPreTransform.h', 'IndexRefine.h', 'IndexReplicas.h', 'IndexRowwiseMinMax.h',
+    'IndexScalarQuantizer.h', 'IndexShards.h', 'IndexShardsIVF.h', 'MatrixStats.h', 'MetaIndexes.h',
+    'MetricType.h', 'VectorTransform.h', 'clone_index.h', 'index_factory.h', 'index_io.h'
 ] + (cuda_compiler_version != "None") * [
     'gpu/GpuAutoTune.h', 'gpu/GpuCloner.h', 'gpu/GpuClonerOptions.h', 'gpu/GpuDistance.h',
     'gpu/GpuFaissAssert.h', 'gpu/GpuIcmEncoder.h', 'gpu/GpuIndex.h', 'gpu/GpuIndexBinaryFlat.h',
     'gpu/GpuIndexFlat.h', 'gpu/GpuIndexIVF.h', 'gpu/GpuIndexIVFFlat.h', 'gpu/GpuIndexIVFPQ.h',
     'gpu/GpuIndexIVFScalarQuantizer.h', 'gpu/GpuIndicesOptions.h', 'gpu/GpuResources.h',
-    'gpu/StandardGpuResources.h',
+    'gpu/StandardGpuResources.h'
 ] %}
 
 package:
@@ -41,7 +41,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c
+  sha256: f6721f1a479b0bdd8547e5bb0dbfa872643e7ea37686c6bf6fc99fb933b3fe4f
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -52,21 +52,24 @@ source:
     - patches/0004-increase-tolerance-for-marginally-failing-test.patch
     # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
     - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
-    # patch out use of non-portable GCC SIMD extension
-    - patches/0006-dont-use-GCC-extension-that-doesn-t-work-on-MSVC.patch
     # due to switch to ninja
-    - patches/0007-no-more-Release-subfolder.patch
+    - patches/0006-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0008-fix-index-type-in-openmp-loop.patch
+    - patches/0007-fix-index-type-in-openmp-loop.patch
     # compare https://github.com/facebookresearch/faiss/pull/2927
-    - patches/0009-loosen-test-tolerance-in-test_ivf_train_2level.patch
-    - patches/0010-don-t-hide-faiss-gpu-symbols-temporaril-install-fais.patch   # [win]
-    - patches/0011-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0008-loosen-test-tolerance-in-test_ivf_train_2level.patch
+    - patches/0009-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
+    - patches/0010-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0012-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    # backport https://github.com/facebookresearch/faiss/pull/4010 for missing headers
+    - patches/0012-Some-chore-fixes-4010.patch
+    # disable library dispatch based on detected CPU instruction sets;
+    # revisit this after (or when) #23 is fixed
+    - patches/0013-disable-loading-different-library-flavours-based-on-.patch
 
 build:
-  number: 2
+  number: 0
 
 requirements:
   build:
