@@ -56,17 +56,13 @@ source:
     - patches/0006-no-more-Release-subfolder.patch
     # more fixes
     - patches/0007-fix-index-type-in-openmp-loop.patch
-    # compare https://github.com/facebookresearch/faiss/pull/2927
-    - patches/0008-loosen-test-tolerance-in-test_ivf_train_2level.patch
-    - patches/0009-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
-    - patches/0010-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
+    - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
-    # backport https://github.com/facebookresearch/faiss/pull/4010 for missing headers
-    - patches/0012-Some-chore-fixes-4010.patch
+    - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
     # disable library dispatch based on detected CPU instruction sets;
     # revisit this after (or when) #23 is fixed
-    - patches/0013-disable-loading-different-library-flavours-based-on-.patch
+    - patches/0011-disable-loading-different-library-flavours-based-on-.patch
 
 build:
   number: 0
