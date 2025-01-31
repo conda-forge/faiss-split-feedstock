@@ -11,9 +11,9 @@ cuda_compiler_version:
 cxx_compiler:
 - vs2019
 libblas:
-- 3.9 *netlib
+- 3.9.* *netlib
 liblapack:
-- 3.9 *netlib
+- 3.9.* *netlib
 numpy:
 - '1.22'
 - '1.23'
