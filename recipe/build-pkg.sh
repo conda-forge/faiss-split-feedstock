@@ -2,7 +2,7 @@
 set -ex
 
 FAISS_ENABLE_GPU=""
-if [ ${cuda_compiler_version} != "None" ]; then
+if [ "${cuda_compiler_version}" != "None" ]; then
     FAISS_ENABLE_GPU="ON"
 else
     FAISS_ENABLE_GPU="OFF"
@@ -21,6 +21,7 @@ cmake -G Ninja \
     ${CMAKE_ARGS} \
     -Dfaiss_ROOT=_libfaiss_stage/ \
     -DCMAKE_BUILD_TYPE=Release \
+    -DFAISS_ENABLE_GPU=$FAISS_ENABLE_GPU \
     -DPython_NumPy_INCLUDE_DIR=$SP_DIR/numpy/core/include \
     ../faiss/python
 
