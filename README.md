@@ -44,24 +44,31 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux_64_cuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13</td>
+              <td>linux_64_blas_implgenericcuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_blas_implgenericcuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13" alt="variant">
                 </a>
               </td>
             </tr><tr>
-              <td>linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13</td>
+              <td>linux_64_blas_implgenericcuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_blas_implgenericcuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13" alt="variant">
                 </a>
               </td>
             </tr><tr>
-              <td>linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11</td>
+              <td>linux_64_blas_implmklcuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_blas_implmklcuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_64_blas_implmklcuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13</td>
+              <td>
+                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_64_blas_implmklcuda_compilercuda-nvcccuda_compiler_version12.6cxx_compiler_version13" alt="variant">
                 </a>
               </td>
             </tr><tr>
@@ -79,13 +86,6 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>linux_aarch64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_aarch64_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
               <td>linux_ppc64le_cuda_compilerNonecuda_compiler_versionNonecxx_compiler_version13</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
@@ -100,17 +100,17 @@ Current build status
                 </a>
               </td>
             </tr><tr>
-              <td>linux_ppc64le_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11</td>
+              <td>osx_64_blas_implgeneric</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=linux&configuration=linux%20linux_ppc64le_cuda_compilernvcccuda_compiler_version11.8cxx_compiler_version11" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_blas_implgeneric" alt="variant">
                 </a>
               </td>
             </tr><tr>
-              <td>osx_64</td>
+              <td>osx_64_blas_implmkl</td>
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_" alt="variant">
+                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=osx&configuration=osx%20osx_64_blas_implmkl" alt="variant">
                 </a>
               </td>
             </tr><tr>
@@ -132,13 +132,6 @@ Current build status
               <td>
                 <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
                   <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compilercuda-nvcccuda_compiler_version12.6" alt="variant">
-                </a>
-              </td>
-            </tr><tr>
-              <td>win_64_cuda_compilernvcccuda_compiler_version11.8</td>
-              <td>
-                <a href="https://dev.azure.com/conda-forge/feedstock-builds/_build/latest?definitionId=9713&branchName=main">
-                  <img src="https://dev.azure.com/conda-forge/feedstock-builds/_apis/build/status/faiss-split-feedstock?branchName=main&jobName=win&configuration=win%20win_64_cuda_compilernvcccuda_compiler_version11.8" alt="variant">
                 </a>
               </td>
             </tr>
