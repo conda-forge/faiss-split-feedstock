@@ -1,0 +1,4 @@
+blas_impl:
+  - mkl                         # [x86_64]
+  # deprioritized on windows, would be nice to have
+  - generic                     # [unix]
