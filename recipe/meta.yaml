@@ -9,6 +9,18 @@
 {% set cuda_compiler_version = "None" %}
 {% endif %}
 
+{% set build = 0 %}
+# Use a higher build number for the CUDA variant, to ensure that it's
+# preferred by conda's solver, and it's preferentially
+# installed where the platform supports it.
+{% if cuda_compiler_version != "None" %}
+{% set build = build + 200 %}
+{% endif %}
+
+{% if blas_impl == "mkl" %}
+{% set build = build + 100 %}
+{% endif %}
+
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
 # see https://github.com/facebookresearch/faiss/blob/v{{ version }}/faiss/CMakeLists.txt;
 # gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'.
@@ -65,7 +77,8 @@ source:
     - patches/0011-disable-loading-different-library-flavours-based-on-.patch
 
 build:
-  number: 0
+  number: {{ build }}
+  skip: true       # [cuda_compiler_version == "11.8"]
 
 requirements:
   build:
@@ -104,6 +117,8 @@ outputs:
         - python                    # [build_platform != target_platform]
         - cmake
         - ninja
+        - llvm-openmp               # [unix]
+        - intel-openmp {{ mkl }}    # [win]
         {% if cuda_major >= 12 %}
         - cuda-version {{ cuda_compiler_version }}  # [build_platform != target_platform]
         - cuda-cudart-dev           # [build_platform != target_platform]
@@ -112,10 +127,14 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
-        - libgomp                   # [linux]
         - llvm-openmp               # [osx]
-        - libblas                   # [not osx]
-        - liblapack                 # [not osx]
+        - mkl-devel {{ mkl }}       # [blas_impl == "mkl"]
+        - libcblas * *_mkl          # [blas_impl == "mkl"]
+        - libblas                   # [blas_impl != "mkl"]
+        - libcblas                  # [blas_impl != "mkl"]
+        - liblapack                 # [blas_impl != "mkl"]
+        - llvm-openmp               # [unix]
+        - intel-openmp {{ mkl }}    # [win]
         {% if cuda_major >= 12 %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -123,6 +142,9 @@ outputs:
         - libcublas-dev
         - libcurand-dev
         {% endif %}
+      run:
+        - intel-openmp {{ mkl }}            # [win]
+        - libblas * *{{ blas_impl }}        # [blas_impl == "mkl"]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
