@@ -195,7 +195,6 @@ outputs:
         - setuptools
         - numpy
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libgomp                             # [linux and blas_impl != "mkl"]
         - llvm-openmp                         # [osx]
         {% if cuda_major >= 12 %}
         - cuda-version {{ cuda_compiler_version }}
