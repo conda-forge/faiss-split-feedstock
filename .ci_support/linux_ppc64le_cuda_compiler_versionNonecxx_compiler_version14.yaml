@@ -11,22 +11,19 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- '12.4'
+- None
 cxx_compiler:
 - gxx
 cxx_compiler_version:
-- '12'
+- '14'
 docker_image:
 - quay.io/condaforge/linux-anvil-x86_64:alma9
 libblas:
-- 3.9 *netlib
+- 3.9.* *netlib
 liblapack:
-- 3.9 *netlib
+- 3.9.* *netlib
 numpy:
-- '1.22'
-- '1.23'
-- '1.26'
-- '1.22'
+- '2'
 pin_run_as_build:
   python:
     min_pin: x.x
@@ -40,8 +37,4 @@ target_platform:
 - linux-ppc64le
 zip_keys:
 - - cxx_compiler_version
-  - cuda_compiler
   - cuda_compiler_version
-  - docker_image
-- - python
-  - numpy
