@@ -69,7 +69,7 @@ source:
     - patches/0013-disable-loading-different-library-flavours-based-on-.patch
 
 build:
-  number: 0
+  number: 1
 
 requirements:
   build:
