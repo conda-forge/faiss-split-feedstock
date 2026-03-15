@@ -2,13 +2,6 @@
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
-{% if cuda_compiler_version != "None" %}
-{% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0] | int %}
-{% else %}
-{% set cuda_major = 0 %}
-{% set cuda_compiler_version = "None" %}
-{% endif %}
-
 {% set build = 0 %}
 # Use a higher build number for the CUDA variant, to ensure that it's
 # preferred by conda's solver, and it's preferentially
@@ -78,7 +71,6 @@ source:
 
 build:
   number: {{ build }}
-  skip: true       # [cuda_compiler_version == "11.8"]
 
 requirements:
   build:
@@ -119,7 +111,7 @@ outputs:
         - ninja
         - llvm-openmp               # [unix]
         - intel-openmp {{ mkl }}    # [win]
-        {% if cuda_major >= 12 %}
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}  # [build_platform != target_platform]
         - cuda-cudart-dev           # [build_platform != target_platform]
         - cuda-profiler-api         # [build_platform != target_platform]
@@ -135,7 +127,7 @@ outputs:
         - liblapack                 # [blas_impl != "mkl"]
         - llvm-openmp               # [unix]
         - intel-openmp {{ mkl }}    # [win]
-        {% if cuda_major >= 12 %}
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
         - cuda-profiler-api
@@ -198,7 +190,7 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
-        {% if cuda_major >= 12 %}
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev                       # [win]
         {% endif %}

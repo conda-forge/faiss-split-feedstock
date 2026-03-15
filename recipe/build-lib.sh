@@ -12,9 +12,7 @@ if [ ${cuda_compiler_version} != "None" ]; then
     # this is to support PTX JIT compilation; see first link above or cf.
     # devblogs.nvidia.com/cuda-pro-tip-understand-fat-binaries-jit-caching
 
-    if [[ ${cuda_compiler_version} == 11.8 ]]; then
-        export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89"
-    elif [[ ${cuda_compiler_version} == 12.* ]]; then
+    if [[ ${cuda_compiler_version} == 12.* ]]; then
         export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
     fi
 
