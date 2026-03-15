@@ -21,7 +21,7 @@ cmake -G Ninja \
     ${CMAKE_ARGS} \
     -Dfaiss_ROOT=_libfaiss_stage/ \
     -DCMAKE_BUILD_TYPE=Release \
-    -DPython_NumPy_INCLUDE_DIR=$SP_DIR/numpy/core/include \
+    -DPython_NumPy_INCLUDE_DIR=$SP_DIR/numpy/_core/include \
     ../faiss/python
 
 cmake --build . --target swigfaiss faiss_example_external_module -j $CPU_COUNT
