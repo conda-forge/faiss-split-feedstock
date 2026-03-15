@@ -1,13 +1,7 @@
-MACOSX_DEPLOYMENT_TARGET:
-- '11.0'
-MACOSX_SDK_VERSION:
-- '11.0'
 blas_impl:
 - mkl
 c_stdlib:
-- macosx_deployment_target
-c_stdlib_version:
-- '11.0'
+- vs
 channel_sources:
 - conda-forge
 channel_targets:
@@ -15,23 +9,11 @@ channel_targets:
 cuda_compiler:
 - cuda-nvcc
 cuda_compiler_version:
-- None
+- '12.9'
 cxx_compiler:
-- clangxx
-cxx_compiler_version:
-- '19'
-libblas:
-- 3.9.* *netlib
-libcblas:
-- 3.9.* *netlib
-liblapack:
-- 3.9.* *netlib
-llvm_openmp:
-- '19'
-macos_machine:
-- x86_64-apple-darwin13.4.0
+- vs2022
 mkl:
-- '2023'
+- '2025'
 numpy:
 - '2'
 pin_run_as_build:
@@ -44,4 +26,4 @@ python:
 - 3.12.* *_cpython
 - 3.13.* *_cp313
 target_platform:
-- osx-64
+- win-64

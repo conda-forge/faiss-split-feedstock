@@ -5,18 +5,21 @@
 jobs:
 - job: osx
   pool:
-    vmImage: macOS-13
+    vmImage: $(VMIMAGE)
   strategy:
     matrix:
       osx_64_blas_implgeneric:
         CONFIG: osx_64_blas_implgeneric
         UPLOAD_PACKAGES: 'True'
+        VMIMAGE: macOS-15
       osx_64_blas_implmkl:
         CONFIG: osx_64_blas_implmkl
         UPLOAD_PACKAGES: 'True'
+        VMIMAGE: macOS-15
       osx_arm64_:
         CONFIG: osx_arm64_
         UPLOAD_PACKAGES: 'True'
+        VMIMAGE: macOS-15
   timeoutInMinutes: 360
   variables: {}
 
