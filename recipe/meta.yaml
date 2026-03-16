@@ -117,7 +117,7 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
-        - blas-devel
+        - blas-devel * *{{ blas_impl }}
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
         {% if cuda_compiler_version != "None" %}
