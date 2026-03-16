@@ -119,14 +119,13 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
+        - libgomp                   # [linux]
         - llvm-openmp               # [osx]
+        - libblas
+        - libcblas
+        - liblapack
         - mkl-devel {{ mkl }}       # [blas_impl == "mkl"]
-        - libcblas * *_mkl          # [blas_impl == "mkl"]
-        - libblas                   # [blas_impl != "mkl"]
-        - libcblas                  # [blas_impl != "mkl"]
-        - liblapack                 # [blas_impl != "mkl"]
-        - llvm-openmp               # [unix]
-        - intel-openmp {{ mkl }}    # [win]
+        - {{ blas_impl }}           # [blas_impl != "mkl"]
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -135,8 +134,8 @@ outputs:
         - libcurand-dev
         {% endif %}
       run:
-        - intel-openmp {{ mkl }}            # [win]
-        - libblas * *{{ blas_impl }}        # [blas_impl == "mkl"]
+        - libblas * *{{ blas_impl }}
+        - {{ blas_impl }}
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
