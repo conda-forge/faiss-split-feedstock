@@ -11,7 +11,7 @@ Summary: A library for efficient similarity search and clustering of dense vecto
 
 Development: https://github.com/facebookresearch/faiss
 
-Documentation: https://rawgit.com/facebookresearch/faiss/master/docs/html/annotated.html
+Documentation: https://faiss.ai/
 
 Faiss is a library for efficient similarity search and clustering of dense vectors.
 It contains algorithms that search in sets of vectors of any size, up to ones that
@@ -261,4 +261,5 @@ Feedstock Maintainers
 =====================
 
 * [@h-vetinari](https://github.com/h-vetinari/)
+* [@weiji14](https://github.com/weiji14/)
 
