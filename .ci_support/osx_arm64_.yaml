@@ -20,12 +20,6 @@ cxx_compiler:
 - clangxx
 cxx_compiler_version:
 - '19'
-libblas:
-- 3.9.* *netlib
-libcblas:
-- 3.9.* *netlib
-liblapack:
-- 3.9.* *netlib
 llvm_openmp:
 - '19'
 macos_machine:

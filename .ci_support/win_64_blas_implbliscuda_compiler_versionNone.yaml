@@ -12,12 +12,6 @@ cuda_compiler_version:
 - None
 cxx_compiler:
 - vs2022
-libblas:
-- 3.9.* *netlib
-libcblas:
-- 3.9.* *netlib
-liblapack:
-- 3.9.* *netlib
 mkl:
 - '2025'
 numpy:
