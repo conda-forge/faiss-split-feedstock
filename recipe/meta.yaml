@@ -117,13 +117,9 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
+        - blas-devel
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
-        - libblas
-        - libcblas
-        - liblapack
-        - mkl-devel {{ mkl }}       # [blas_impl == "mkl"]
-        - {{ blas_impl }}           # [blas_impl != "mkl"]
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
