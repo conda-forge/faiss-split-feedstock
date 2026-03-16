@@ -306,7 +306,7 @@ about:
     [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
     using the MKL implementation of blas/lapack. You can ensure that this is installed
     by adding "libblas =*=*mkl" to your dependencies.
-  doc_url: https://rawgit.com/facebookresearch/faiss/master/docs/html/annotated.html
+  doc_url: https://faiss.ai/
   dev_url: https://github.com/facebookresearch/faiss
 
 extra:
