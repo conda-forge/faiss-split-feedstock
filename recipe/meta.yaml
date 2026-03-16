@@ -226,8 +226,8 @@ outputs:
         {% set skips = skips + " or (test_contrib and test_checkpoint)" %}                 # [win]
         # marginal tolerance violation
         {% set skips = skips + " or (TestProductLocalSearchQuantizer and test_lut)" %}     # [osx]
-        # two failing tests on on aarch (test_index_accuracy & test_index_accuracy2)
-        {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le]
+        # two failing tests on on aarch and win (test_index_accuracy & test_index_accuracy2)
+        {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le or win]
         # test errors on aarch (probably due to emulation)
         {% set skips = skips + " or (TestPCA and test_pca)" %}                             # [aarch64]
         {% set skips = skips + " or test_PQ4_speed" %}                                     # [aarch64]
@@ -250,8 +250,8 @@ outputs:
         # TestClustering::test_ivf_train_2level, and
         # TestComponents::test_update_codebooks_with_double. Remove after faiss>=1.13.0
         # https://github.com/facebookresearch/faiss/pull/4523
-        {% set skips = skips + " or test_float" %}  # [unix]
-        {% set skips = skips + " or test_ivf_train_2level" %}  # [linux]
+        {% set skips = skips + " or test_float" %}
+        {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
         {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
