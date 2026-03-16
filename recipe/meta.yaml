@@ -109,8 +109,6 @@ outputs:
         - python                    # [build_platform != target_platform]
         - cmake
         - ninja
-        - llvm-openmp               # [unix]
-        - intel-openmp {{ mkl }}    # [win]
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}  # [build_platform != target_platform]
         - cuda-cudart-dev           # [build_platform != target_platform]
