@@ -17,11 +17,12 @@ mkdir build_python
 pushd build_python
 
 # Build vanilla version (no avx2), see build-lib.sh
+Python_NumPy_INCLUDE_DIR="$(python -c 'import numpy; print(numpy.get_include())')"
 cmake -G Ninja \
     ${CMAKE_ARGS} \
     -Dfaiss_ROOT=_libfaiss_stage/ \
     -DCMAKE_BUILD_TYPE=Release \
-    -DPython_NumPy_INCLUDE_DIR=$SP_DIR/numpy/_core/include \
+    -DPython_NumPy_INCLUDE_DIR=${Python_NumPy_INCLUDE_DIR} \
     ../faiss/python
 
 cmake --build . --target swigfaiss faiss_example_external_module -j $CPU_COUNT

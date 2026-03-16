@@ -249,6 +249,13 @@ outputs:
             {% set skips = skips + " or (TestIndexProduct and test_accuracy1)" %}
             {% set skips = skips + " or test_wrapped_quantizer_HNSW" %}
         {% endif %}
+        # Failing tests on NumPy 2: TestPreassigned::test_float,
+        # TestClustering::test_ivf_train_2level, and
+        # TestComponents::test_update_codebooks_with_double. Remove after faiss>=1.13.0
+        # https://github.com/facebookresearch/faiss/pull/4523
+        {% set skips = skips + " or test_float" %}  # [unix]
+        {% set skips = skips + " or test_ivf_train_2level" %}  # [linux]
+        {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
