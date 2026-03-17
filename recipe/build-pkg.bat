@@ -23,7 +23,7 @@ cmake -G Ninja ^
     ../faiss/python
 if %ERRORLEVEL% neq 0 exit 1
 
-cmake --build . --target swigfaiss faiss_example_external_module --config Release -j %CPU_COUNT%
+cmake --build . --target swigfaiss --config Release -j %CPU_COUNT%
 if %ERRORLEVEL% neq 0 exit 1
 
 :: Build actual python module.

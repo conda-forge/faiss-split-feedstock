@@ -26,7 +26,7 @@ cmake -G Ninja \
     -DPython_NumPy_INCLUDE_DIR=${Python_NumPy_INCLUDE_DIR} \
     ../faiss/python
 
-cmake --build . --target swigfaiss faiss_example_external_module -j $CPU_COUNT
+cmake --build . --target swigfaiss -j $CPU_COUNT
 
 # Build actual python module.
 $PYTHON setup.py install --single-version-externally-managed --record=record.txt --prefix=$PREFIX
