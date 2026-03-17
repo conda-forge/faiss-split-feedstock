@@ -71,6 +71,8 @@ source:
 
 build:
   number: {{ build }}
+  # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
+  skip: true  # [win and cuda_compiler_version != "None"]
 
 requirements:
   build:
