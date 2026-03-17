@@ -2,7 +2,7 @@
 set -ex
 
 declare -a CUDA_CONFIG_ARGS
-if [ ${cuda_compiler_version} != "None" ]; then
+if [ "${cuda_compiler_version}" != "None" ]; then
     # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
     # docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#ptxas-options-gpu-name
@@ -16,14 +16,14 @@ if [ ${cuda_compiler_version} != "None" ]; then
         export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
     fi
 
-    FAISS_ENABLE_GPU="ON"
+    export FAISS_ENABLE_GPU="ON"
     CUDA_CONFIG_ARGS+=(
         -DCMAKE_CUDA_ARCHITECTURES="${CMAKE_CUDA_ARCHS}"
     )
     # cmake does not generate output for the call below; echo some info
     echo "Set up extra cmake-args: CUDA_CONFIG_ARGS=${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"}"
 else
-    FAISS_ENABLE_GPU="OFF"
+    export FAISS_ENABLE_GPU="OFF"
 fi
 
 mkdir build
