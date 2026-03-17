@@ -185,6 +185,7 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
+        - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev                       # [win]
