@@ -188,7 +188,7 @@ outputs:
         - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
-        - libcublas-dev                       # [win]
+        - libcublas-dev
         {% endif %}
       run:
         - python
