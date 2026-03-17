@@ -254,6 +254,10 @@ outputs:
         {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
         {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
         {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
+        # Segfaults on Linux + CUDA builds
+        {% set skips = skips + " or (TestComputeGT and test_compute_GT_gpu)" %} # [linux]
+        # Segfaults on Windows + MKL + no CUDA builds
+        {% set skips = skips + " or (TestReconstructBatch and test_exception)" %} # [win]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
