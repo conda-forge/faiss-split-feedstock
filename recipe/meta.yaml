@@ -121,7 +121,8 @@ outputs:
       host:
         - blas-devel * *{{ blas_impl }}
         - libgomp                   # [linux]
-        - llvm-openmp               # [osx]
+        - llvm-openmp               # [osx or (win and blas_impl != 'mkl')]
+        - intel-openmp              # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -184,7 +185,7 @@ outputs:
         - numpy
         - libfaiss {{ version }}.* {{ faiss_proc_type }}*
         - libgomp                             # [linux]
-        - llvm-openmp                         # [osx]
+        - llvm-openmp                         # [osx or (win and blas_impl != 'mkl')]
         - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
