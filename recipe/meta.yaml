@@ -120,8 +120,8 @@ outputs:
         {% endif %}
       host:
         - blas-devel * *{{ blas_impl }}
-        - libgomp                   # [win]
         - llvm-openmp               # [unix]
+        - intel-openmp              # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -183,8 +183,8 @@ outputs:
         - setuptools
         - numpy
         - libfaiss {{ version }}.* {{ faiss_proc_type }}*
-        - libgomp                             # [win]
         - llvm-openmp                         # [unix]
+        - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev
@@ -257,18 +257,19 @@ outputs:
         {% set skips = skips + " or (TestComputeGT and test_compute_GT_gpu)" %}  # [linux and cuda_compiler_version != "None"]
         {% set skips = skips + " or (TestComputeGT and test_compute_GT_ip_gpu)" %}  # [linux and cuda_compiler_version != "None"]
         # Segfaults on Windows + MKL + no CUDA builds
-        # {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBucketSort and test_bucket_sort_parallel)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBucketSort and test_bucket_sort_inplace_parallel)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestMapInt64ToInt64 and test_small)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestClone and test_IDMap)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestClone and test_IVF)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBigBatchSearch and test_Flat)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBigBatchSearch and test_PQ)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBigBatchSearch and test_SQ)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestBigBatchSearch and test_checkpoint)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestInvlistSort and test_sort)" %}  # [win and blas_impl == 'mkl']
-        # {% set skips = skips + " or (TestIVFAQFastScan)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBucketSort and test_bucket_sort_parallel)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBucketSort and test_bucket_sort_inplace_parallel)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestMapInt64ToInt64 and test_small)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestClone and test_IDMap)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestClone and test_IVF)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_Flat)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_PQ)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_SQ)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_checkpoint)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestInvlistSort and test_sort)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestIVFAQFastScan)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestIVFPAQFastScan)" %}  # [win and blas_impl == 'mkl']
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
