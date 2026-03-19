@@ -14,6 +14,8 @@ if [ "${cuda_compiler_version}" != "None" ]; then
 
     if [[ ${cuda_compiler_version} == 12.* ]]; then
         export CMAKE_CUDA_ARCHS="53-real;62-real;72-real;75-real;80-real;86-real;89-real;90"
+    elif [[ ${cuda_compiler_version} == 13.* ]]; then
+        export CMAKE_CUDA_ARCHS="75-real;80-real;86-real;89-real;90-real;100-real;110-real;120"
     fi
 
     export FAISS_ENABLE_GPU="ON"
