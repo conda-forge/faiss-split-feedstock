@@ -73,6 +73,9 @@ build:
   number: {{ build }}
   # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
   skip: true  # [win and cuda_compiler_version != "None"]
+  # Windows + MKL disabled because of too many segfaults, see
+  # https://github.com/conda-forge/faiss-split-feedstock/pull/83#discussion_r2948647890
+  skip: true  # [win and blas_impl == "mkl"]
 
 requirements:
   build:
@@ -121,7 +124,7 @@ outputs:
       host:
         - blas-devel * *{{ blas_impl }}
         - llvm-openmp               # [unix]
-        - intel-openmp              # [win and blas_impl == 'mkl']
+        # - intel-openmp            # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -184,7 +187,7 @@ outputs:
         - numpy
         - libfaiss {{ version }}.* {{ faiss_proc_type }}*
         - llvm-openmp                         # [unix]
-        - intel-openmp                        # [win and blas_impl == 'mkl']
+        # - intel-openmp                      # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev
