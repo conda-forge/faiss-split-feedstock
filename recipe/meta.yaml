@@ -47,27 +47,27 @@ package:
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
   sha256: c5d517da6deb6a6d74290d7145331fc7474426025e2d826fa4a6d40670f4493c
-  patches:
-    - patches/0001-adapt-header-target-directory-to-outputname.patch
-    # patch for avoiding crash in GPU test suite on windows
-    - patches/0002-skip-test_stress-for-GPU-on-windows.patch
-    # enable building libfaiss_avx2 without libfaiss
-    - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
-    # increase tolerance for test that occasionally fails marginally
-    - patches/0004-increase-tolerance-for-marginally-failing-test.patch
-    # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
-    - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
-    # due to switch to ninja
-    - patches/0006-no-more-Release-subfolder.patch
-    # more fixes
-    - patches/0007-fix-index-type-in-openmp-loop.patch
-    - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
-    - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
-    # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
-    # disable library dispatch based on detected CPU instruction sets;
-    # revisit this after (or when) #23 is fixed
-    - patches/0011-disable-loading-different-library-flavours-based-on-.patch
+  # patches:
+  #   - patches/0001-adapt-header-target-directory-to-outputname.patch
+  #   # patch for avoiding crash in GPU test suite on windows
+  #   - patches/0002-skip-test_stress-for-GPU-on-windows.patch
+  #   # enable building libfaiss_avx2 without libfaiss
+  #   - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
+  #   # increase tolerance for test that occasionally fails marginally
+  #   - patches/0004-increase-tolerance-for-marginally-failing-test.patch
+  #   # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
+  #   - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+  #   # due to switch to ninja
+  #   - patches/0006-no-more-Release-subfolder.patch
+  #   # more fixes
+  #   - patches/0007-fix-index-type-in-openmp-loop.patch
+  #   - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
+  #   - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+  #   # workaround for https://github.com/facebookresearch/faiss/issues/2985
+  #   - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+  #   # disable library dispatch based on detected CPU instruction sets;
+  #   # revisit this after (or when) #23 is fixed
+  #   - patches/0011-disable-loading-different-library-flavours-based-on-.patch
 
 build:
   number: {{ build }}
@@ -252,13 +252,10 @@ outputs:
         # TestClustering::test_ivf_train_2level, OPQRelativeAccuracy::test_OIVFPQ and
         # TestComponents::test_update_codebooks_with_double. Remove after faiss>=1.13.0
         # https://github.com/facebookresearch/faiss/pull/4523
-        {% set skips = skips + " or test_float" %}
-        {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
+        {% set skips = skips + " or (TestPreassigned and test_float)" %}
+        {% set skips = skips + " or (TestClustering and test_ivf_train_2level)" %}  # [linux or win]
         {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
-        {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
-        # Segfaults on Linux + CUDA builds
-        {% set skips = skips + " or (TestComputeGT and test_compute_GT_gpu)" %}  # [linux and cuda_compiler_version != "None"]
-        {% set skips = skips + " or (TestComputeGT and test_compute_GT_ip_gpu)" %}  # [linux and cuda_compiler_version != "None"]
+        # {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
         # Segfaults on Windows + MKL + no CUDA builds
         {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win and blas_impl == 'mkl']
         {% set skips = skips + " or (TestBucketSort and test_bucket_sort_parallel)" %}  # [win and blas_impl == 'mkl']
