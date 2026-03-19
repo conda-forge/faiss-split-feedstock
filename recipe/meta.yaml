@@ -1,4 +1,4 @@
-{% set version = "1.10.0" %}
+{% set version = "1.14.1" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -46,7 +46,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 65b5493d6b8cb992f104677cab255a9b71ef1e1d2ea3b1500dc995c68b429949
+  sha256: 0216d38d8c5c460433815b72d3cde6725eaa5d5770576277a2abc01ffc414d20
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -94,10 +94,10 @@ outputs:
         - exit 0
 
   - name: libfaiss
-    script: build-lib.sh    # [unix]
-    script: build-lib.bat   # [win]
+    script: build-lib.sh  # [unix]
+    script: build-lib.bat  # [win]
     build:
-      string: "cpu_{{ blas_impl }}_h{{ PKG_HASH }}_{{ build }}"                                                 # [cuda_compiler_version == "None"]
+      string: "cpu_{{ blas_impl }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}_{{ blas_impl }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version != "None"]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
@@ -164,10 +164,10 @@ outputs:
         - if not exist %LIBRARY_LIB%\cmake\faiss\faiss-targets.cmake exit 1  # [win]
 
   - name: faiss
-    script: build-pkg.sh          # [not win]
-    script: build-pkg.bat         # [win]
+    script: build-pkg.sh  # [not win]
+    script: build-pkg.bat  # [win]
     build:
-      string: "cpu_{{ blas_impl }}_py{{ CONDA_PY }}_h{{ PKG_HASH }}_{{ build }}"                                                 # [cuda_compiler_version == "None"]
+      string: "cpu_{{ blas_impl }}_py{{ CONDA_PY }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}_{{ blas_impl }}_py{{ CONDA_PY }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
