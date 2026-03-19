@@ -120,7 +120,8 @@ outputs:
         {% endif %}
       host:
         - blas-devel * *{{ blas_impl }}
-        - llvm-openmp
+        - libgomp                   # [win]
+        - llvm-openmp               # [unix]
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
@@ -182,7 +183,8 @@ outputs:
         - setuptools
         - numpy
         - libfaiss {{ version }}.* {{ faiss_proc_type }}*
-        - llvm-openmp
+        - libgomp                             # [win]
+        - llvm-openmp                         # [unix]
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev
