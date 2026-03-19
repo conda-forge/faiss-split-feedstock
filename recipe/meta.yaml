@@ -1,12 +1,17 @@
-{% set version = "1.9.0" %}
+{% set version = "1.10.0" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
+{% set build = 0 %}
+# Use a higher build number for the CUDA variant, to ensure that it's
+# preferred by conda's solver, and it's preferentially
+# installed where the platform supports it.
 {% if cuda_compiler_version != "None" %}
-{% set cuda_major = environ.get("cuda_compiler_version", "11.8").split(".")[0] | int %}
-{% else %}
-{% set cuda_major = 0 %}
-{% set cuda_compiler_version = "None" %}
+{% set build = build + 200 %}
+{% endif %}
+
+{% if blas_impl == "mkl" %}
+{% set build = build + 100 %}
 {% endif %}
 
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
@@ -41,7 +46,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: f6721f1a479b0bdd8547e5bb0dbfa872643e7ea37686c6bf6fc99fb933b3fe4f
+  sha256: 65b5493d6b8cb992f104677cab255a9b71ef1e1d2ea3b1500dc995c68b429949
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -56,20 +61,21 @@ source:
     - patches/0006-no-more-Release-subfolder.patch
     # more fixes
     - patches/0007-fix-index-type-in-openmp-loop.patch
-    # compare https://github.com/facebookresearch/faiss/pull/2927
-    - patches/0008-loosen-test-tolerance-in-test_ivf_train_2level.patch
-    - patches/0009-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
-    - patches/0010-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
+    - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0011-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
-    # backport https://github.com/facebookresearch/faiss/pull/4010 for missing headers
-    - patches/0012-Some-chore-fixes-4010.patch
+    - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
     # disable library dispatch based on detected CPU instruction sets;
     # revisit this after (or when) #23 is fixed
-    - patches/0013-disable-loading-different-library-flavours-based-on-.patch
+    - patches/0011-disable-loading-different-library-flavours-based-on-.patch
 
 build:
-  number: 0
+  number: {{ build }}
+  # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
+  skip: true  # [win and cuda_compiler_version != "None"]
+  # Windows + MKL disabled because of too many segfaults, see
+  # https://github.com/conda-forge/faiss-split-feedstock/pull/83#discussion_r2948647890
+  skip: true  # [win and blas_impl == "mkl"]
 
 requirements:
   build:
@@ -91,14 +97,14 @@ outputs:
     script: build-lib.sh    # [unix]
     script: build-lib.bat   # [win]
     build:
-      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
-      string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      string: "cpu_{{ blas_impl }}_h{{ PKG_HASH }}_{{ build }}"                                                 # [cuda_compiler_version == "None"]
+      string: "cuda{{ cuda_compiler_version | replace('.', '') }}_{{ blas_impl }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version != "None"]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
         - libfaiss >={{ version }},<2
         # additionally, we need to ensure matching proc-type
-        - libfaiss =*=*_{{ faiss_proc_type }}
+        - libfaiss * {{ faiss_proc_type }}*
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -108,7 +114,7 @@ outputs:
         - python                    # [build_platform != target_platform]
         - cmake
         - ninja
-        {% if cuda_major >= 12 %}
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}  # [build_platform != target_platform]
         - cuda-cudart-dev           # [build_platform != target_platform]
         - cuda-profiler-api         # [build_platform != target_platform]
@@ -116,21 +122,23 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
-        - libgomp                   # [linux]
-        - llvm-openmp               # [osx]
-        - libblas                   # [not osx]
-        - liblapack                 # [not osx]
-        {% if cuda_major >= 12 %}
+        - blas-devel * *{{ blas_impl }}
+        - llvm-openmp               # [unix]
+        # - intel-openmp            # [win and blas_impl == 'mkl']
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - cuda-cudart-dev
         - cuda-profiler-api
         - libcublas-dev
         - libcurand-dev
         {% endif %}
+      run:
+        - libblas * *{{ blas_impl }}
+        - {{ blas_impl }}
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
-        - faiss-proc =*={{ faiss_proc_type }}
+        - faiss-proc * {{ faiss_proc_type }}
 
     test:
       commands:
@@ -159,8 +167,8 @@ outputs:
     script: build-pkg.sh          # [not win]
     script: build-pkg.bat         # [win]
     build:
-      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
-      string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      string: "cpu_{{ blas_impl }}_py{{ CONDA_PY }}_h{{ PKG_HASH }}_{{ build }}"                                                 # [cuda_compiler_version == "None"]
+      string: "cuda{{ cuda_compiler_version | replace('.', '') }}_{{ blas_impl }}_py{{ CONDA_PY }}_h{{ PKG_HASH }}_{{ build }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -177,21 +185,21 @@ outputs:
         - pip
         - setuptools
         - numpy
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
-        - libgomp                             # [linux]
-        - llvm-openmp                         # [osx]
-        {% if cuda_major >= 12 %}
+        - libfaiss {{ version }}.* {{ faiss_proc_type }}*
+        - llvm-openmp                         # [unix]
+        # - intel-openmp                      # [win and blas_impl == 'mkl']
+        {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
-        - libcublas-dev                       # [win]
+        - libcublas-dev
         {% endif %}
       run:
         - python
         - packaging
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss {{ version }}.* {{ faiss_proc_type }}*
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
-        - faiss-proc =*={{ faiss_proc_type }}
+        - faiss-proc * {{ faiss_proc_type }}
 
     {% if not (aarch64 or ppc64le) or py == 311 %}
     # only run the full test suite for one python version when in emulation
@@ -199,10 +207,6 @@ outputs:
     # in behaviour across python versions anyway
     test:
       requires:
-        # trying to test all blas-variants runs into conda/conda-build#3947
-        # - libblas =*=*{{ blas_impl }}
-        # testing with MKL on x86_64, as upstream considers this the most important
-        - libblas =*=*mkl  # [x86_64]
         - scipy
         - pytest
       files:
@@ -223,8 +227,9 @@ outputs:
         {% set skips = skips + " or (test_contrib and test_checkpoint)" %}                 # [win]
         # marginal tolerance violation
         {% set skips = skips + " or (TestProductLocalSearchQuantizer and test_lut)" %}     # [osx]
-        # two failing tests on on aarch (test_index_accuracy & test_index_accuracy2)
-        {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le]
+        # two failing tests on on aarch and win (test_index_accuracy & test_index_accuracy2)
+        {% set skips = skips + " or (test_residual_quantizer and test_index_accuracy)" %}  # [aarch64 or ppc64le or win]
+        {% set skips = skips + " or (test_local_search_quantizer and test_index_accuracy2)" %}  # [win]
         # test errors on aarch (probably due to emulation)
         {% set skips = skips + " or (TestPCA and test_pca)" %}                             # [aarch64]
         {% set skips = skips + " or test_PQ4_speed" %}                                     # [aarch64]
@@ -243,6 +248,31 @@ outputs:
             {% set skips = skips + " or (TestIndexProduct and test_accuracy1)" %}
             {% set skips = skips + " or test_wrapped_quantizer_HNSW" %}
         {% endif %}
+        # Failing tests on NumPy 2: TestPreassigned::test_float,
+        # TestClustering::test_ivf_train_2level, OPQRelativeAccuracy::test_OIVFPQ and
+        # TestComponents::test_update_codebooks_with_double. Remove after faiss>=1.13.0
+        # https://github.com/facebookresearch/faiss/pull/4523
+        {% set skips = skips + " or test_float" %}
+        {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
+        {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
+        {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
+        # Segfaults on Linux + CUDA builds
+        {% set skips = skips + " or (TestComputeGT and test_compute_GT_gpu)" %}  # [linux and cuda_compiler_version != "None"]
+        {% set skips = skips + " or (TestComputeGT and test_compute_GT_ip_gpu)" %}  # [linux and cuda_compiler_version != "None"]
+        # Segfaults on Windows + MKL + no CUDA builds
+        {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBucketSort and test_bucket_sort_parallel)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBucketSort and test_bucket_sort_inplace_parallel)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestMapInt64ToInt64 and test_small)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestClone and test_IDMap)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestClone and test_IVF)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_Flat)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_PQ)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_SQ)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestBigBatchSearch and test_checkpoint)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestInvlistSort and test_sort)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestIVFAQFastScan)" %}  # [win and blas_impl == 'mkl']
+        {% set skips = skips + " or (TestIVFPAQFastScan)" %}  # [win and blas_impl == 'mkl']
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
@@ -259,7 +289,7 @@ outputs:
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cpu
+        - faiss {{ version }}.* cpu*
     test:
       imports:
         - faiss
@@ -269,7 +299,7 @@ outputs:
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cuda
+        - faiss {{ version }}.* cuda*
     test:
       imports:
         - faiss
@@ -293,7 +323,7 @@ about:
     [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
     using the MKL implementation of blas/lapack. You can ensure that this is installed
     by adding "libblas =*=*mkl" to your dependencies.
-  doc_url: https://rawgit.com/facebookresearch/faiss/master/docs/html/annotated.html
+  doc_url: https://faiss.ai/
   dev_url: https://github.com/facebookresearch/faiss
 
 extra:

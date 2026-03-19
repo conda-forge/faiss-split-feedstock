@@ -1,14 +1,14 @@
-From 60b99f230450a3e52a03c2f6ace7005b8d331e55 Mon Sep 17 00:00:00 2001
+From 683173795de508089b5ba4092a5e19197b908ea8 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Fri, 26 May 2023 13:16:44 +1100
-Subject: [PATCH 07/13] fix index type in openmp loop
+Subject: [PATCH 07/11] fix index type in openmp loop
 
 ---
  faiss/utils/distances_fused/simdlib_based.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/faiss/utils/distances_fused/simdlib_based.cpp b/faiss/utils/distances_fused/simdlib_based.cpp
-index 309fb7211..6a9698b94 100644
+index 146dfe88..1a531c1a 100644
 --- a/faiss/utils/distances_fused/simdlib_based.cpp
 +++ b/faiss/utils/distances_fused/simdlib_based.cpp
 @@ -260,7 +260,7 @@ void exhaustive_L2sqr_fused_cmax(
