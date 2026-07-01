@@ -71,6 +71,8 @@ source:
     - patches/0012-build-metal-backend-as-shared-library.patch
     # avoid CUDA-style Python helpers for Metal-only builds
     - patches/0013-fall-back-to-cpu-for-metal-only-contrib-ground-truth.patch
+    # use the CBLAS ABI for Windows MKL BLAS calls
+    - patches/0014-use-cblas-gemm-for-windows-mkl.patch                         # [win and blas_impl == 'mkl']
 
 build:
   number: {{ build }}
