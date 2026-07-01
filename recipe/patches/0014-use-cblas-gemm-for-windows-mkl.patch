@@ -14,7 +14,7 @@ diff --git a/faiss/utils/distances.cpp b/faiss/utils/distances.cpp
  
  #include <omp.h>
  
-+#include <cblas.h>
++#include <mkl_cblas.h>
  #include <faiss/impl/AuxIndexStructures.h>
  #include <faiss/impl/FaissAssert.h>
  #include <faiss/impl/IDSelector.h>
