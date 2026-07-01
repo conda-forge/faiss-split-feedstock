@@ -2,6 +2,7 @@
 set -ex
 
 declare -a CUDA_CONFIG_ARGS
+BUILD_JOBS="${CPU_COUNT}"
 if [ "${cuda_compiler_version}" != "None" ]; then
     # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
@@ -14,12 +15,18 @@ if [ "${cuda_compiler_version}" != "None" ]; then
 
     if [[ ${cuda_compiler_version} == 12.* ]]; then
         export CMAKE_CUDA_ARCHS="86-real"
+    elif [[ ${cuda_compiler_version} == 13.* ]]; then
+        # export CMAKE_CUDA_ARCHS="75-real;80-real;86-real;89-real;90-real;100-real;110-real;120"
+        export CMAKE_CUDA_ARCHS="86-real"
     fi
 
     export FAISS_ENABLE_GPU="ON"
     CUDA_CONFIG_ARGS+=(
         -DCMAKE_CUDA_ARCHITECTURES="${CMAKE_CUDA_ARCHS}"
     )
+    if [[ ${BUILD_JOBS} -gt 8 ]]; then
+        BUILD_JOBS=8
+    fi
     # cmake does not generate output for the call below; echo some info
     echo "Set up extra cmake-args: CUDA_CONFIG_ARGS=${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"}"
 else
@@ -41,6 +48,6 @@ cmake -G Ninja \
     ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
     ..
 
-cmake --build . --target "faiss" -j $CPU_COUNT
+cmake --build . --target "faiss" -j ${BUILD_JOBS}
 cmake --install . --prefix $PREFIX
 cmake --install . --prefix _libfaiss_stage/
