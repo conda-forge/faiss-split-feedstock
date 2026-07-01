@@ -268,7 +268,7 @@ outputs:
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
-        - export SKIPS="({{ skips }})" && ./test-pkg.sh  # [unix]
+        - export SKIPS="({{ skips }})" && ./test-pkg.sh  # [unix and (not ppc64le or py == 312)]
         - set "SKIPS=({{ skips }})"    && test-pkg.bat   # [win]
 
         # running the following test requires an actual GPU device, which is not available in CI
