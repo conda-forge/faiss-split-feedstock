@@ -67,6 +67,10 @@ source:
     # disable library dispatch based on detected CPU instruction sets;
     # revisit this after (or when) #23 is fixed
     - patches/0011-disable-loading-different-library-flavours-based-on-.patch
+    # build Metal backend as shared library
+    - patches/0012-build-metal-backend-as-shared-library.patch
+    # avoid CUDA-style Python helpers for Metal-only builds
+    - patches/0013-fall-back-to-cpu-for-metal-only-contrib-ground-truth.patch
 
 build:
   number: {{ build }}
@@ -147,7 +151,10 @@ outputs:
         # absence of static libraries
         - test ! -f $PREFIX/lib/libfaiss.a              # [unix]
         - test ! -f $PREFIX/lib/libfaiss_gpu.a          # [unix]
+        - test ! -f $PREFIX/lib/libfaiss_metal.a        # [osx and arm64]
         - if exist %LIBRARY_LIB%\faiss_gpu.lib exit 1   # [win]
+        - test -f $PREFIX/lib/libfaiss_metal.dylib      # [osx and arm64]
+        - test -f $PREFIX/lib/MetalDistance.metallib    # [osx and arm64]
 
         # headers
         {% for each_header in headers %}

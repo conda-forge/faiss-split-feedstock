@@ -8,6 +8,12 @@ else
     export FAISS_ENABLE_GPU="OFF"
 fi
 
+if [[ "${target_platform}" == "osx-arm64" ]]; then
+    export FAISS_ENABLE_METAL="ON"
+else
+    export FAISS_ENABLE_METAL="OFF"
+fi
+
 # see https://github.com/swig/swig/issues/568
 if [[ "${target_platform}" == linux-* ]]; then
     export CXXFLAGS="$CXXFLAGS -DSWIGWORDSIZE64"
@@ -22,6 +28,7 @@ cmake -G Ninja \
     ${CMAKE_ARGS} \
     -Dfaiss_ROOT=_libfaiss_stage/ \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
+    -DFAISS_ENABLE_METAL=${FAISS_ENABLE_METAL} \
     -DCMAKE_BUILD_TYPE=Release \
     -DPython_NumPy_INCLUDE_DIR=${Python_NumPy_INCLUDE_DIR} \
     ../faiss/python

@@ -33,6 +33,12 @@ else
     export FAISS_ENABLE_GPU="OFF"
 fi
 
+if [[ "${target_platform}" == "osx-arm64" ]]; then
+    export FAISS_ENABLE_METAL="ON"
+else
+    export FAISS_ENABLE_METAL="OFF"
+fi
+
 mkdir build
 cd build
 
@@ -42,6 +48,7 @@ cmake -G Ninja \
     -DBUILD_TESTING=${BUILD_TESTING} \
     -DFAISS_ENABLE_PYTHON=OFF \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
+    -DFAISS_ENABLE_METAL=${FAISS_ENABLE_METAL} \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_INSTALL_DATAROOTDIR="${PREFIX}/lib/cmake" \
@@ -49,5 +56,8 @@ cmake -G Ninja \
     ..
 
 cmake --build . --target "faiss" -j ${BUILD_JOBS}
+if [[ "${FAISS_ENABLE_METAL}" == "ON" ]]; then
+    cmake --build . --target "faiss_metal" -j ${BUILD_JOBS}
+fi
 cmake --install . --prefix $PREFIX
 cmake --install . --prefix _libfaiss_stage/
