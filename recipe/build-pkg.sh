@@ -30,6 +30,8 @@ cmake -G Ninja \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
     -DFAISS_ENABLE_METAL=${FAISS_ENABLE_METAL} \
     -DCMAKE_BUILD_TYPE=Release \
+    -DPython_EXECUTABLE=$PYTHON \
+    -DPython_FIND_STRATEGY=LOCATION \
     -DPython_NumPy_INCLUDE_DIR=${Python_NumPy_INCLUDE_DIR} \
     ../faiss/python
 
