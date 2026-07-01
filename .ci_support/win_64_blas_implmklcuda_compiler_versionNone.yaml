@@ -12,8 +12,6 @@ cuda_compiler_version:
 - None
 cxx_compiler:
 - vs2022
-github_actions_labels:
-- depot-windows-2025-16
 mkl:
 - '2026'
 numpy:
