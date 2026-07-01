@@ -4,33 +4,32 @@ Date: Thu, 8 Aug 2024 15:40:34 +1100
 Subject: [PATCH 09/11] don't rely on luck for initialization order on win+CUDA
 
 ---
- faiss/gpu/GpuIndex.cu | 20 --------------------
- faiss/utils/utils.cpp |  6 ++++--
- 2 files changed, 4 insertions(+), 22 deletions(-)
+ faiss/gpu/GpuIndex.cu | 19 -------------------
+ faiss/utils/utils.cpp | 10 +++++++++-
+ 2 files changed, 9 insertions(+), 20 deletions(-)
 
 diff --git a/faiss/gpu/GpuIndex.cu b/faiss/gpu/GpuIndex.cu
-index 033cb9aa..08769920 100644
+index 4b8047a4..9abac61b 100644
 --- a/faiss/gpu/GpuIndex.cu
 +++ b/faiss/gpu/GpuIndex.cu
-@@ -525,24 +525,4 @@ bool isGpuIndexImplemented(faiss::Index* index) {
+@@ -747,23 +747,4 @@ bool isGpuIndexImplemented(faiss::Index* index) {
  
  } // namespace gpu
  
 -// This is the one defined in utils.cpp
--// Crossing fingers that the InitGpuCompileOptions_instance will
--// be instanciated after this global variable
--extern std::string gpu_compile_options;
+-extern std::string& ref_gpu_compile_options();
 -
 -struct InitGpuCompileOptions {
 -    InitGpuCompileOptions() {
--        gpu_compile_options = "GPU ";
+-        ref_gpu_compile_options() = std::string("GPU ") +
 -#ifdef USE_NVIDIA_CUVS
--        gpu_compile_options += "NVIDIA_CUVS ";
+-                "NVIDIA_CUVS " +
 -#endif
 -
 -#ifdef USE_AMD_ROCM
--        gpu_compile_options += "AMD_ROCM ";
+-                "AMD_ROCM " +
 -#endif
+-                "";
 -    }
 -};
 -
@@ -38,19 +37,23 @@ index 033cb9aa..08769920 100644
 -
  } // namespace faiss
 diff --git a/faiss/utils/utils.cpp b/faiss/utils/utils.cpp
-index 85bf1348..326e019c 100644
+index 85fbc113..ecb87e39 100644
 --- a/faiss/utils/utils.cpp
 +++ b/faiss/utils/utils.cpp
-@@ -104,8 +104,10 @@ int sgemv_(
+@@ -104,7 +104,15 @@ namespace faiss {
  
- namespace faiss {
- 
--// this will be set at load time from GPU Faiss
--std::string gpu_compile_options;
-+std::string gpu_compile_options = "GPU ";
-+#ifdef USE_NVIDIA_RAFT
-+    gpu_compile_options += "NVIDIA_RAFT ";
+ // this will be set at load time from GPU Faiss
+ std::string& ref_gpu_compile_options() {
+-    static std::string gpu_compile_options;
++    static std::string gpu_compile_options = std::string("GPU ") +
++#ifdef USE_NVIDIA_CUVS
++            "NVIDIA_CUVS " +
 +#endif
++
++#ifdef USE_AMD_ROCM
++            "AMD_ROCM " +
++#endif
++            "";
+     return gpu_compile_options;
+ }
  
- std::string get_compile_options() {
-     std::string options;
