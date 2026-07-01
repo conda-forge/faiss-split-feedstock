@@ -60,7 +60,6 @@ source:
     # due to switch to ninja
     - patches/0006-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0007-fix-index-type-in-openmp-loop.patch
     - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
     - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985

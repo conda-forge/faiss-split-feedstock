@@ -11,10 +11,10 @@ diff --git a/faiss/python/setup.py b/faiss/python/setup.py
 index 23611cb3..4745b970 100644
 --- a/faiss/python/setup.py
 +++ b/faiss/python/setup.py
-@@ -23,7 +23,7 @@ shutil.copyfile("extra_wrappers.py", "faiss/extra_wrappers.py")
- shutil.copyfile("array_conversions.py", "faiss/array_conversions.py")
- 
- ext = ".pyd" if platform.system() == "Windows" else ".so"
+@@ -31,7 +31,7 @@ if platform.system() != "AIX":
+     ext = ".pyd" if platform.system() == "Windows" else ".so"
+ else:
+     ext = ".a"
 -prefix = "Release/" * (platform.system() == "Windows")
 +prefix = ""
  
