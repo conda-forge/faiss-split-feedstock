@@ -18,7 +18,6 @@ set "LDFLAGS=%LDFLAGS% /LIBPATH:%SRC_DIR:\=/%/build/_libfaiss_stage/lib"
 cmake -G Ninja ^
     -Dfaiss_ROOT=_libfaiss_stage ^
     -DFAISS_ENABLE_GPU=!FAISS_ENABLE_GPU! ^
-    -DFAISS_ENABLE_MKL=OFF ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DPython_EXECUTABLE="%PYTHON%" ^
     ../faiss/python
