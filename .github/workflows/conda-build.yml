@@ -32,7 +32,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implblisc_stdlib_version2.17cuda_compiler_versionNone
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -44,7 +44,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implblisc_stdlib_version2.28cuda_compiler_version13.0
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -56,7 +56,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implmklc_stdlib_version2.17cuda_compiler_version12.9
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -68,7 +68,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implmklc_stdlib_version2.17cuda_compiler_versionNone
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -80,7 +80,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implmklc_stdlib_version2.28cuda_compiler_version13.0
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -92,7 +92,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implopenblasc_stdlib_version2.17cuda_compiler_version12.9
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -104,7 +104,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implopenblasc_stdlib_version2.17cuda_compiler_versionNone
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -116,7 +116,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_64_blas_implopenblasc_stdlib_version2.28cuda_compiler_version13.0
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -128,7 +128,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-latest']
+            runs_on: ['depot-ubuntu-24.04-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_c_stdlib_version2.17cuda_compiler_version12.9
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
@@ -140,7 +140,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-24.04-arm']
+            runs_on: ['depot-ubuntu-24.04-arm-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_c_stdlib_version2.17cuda_compiler_versionNone
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
@@ -152,7 +152,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-24.04-arm']
+            runs_on: ['depot-ubuntu-24.04-arm-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_aarch64_c_stdlib_version2.28cuda_compiler_version13.0
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-aarch64:alma9
@@ -164,7 +164,7 @@ jobs:
             os: ubuntu
             pagefile_size: 0
             resize_partitions: False
-            runs_on: ['ubuntu-24.04-arm']
+            runs_on: ['depot-ubuntu-24.04-arm-16']
             tools_install_dir: ~/miniforge3
           - CONFIG: linux_ppc64le_
             DOCKER_IMAGE: quay.io/condaforge/linux-anvil-x86_64:alma9
@@ -178,6 +178,39 @@ jobs:
             resize_partitions: False
             runs_on: ['ubuntu-latest']
             tools_install_dir: ~/miniforge3
+          - CONFIG: win_64_blas_implbliscuda_compiler_versionNone
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: C:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['depot-windows-2025-16']
+            tools_install_dir: C:\Miniforge
+          - CONFIG: win_64_blas_implmklcuda_compiler_versionNone
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: C:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['depot-windows-2025-16']
+            tools_install_dir: C:\Miniforge
+          - CONFIG: win_64_blas_implopenblascuda_compiler_versionNone
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: C:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['depot-windows-2025-16']
+            tools_install_dir: C:\Miniforge
     steps:
 
     - name: Checkout code
