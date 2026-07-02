@@ -263,9 +263,9 @@ outputs:
         {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
         {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
         {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
-        # GPU-only tests abort on Linux + CUDA builds without a usable GPU
-        {% set skips = skips + " or TestComputeGT" %}  # [linux and cuda_compiler_version != "None"]
-        {% set skips = skips + " or test_wheel_smoke_gpu.py" %}  # [linux and cuda_compiler_version != "None"]
+        # GPU-only tests abort on CUDA builds without a usable GPU
+        {% set skips = skips + " or TestComputeGT" %}  # [cuda_compiler_version != "None"]
+        {% set skips = skips + " or test_wheel_smoke_gpu.py" %}  # [cuda_compiler_version != "None"]
         # Segfaults on Windows + MKL + no CUDA builds
         {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
