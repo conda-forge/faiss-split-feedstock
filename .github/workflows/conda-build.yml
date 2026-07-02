@@ -178,6 +178,28 @@ jobs:
             resize_partitions: False
             runs_on: ['ubuntu-latest']
             tools_install_dir: ~/miniforge3
+          - CONFIG: win_64_blas_implbliscuda_compiler_version12.9
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: D:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['windows-2022']
+            tools_install_dir: D:\Miniforge
+          - CONFIG: win_64_blas_implbliscuda_compiler_version13.0
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: D:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['windows-2022']
+            tools_install_dir: D:\Miniforge
           - CONFIG: win_64_blas_implbliscuda_compiler_versionNone
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
@@ -189,7 +211,18 @@ jobs:
             resize_partitions: False
             runs_on: ['windows-2022']
             tools_install_dir: D:\Miniforge
-          - CONFIG: win_64_blas_implmklcuda_compiler_versionNone
+          - CONFIG: win_64_blas_implopenblascuda_compiler_version12.9
+            STORE_BUILD_ARTIFACTS: False
+            UPLOAD_PACKAGES: True
+            build_workspace_dir: D:\\bld\\
+            docker_run_args: 
+            free_disk_space: skip
+            os: windows
+            pagefile_size: 0
+            resize_partitions: False
+            runs_on: ['windows-2022']
+            tools_install_dir: D:\Miniforge
+          - CONFIG: win_64_blas_implopenblascuda_compiler_version13.0
             STORE_BUILD_ARTIFACTS: False
             UPLOAD_PACKAGES: True
             build_workspace_dir: D:\\bld\\
