@@ -71,13 +71,16 @@ source:
     - patches/0012-build-metal-backend-as-shared-library.patch
     # avoid CUDA-style Python helpers for Metal-only builds
     - patches/0013-fall-back-to-cpu-for-metal-only-contrib-ground-truth.patch
-    # use the CBLAS ABI for Windows MKL BLAS calls
-    - patches/0014-use-cblas-gemm-for-windows-mkl.patch                         # [win and blas_impl == 'mkl']
+    # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/msvc-template.diff
+    - patches/0014-msvc-template.patch  # [win]
+    # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
+    - patches/0015-undef-small.patch  # [win]
+
 
 build:
   number: {{ build }}
   # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
-  skip: true  # [win and cuda_compiler_version != "None"]
+  skip: true  # [win and blas_impl == "mkl"]
 
 requirements:
   build:
