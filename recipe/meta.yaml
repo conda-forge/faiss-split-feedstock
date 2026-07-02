@@ -71,10 +71,8 @@ source:
     - patches/0012-build-metal-backend-as-shared-library.patch
     # avoid CUDA-style Python helpers for Metal-only builds
     - patches/0013-fall-back-to-cpu-for-metal-only-contrib-ground-truth.patch
-    # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/msvc-template.diff
-    - patches/0014-msvc-template.patch  # [win]
     # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
-    - patches/0015-undef-small.patch  # [win]
+    - patches/0014-undef-small.patch  # [win]
 
 
 build:
