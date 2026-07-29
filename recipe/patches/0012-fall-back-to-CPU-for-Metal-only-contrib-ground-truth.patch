@@ -1,5 +1,5 @@
 From 3e36418b2f9ee3681cef5a1bdcc58e9924a806f3 Mon Sep 17 00:00:00 2001
-From: conda-forge <conda-forge@users.noreply.github.com>
+From: Tobias Fischer <info@tobiasfischer.info>
 Date: Wed, 1 Jul 2026 00:00:00 +0000
 Subject: [PATCH 12/13] fall back to CPU for Metal-only contrib ground truth
 

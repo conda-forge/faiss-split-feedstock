@@ -1,5 +1,5 @@
 From 72b30662bb883ea13a6f6a04c072e3ed02090aa3 Mon Sep 17 00:00:00 2001
-From: conda-forge <conda-forge@users.noreply.github.com>
+From: Tobias Fischer <info@tobiasfischer.info>
 Date: Wed, 1 Jul 2026 00:00:00 +0000
 Subject: [PATCH 13/13] undef small macro before MergeNetworkWarp
 

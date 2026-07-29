@@ -1,5 +1,5 @@
 From af0e283d4567b2cd16df49fb9f18c2a10df22443 Mon Sep 17 00:00:00 2001
-From: conda-forge <conda-forge@users.noreply.github.com>
+From: Tobias Fischer <info@tobiasfischer.info>
 Date: Wed, 1 Jul 2026 00:00:00 +0000
 Subject: [PATCH 11/13] build Metal backend as shared library
 
