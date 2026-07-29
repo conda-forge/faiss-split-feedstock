@@ -60,19 +60,19 @@ source:
     # due to switch to ninja
     - patches/0006-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
-    - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0007-don-t-hide-faiss-gpu-symbols-on-windows.patch                # [win]
+    - patches/0008-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    - patches/0009-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
     # disable library dispatch based on detected CPU instruction sets;
     # revisit this after (or when) #23 is fixed
-    - patches/0011-disable-loading-different-library-flavours-based-on-.patch
+    - patches/0010-disable-loading-different-library-flavours-based-on-.patch
     # build Metal backend as shared library
-    - patches/0012-build-metal-backend-as-shared-library.patch
+    - patches/0011-build-Metal-backend-as-shared-library.patch
     # avoid CUDA-style Python helpers for Metal-only builds
-    - patches/0013-fall-back-to-cpu-for-metal-only-contrib-ground-truth.patch
+    - patches/0012-fall-back-to-CPU-for-Metal-only-contrib-ground-truth.patch
     # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
-    - patches/0014-undef-small.patch  # [win]
+    - patches/0013-undef-small-macro-before-MergeNetworkWarp.patch              # [win]
 
 
 build:

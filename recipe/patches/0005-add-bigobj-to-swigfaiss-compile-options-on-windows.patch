@@ -1,14 +1,14 @@
-From accd9b17d5b53c05c600498d982834cdb6bc686d Mon Sep 17 00:00:00 2001
+From 8c3bc295452b65175bd44175506c55cec569ee72 Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Sat, 5 Jun 2021 16:29:53 +0200
-Subject: [PATCH 05/11] add /bigobj to swigfaiss compile options on windows
+Subject: [PATCH 05/13] add /bigobj to swigfaiss compile options on windows
 
 ---
  faiss/python/CMakeLists.txt | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
-index 3fc46f4c..ec8cfd0a 100644
+index 2566784..1361113 100644
 --- a/faiss/python/CMakeLists.txt
 +++ b/faiss/python/CMakeLists.txt
 @@ -32,6 +32,8 @@ macro(configure_swigfaiss source)
@@ -18,5 +18,5 @@ index 3fc46f4c..ec8cfd0a 100644
 +    # to avoid: "fatal error C1128: number of sections exceeded object file format limit"
 +    add_compile_options(/bigobj)
    endif()
-   if(FAISS_ENABLE_GPU)
-     set_source_files_properties(${source} PROPERTIES
+   if(FAISS_ENABLE_SVS)
+     set_property(SOURCE ${source} APPEND PROPERTY
