@@ -10,10 +10,6 @@
 {% set build = build + 200 %}
 {% endif %}
 
-{% if blas_impl == "mkl" %}
-{% set build = build + 100 %}
-{% endif %}
-
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
 # see https://github.com/facebookresearch/faiss/blob/v{{ version }}/faiss/CMakeLists.txt;
 # gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'.
@@ -77,8 +73,6 @@ source:
 
 build:
   number: {{ build }}
-  # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
-  skip: true  # [win and blas_impl == "mkl"]
 
 requirements:
   build:
@@ -125,7 +119,8 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
-        - blas-devel * *{{ blas_impl }}
+        - libblas
+        - liblapack
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
         {% if cuda_compiler_version != "None" %}
@@ -136,8 +131,8 @@ outputs:
         - libcurand-dev
         {% endif %}
       run:
-        - libblas * *{{ blas_impl }}
-        - {{ blas_impl }}
+        - libblas
+        - liblapack
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
@@ -194,7 +189,6 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
-        - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev
@@ -261,7 +255,6 @@ outputs:
         # https://github.com/facebookresearch/faiss/pull/4523
         {% set skips = skips + " or test_float" %}
         {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
-        {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
         {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
         # GPU-only tests abort on CUDA builds without a usable GPU
         {% set skips = skips + " or TestComputeGT" %}  # [cuda_compiler_version != "None"]
@@ -314,10 +307,8 @@ about:
     Some of the most useful algorithms are implemented on the GPU. It is developed by
     [Facebook AI Research](https://research.fb.com/category/facebook-ai-research-fair/).
 
-    For best performance, the maintainers of the package
-    [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
-    using the MKL implementation of blas/lapack. You can ensure that this is installed
-    by adding "libblas =*=*mkl" to your dependencies.
+    The BLAS/LAPACK implementation can be selected at runtime by installing
+    the desired libblas/liblapack variant.
   doc_url: https://faiss.ai/
   dev_url: https://github.com/facebookresearch/faiss
 
