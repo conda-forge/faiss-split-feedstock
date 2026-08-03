@@ -13,7 +13,7 @@ cuda_compiler_version:
 cxx_compiler:
 - vs2022
 mkl:
-- '2025'
+- '2026'
 numpy:
 - '2'
 pin_run_as_build:
