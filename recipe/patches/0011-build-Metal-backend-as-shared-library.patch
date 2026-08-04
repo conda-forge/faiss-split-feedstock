@@ -1,0 +1,32 @@
+From af0e283d4567b2cd16df49fb9f18c2a10df22443 Mon Sep 17 00:00:00 2001
+From: Tobias Fischer <info@tobiasfischer.info>
+Date: Wed, 1 Jul 2026 00:00:00 +0000
+Subject: [PATCH 11/13] build Metal backend as shared library
+
+---
+ faiss/gpu_metal/CMakeLists.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/faiss/gpu_metal/CMakeLists.txt b/faiss/gpu_metal/CMakeLists.txt
+index 22f5fb8..6805b96 100644
+--- a/faiss/gpu_metal/CMakeLists.txt
++++ b/faiss/gpu_metal/CMakeLists.txt
+@@ -22,7 +22,7 @@ set(FAISS_METAL_SRC
+   MetalPythonBridge.mm
+ )
+ 
+-add_library(faiss_metal STATIC ${FAISS_METAL_SRC})
++add_library(faiss_metal ${FAISS_METAL_SRC})
+ 
+ target_link_libraries(faiss_metal
+   PUBLIC
+@@ -83,6 +83,9 @@ target_compile_definitions(faiss_metal PRIVATE
+ install(TARGETS faiss_metal
+   EXPORT faiss-targets
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+ )
+ 
+ set(FAISS_METAL_HEADERS

@@ -1,0 +1,24 @@
+From 72b30662bb883ea13a6f6a04c072e3ed02090aa3 Mon Sep 17 00:00:00 2001
+From: Tobias Fischer <info@tobiasfischer.info>
+Date: Wed, 1 Jul 2026 00:00:00 +0000
+Subject: [PATCH 13/13] undef small macro before MergeNetworkWarp
+
+---
+ faiss/gpu/utils/MergeNetworkWarp.cuh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/faiss/gpu/utils/MergeNetworkWarp.cuh b/faiss/gpu/utils/MergeNetworkWarp.cuh
+index 39b3008..06d0c91 100644
+--- a/faiss/gpu/utils/MergeNetworkWarp.cuh
++++ b/faiss/gpu/utils/MergeNetworkWarp.cuh
+@@ -13,6 +13,10 @@
+ #include <faiss/gpu/utils/PtxUtils.cuh>
+ #include <faiss/gpu/utils/WarpShuffles.cuh>
+ 
++#ifdef small
++#undef small
++#endif
++
+ namespace faiss {
+ namespace gpu {
+ 

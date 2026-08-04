@@ -1,0 +1,24 @@
+From 3e36418b2f9ee3681cef5a1bdcc58e9924a806f3 Mon Sep 17 00:00:00 2001
+From: Tobias Fischer <info@tobiasfischer.info>
+Date: Wed, 1 Jul 2026 00:00:00 +0000
+Subject: [PATCH 12/13] fall back to CPU for Metal-only contrib ground truth
+
+---
+ contrib/exhaustive_search.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/contrib/exhaustive_search.py b/contrib/exhaustive_search.py
+index 7a5156b..196a7cd 100644
+--- a/contrib/exhaustive_search.py
++++ b/contrib/exhaustive_search.py
+@@ -27,6 +27,10 @@ def knn_ground_truth(xq, db_iterator, k, metric_type=faiss.METRIC_L2, shard=Fals
+     if ngpu == -1:
+         ngpu = faiss.get_num_gpus()
+ 
++    if ngpu and not hasattr(faiss, "GpuMultipleClonerOptions"):
++        LOG.info("GPU cloner helpers unavailable, falling back to CPU")
++        ngpu = 0
++
+     if ngpu:
+         LOG.info('running on %d GPUs' % ngpu)
+         co = faiss.GpuMultipleClonerOptions()

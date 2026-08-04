@@ -1,0 +1,3 @@
+# For Metal support
+c_stdlib_version:            # [osx and arm64]
+  - 13.3                     # [osx and arm64]

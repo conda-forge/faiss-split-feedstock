@@ -1,20 +1,20 @@
-From bd0e39e64d0dd7a81f0129f790ee695fb396a0fe Mon Sep 17 00:00:00 2001
+From ec0279c686e54dcd0fdc27b797fe68a6907d369e Mon Sep 17 00:00:00 2001
 From: "H. Vetinari" <h.vetinari@gmx.com>
 Date: Thu, 25 May 2023 22:29:29 +1100
-Subject: [PATCH 06/11] no more Release/ subfolder
+Subject: [PATCH 06/13] no more Release/ subfolder
 
 ---
  faiss/python/setup.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/faiss/python/setup.py b/faiss/python/setup.py
-index 23611cb3..4745b970 100644
+index 8c90617..9f21f00 100644
 --- a/faiss/python/setup.py
 +++ b/faiss/python/setup.py
-@@ -23,7 +23,7 @@ shutil.copyfile("extra_wrappers.py", "faiss/extra_wrappers.py")
- shutil.copyfile("array_conversions.py", "faiss/array_conversions.py")
- 
- ext = ".pyd" if platform.system() == "Windows" else ".so"
+@@ -31,7 +31,7 @@ if platform.system() != "AIX":
+     ext = ".pyd" if platform.system() == "Windows" else ".so"
+ else:
+     ext = ".a"
 -prefix = "Release/" * (platform.system() == "Windows")
 +prefix = ""
  

@@ -1,4 +1,4 @@
-{% set version = "1.10.0" %}
+{% set version = "1.14.3" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -8,10 +8,6 @@
 # installed where the platform supports it.
 {% if cuda_compiler_version != "None" %}
 {% set build = build + 200 %}
-{% endif %}
-
-{% if blas_impl == "mkl" %}
-{% set build = build + 100 %}
 {% endif %}
 
 # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
@@ -46,7 +42,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 65b5493d6b8cb992f104677cab255a9b71ef1e1d2ea3b1500dc995c68b429949
+  sha256: 7f3c4ed9aec3bd7524382862f5fcbd4d8984e2a8979ff3bdb2c0bcea5144149e
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -60,19 +56,23 @@ source:
     # due to switch to ninja
     - patches/0006-no-more-Release-subfolder.patch
     # more fixes
-    - patches/0007-fix-index-type-in-openmp-loop.patch
-    - patches/0008-don-t-hide-faiss-gpu-symbols-temporarily-install-fai.patch   # [win]
-    - patches/0009-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
+    - patches/0007-don-t-hide-faiss-gpu-symbols-on-windows.patch                # [win]
+    - patches/0008-don-t-rely-on-luck-for-initialization-order-on-win-C.patch   # [win and cuda_compiler_version != "None"]
     # workaround for https://github.com/facebookresearch/faiss/issues/2985
-    - patches/0010-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
+    - patches/0009-fix-a-MSVC-problem.patch                                     # [win and cuda_compiler_version != "None"]
     # disable library dispatch based on detected CPU instruction sets;
     # revisit this after (or when) #23 is fixed
-    - patches/0011-disable-loading-different-library-flavours-based-on-.patch
+    - patches/0010-disable-loading-different-library-flavours-based-on-.patch
+    # build Metal backend as shared library
+    - patches/0011-build-Metal-backend-as-shared-library.patch
+    # avoid CUDA-style Python helpers for Metal-only builds
+    - patches/0012-fall-back-to-CPU-for-Metal-only-contrib-ground-truth.patch
+    # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
+    - patches/0013-undef-small-macro-before-MergeNetworkWarp.patch              # [win]
+
 
 build:
   number: {{ build }}
-  # Windows CUDA builds unsupported - https://github.com/facebookresearch/faiss/issues/2985
-  skip: true  # [win and cuda_compiler_version != "None"]
 
 requirements:
   build:
@@ -119,7 +119,8 @@ outputs:
         - libcurand-dev             # [build_platform != target_platform]
         {% endif %}
       host:
-        - blas-devel * *{{ blas_impl }}
+        - libblas
+        - liblapack
         - libgomp                   # [linux]
         - llvm-openmp               # [osx]
         {% if cuda_compiler_version != "None" %}
@@ -130,8 +131,8 @@ outputs:
         - libcurand-dev
         {% endif %}
       run:
-        - libblas * *{{ blas_impl }}
-        - {{ blas_impl }}
+        - libblas
+        - liblapack
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
@@ -148,7 +149,10 @@ outputs:
         # absence of static libraries
         - test ! -f $PREFIX/lib/libfaiss.a              # [unix]
         - test ! -f $PREFIX/lib/libfaiss_gpu.a          # [unix]
+        - test ! -f $PREFIX/lib/libfaiss_metal.a        # [osx and arm64]
         - if exist %LIBRARY_LIB%\faiss_gpu.lib exit 1   # [win]
+        - test -f $PREFIX/lib/libfaiss_metal.dylib      # [osx and arm64]
+        - test -f $PREFIX/lib/MetalDistance.metallib    # [osx and arm64]
 
         # headers
         {% for each_header in headers %}
@@ -185,7 +189,6 @@ outputs:
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
-        - intel-openmp                        # [win and blas_impl == 'mkl']
         {% if cuda_compiler_version != "None" %}
         - cuda-version {{ cuda_compiler_version }}
         - libcublas-dev
@@ -252,16 +255,16 @@ outputs:
         # https://github.com/facebookresearch/faiss/pull/4523
         {% set skips = skips + " or test_float" %}
         {% set skips = skips + " or test_ivf_train_2level" %}  # [linux or win]
-        {% set skips = skips + " or test_OIVFPQ" %}  # [osx and blas_impl == 'blis']
         {% set skips = skips + " or test_update_codebooks_with_double" %}  # [linux]
-        # Segfaults on Linux + CUDA builds
-        {% set skips = skips + " or (TestComputeGT and test_compute_GT_gpu)" %} # [linux]
+        # GPU-only tests abort on CUDA builds without a usable GPU
+        {% set skips = skips + " or TestComputeGT" %}  # [cuda_compiler_version != "None"]
+        {% set skips = skips + " or test_wheel_smoke_gpu.py" %}  # [cuda_compiler_version != "None"]
         # Segfaults on Windows + MKL + no CUDA builds
-        {% set skips = skips + " or (TestReconstructBatch and test_exception)" %} # [win]
+        {% set skips = skips + " or (TestReconstructBatch and test_exception)" %}  # [win]
         # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
         # we expect faiss will load the library with AVX2-support, see
         # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
-        - export SKIPS="({{ skips }})" && ./test-pkg.sh  # [unix]
+        - export SKIPS="({{ skips }})" && ./test-pkg.sh  # [unix and not ppc64le]
         - set "SKIPS=({{ skips }})"    && test-pkg.bat   # [win]
 
         # running the following test requires an actual GPU device, which is not available in CI
@@ -304,10 +307,8 @@ about:
     Some of the most useful algorithms are implemented on the GPU. It is developed by
     [Facebook AI Research](https://research.fb.com/category/facebook-ai-research-fair/).
 
-    For best performance, the maintainers of the package
-    [recommend](https://github.com/conda-forge/staged-recipes/pull/11337#issuecomment-623718460)
-    using the MKL implementation of blas/lapack. You can ensure that this is installed
-    by adding "libblas =*=*mkl" to your dependencies.
+    The BLAS/LAPACK implementation can be selected at runtime by installing
+    the desired libblas/liblapack variant.
   doc_url: https://faiss.ai/
   dev_url: https://github.com/facebookresearch/faiss
 

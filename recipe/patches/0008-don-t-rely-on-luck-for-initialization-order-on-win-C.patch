@@ -1,0 +1,59 @@
+From fb3faa0c444a50c6ed8335c67af97dde8a5eda0b Mon Sep 17 00:00:00 2001
+From: "H. Vetinari" <h.vetinari@gmx.com>
+Date: Thu, 8 Aug 2024 15:40:34 +1100
+Subject: [PATCH 08/13] don't rely on luck for initialization order on win+CUDA
+
+---
+ faiss/gpu/GpuIndex.cu | 19 -------------------
+ faiss/utils/utils.cpp | 10 +++++++++-
+ 2 files changed, 9 insertions(+), 20 deletions(-)
+
+diff --git a/faiss/gpu/GpuIndex.cu b/faiss/gpu/GpuIndex.cu
+index 73f0867..453bc4f 100644
+--- a/faiss/gpu/GpuIndex.cu
++++ b/faiss/gpu/GpuIndex.cu
+@@ -747,23 +747,4 @@ bool isGpuIndexImplemented(faiss::Index* index) {
+ 
+ } // namespace gpu
+ 
+-// This is the one defined in utils.cpp
+-extern std::string& ref_gpu_compile_options();
+-
+-struct InitGpuCompileOptions {
+-    InitGpuCompileOptions() {
+-        ref_gpu_compile_options() = std::string("GPU ") +
+-#ifdef USE_NVIDIA_CUVS
+-                "NVIDIA_CUVS " +
+-#endif
+-
+-#ifdef USE_AMD_ROCM
+-                "AMD_ROCM " +
+-#endif
+-                "";
+-    }
+-};
+-
+-InitGpuCompileOptions InitGpuCompileOptions_instance;
+-
+ } // namespace faiss
+diff --git a/faiss/utils/utils.cpp b/faiss/utils/utils.cpp
+index 1af01e2..2f45149 100644
+--- a/faiss/utils/utils.cpp
++++ b/faiss/utils/utils.cpp
+@@ -104,7 +104,15 @@ namespace faiss {
+ 
+ // this will be set at load time from GPU Faiss
+ std::string& ref_gpu_compile_options() {
+-    static std::string gpu_compile_options;
++    static std::string gpu_compile_options = std::string("GPU ") +
++#ifdef USE_NVIDIA_CUVS
++            "NVIDIA_CUVS " +
++#endif
++
++#ifdef USE_AMD_ROCM
++            "AMD_ROCM " +
++#endif
++            "";
+     return gpu_compile_options;
+ }
+ 
