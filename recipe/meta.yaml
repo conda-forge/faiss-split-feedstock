@@ -202,7 +202,7 @@ outputs:
         - setuptools
         - numpy
         {% if microarch_level|default(1)|int < 4 %}
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss {{ version }}.* *_{{ faiss_proc_type }}
         {% endif %}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
@@ -213,7 +213,7 @@ outputs:
       run:
         - python
         - packaging
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss {{ version }}.* *_{{ faiss_proc_type }}
         - _x86_64-microarch-level >={{ microarch_level }}  # [unix and x86_64]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
@@ -295,7 +295,7 @@ outputs:
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cpu
+        - faiss {{ version }}.* *_cpu
     {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
@@ -307,7 +307,7 @@ outputs:
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cuda
+        - faiss {{ version }}.*_cuda
     {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
