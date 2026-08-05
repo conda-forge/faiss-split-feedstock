@@ -4,8 +4,8 @@ Date: Wed, 5 Aug 2026 17:30:00 +0930
 Subject: [PATCH 14/14] Install selected SIMD flavour as libfaiss
 
 ---
- faiss/CMakeLists.txt | 71 +++++++++++++++++---------------------------
- 1 file changed, 28 insertions(+), 43 deletions(-)
+ faiss/CMakeLists.txt | 77 ++++++++++++++++++++------------------------
+ 1 file changed, 34 insertions(+), 43 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
 --- a/faiss/CMakeLists.txt
@@ -19,7 +19,7 @@ diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
    set_target_properties(faiss PROPERTIES EXCLUDE_FROM_ALL TRUE)
  else()
    set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
-@@ -749,54 +749,33 @@ else()
+@@ -749,54 +749,39 @@ else()
    target_link_libraries(faiss_sve PRIVATE ${LAPACK_LIBRARIES})
  endif()
  
@@ -38,6 +38,12 @@ diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
 +  set(faiss_target faiss_sve)
  endif()
  
++# Keep the unselected generic target's output distinct from the selected
++# flavour, which is installed under the standard libfaiss name below.
++if(NOT "${faiss_target}" STREQUAL "faiss")
++  set_target_properties(faiss PROPERTIES OUTPUT_NAME "faiss_generic")
++endif()
++
 -if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
 -  install(TARGETS faiss
 -    EXPORT faiss-targets
