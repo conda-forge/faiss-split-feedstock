@@ -12,13 +12,13 @@ flavours (i.e. avx2, avx512, sve) of libraries that could be loaded in any case.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/faiss/python/loader.py b/faiss/python/loader.py
-index 388d4e3..4577d95 100644
+index 9527122..11faf90 100644
 --- a/faiss/python/loader.py
 +++ b/faiss/python/loader.py
-@@ -95,7 +95,7 @@ opt_level = os.environ.get(opt_env_variable_name, None)
- if opt_level is None:
-     logger.debug(f"Environment variable {opt_env_variable_name} is not set, " \
-                 "so let's pick the instruction set according to the current CPU")
+@@ -117,7 +117,7 @@ if opt_level is None:
+         f"Environment variable {opt_env_variable_name} is not set, "
+         "so let's pick the instruction set according to the current CPU"
+     )
 -    instruction_sets = supported_instruction_sets()
 +    instruction_sets = set()
  else:
