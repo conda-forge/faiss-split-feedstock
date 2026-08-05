@@ -4,9 +4,10 @@ Date: Wed, 5 Aug 2026 17:30:00 +0930
 Subject: [PATCH 14/14] Install selected SIMD flavour as libfaiss
 
 ---
- faiss/CMakeLists.txt     | 20 ++++++++++++++++----
- faiss/gpu/CMakeLists.txt |  2 ++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+ faiss/CMakeLists.txt        | 20 ++++++++++++++++----
+ faiss/gpu/CMakeLists.txt    |  2 ++
+ faiss/python/CMakeLists.txt |  2 +-
+ 3 files changed, 19 insertions(+), 5 deletions(-)
 
 diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
 --- a/faiss/CMakeLists.txt
@@ -81,5 +82,17 @@ diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
  else()
    get_target_property(libname faiss OUTPUT_NAME)
  endif()
+diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
+--- a/faiss/python/CMakeLists.txt
++++ b/faiss/python/CMakeLists.txt
+@@ -113,7 +113,7 @@ if(TARGET faiss)
+       "${faiss_SOURCE_DIR}/faiss/gpu/${h}")
+   endforeach()
+ else()
+-  find_package(faiss REQUIRED)
++  find_package(faiss REQUIRED HINTS "${CMAKE_CURRENT_BINARY_DIR}/../build/_libfaiss_stage")
+ endif()
+ 
+ swig_add_library(swigfaiss
 -- 
 2.51.0
