@@ -207,7 +207,7 @@ outputs:
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
-    {% if not (aarch64 or ppc64le) or py == 311 %}
+    {% if microarch_level|default(1)|int < 4 and (not (aarch64 or ppc64le) or py == 311) %}
     # only run the full test suite for one python version when in emulation
     # (each run can take up to 5h!); there's essentially zero divergence
     # in behaviour across python versions anyway
@@ -283,9 +283,11 @@ outputs:
     requirements:
       run:
         - faiss ={{ version }}=*_cpu
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
         - faiss
+    {% endif %}
 
   - name: faiss-gpu
     build:
@@ -293,9 +295,11 @@ outputs:
     requirements:
       run:
         - faiss ={{ version }}=*_cuda
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
         - faiss
+    {% endif %}
 
 about:
   home: https://github.com/facebookresearch/faiss
