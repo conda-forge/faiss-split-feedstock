@@ -1,5 +1,7 @@
 source run_conda_forge_build_setup
 
+# Hosted runners do not guarantee x86-64-v4, so force the solve but do not
+# execute the resulting binaries there.
 if [[ "${CONFIG:-}" == *microarch_level4 ]]; then
     export CONDA_OVERRIDE_ARCHSPEC=x86_64_v4
     export EXTRA_CB_OPTIONS="${EXTRA_CB_OPTIONS:-} --no-test"
