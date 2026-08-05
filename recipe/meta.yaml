@@ -72,10 +72,11 @@ source:
 
 
 build:
-  number: {{ build }}
+  number: {{ build + 100 * (microarch_level|default(1)|int - 1) }}
 
 requirements:
   build:
+    - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
     - {{ stdlib('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
@@ -104,6 +105,7 @@ outputs:
         - libfaiss =*=*_{{ faiss_proc_type }}
     requirements:
       build:
+        - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}    # [cuda_compiler_version != "None"]
@@ -172,6 +174,7 @@ outputs:
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
     requirements:
       build:
+        - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
