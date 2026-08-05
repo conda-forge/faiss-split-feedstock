@@ -69,6 +69,8 @@ source:
     - patches/0012-fall-back-to-CPU-for-Metal-only-contrib-ground-truth.patch
     # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
     - patches/0013-undef-small-macro-before-MergeNetworkWarp.patch              # [win]
+    # avoid enabling incomplete AVX512 code paths from compiler flags alone
+    - patches/0014-guard-avx512-fast-scan-kernels.patch
 
 
 build:
