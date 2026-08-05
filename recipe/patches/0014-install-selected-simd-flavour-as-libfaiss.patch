@@ -101,7 +101,7 @@ diff --git a/faiss/python/CMakeLists.txt b/faiss/python/CMakeLists.txt
    endforeach()
  else()
 -  find_package(faiss REQUIRED)
-+  find_package(faiss REQUIRED HINTS "${CMAKE_CURRENT_BINARY_DIR}/../build/_libfaiss_stage" NO_CMAKE_FIND_ROOT_PATH)
++  find_package(faiss REQUIRED)
  endif()
  
  swig_add_library(swigfaiss
