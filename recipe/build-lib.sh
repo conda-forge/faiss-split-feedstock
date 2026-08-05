@@ -3,12 +3,12 @@ set -ex
 
 declare -a CUDA_CONFIG_ARGS
 BUILD_JOBS="${CPU_COUNT}"
-case "${microarch_level:-1}" in
-    3)
+case "${target_platform}:${microarch_level:-1}" in
+    linux-64:3|osx-64:3)
         FAISS_OPT_LEVEL="avx2"
         FAISS_TARGET="faiss_avx2"
         ;;
-    4)
+    linux-64:4|osx-64:4)
         FAISS_OPT_LEVEL="avx512"
         FAISS_TARGET="faiss_avx512"
         ;;
