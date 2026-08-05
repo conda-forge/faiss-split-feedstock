@@ -75,6 +75,8 @@ source:
 
 build:
   number: {{ build + 100 * (microarch_level|default(1)|int - 1) }}
+  ignore_run_exports_from:
+    - x86_64-microarch-level  # [unix and x86_64]
 
 requirements:
   build:
@@ -99,6 +101,8 @@ outputs:
     build:
       string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      ignore_run_exports_from:
+        - x86_64-microarch-level  # [unix and x86_64]
       run_exports:
         # faiss follows SemVer, so restrict packages built with libfaiss to use
         # at least the same version at runtime, but below the next major version.
@@ -137,11 +141,13 @@ outputs:
       run:
         - libblas
         - liblapack
+        - _x86_64-microarch-level >={{ microarch_level }}  # [unix and x86_64]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       commands:
         # shared
@@ -167,6 +173,7 @@ outputs:
         # CMake metadata
         - test -f $PREFIX/lib/cmake/faiss/faiss-targets.cmake                # [unix]
         - if not exist %LIBRARY_LIB%\cmake\faiss\faiss-targets.cmake exit 1  # [win]
+    {% endif %}
 
   - name: faiss
     script: build-pkg.sh          # [not win]
@@ -174,6 +181,8 @@ outputs:
     build:
       string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      ignore_run_exports_from:
+        - x86_64-microarch-level  # [unix and x86_64]
     requirements:
       build:
         - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
@@ -191,7 +200,9 @@ outputs:
         - pip
         - setuptools
         - numpy
+        {% if microarch_level|default(1)|int < 4 %}
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        {% endif %}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
         {% if cuda_compiler_version != "None" %}
@@ -202,6 +213,7 @@ outputs:
         - python
         - packaging
         - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - _x86_64-microarch-level >={{ microarch_level }}  # [unix and x86_64]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
