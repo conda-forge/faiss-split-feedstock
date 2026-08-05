@@ -83,8 +83,8 @@ else
 fi
 
 echo -e "\n\nRunning the build setup script."
-source run_conda_forge_build_setup
-
+# Overriding global run_conda_forge_build_setup_osx with local copy.
+source recipe/run_conda_forge_build_setup_osx
 
 
 ( endgroup "Configuring conda" ) 2> /dev/null

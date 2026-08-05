@@ -42,7 +42,8 @@ export CONDA_LIBMAMBA_SOLVER_NO_CHANNELS_FROM_INSTALLED=1
 # set up the condarc
 setup_conda_rc "${FEEDSTOCK_ROOT}" "${RECIPE_ROOT}" "${CONFIG_FILE}"
 
-source run_conda_forge_build_setup
+# Overriding global run_conda_forge_build_setup_linux with local copy.
+source ${RECIPE_ROOT}/run_conda_forge_build_setup_linux
 
 
 
