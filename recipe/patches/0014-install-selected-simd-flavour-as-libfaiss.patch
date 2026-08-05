@@ -1,0 +1,101 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tobias Fischer <info@tobiasfischer.info>
+Date: Wed, 5 Aug 2026 17:30:00 +0930
+Subject: [PATCH 14/14] Install selected SIMD flavour as libfaiss
+
+---
+ faiss/CMakeLists.txt | 71 +++++++++++++++++---------------------------
+ 1 file changed, 28 insertions(+), 43 deletions(-)
+
+diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
+--- a/faiss/CMakeLists.txt
++++ b/faiss/CMakeLists.txt
+@@ -439,7 +439,7 @@ add_library(faiss ${FAISS_SRC})
+ add_library(faiss_avx2 ${FAISS_SRC})
+ set_target_properties(faiss_avx2 PROPERTIES OUTPUT_NAME "faiss_avx2")
+ 
+-if(FAISS_OPT_LEVEL STREQUAL "avx2")
++if(FAISS_OPT_LEVEL MATCHES "^(avx2|avx512|avx512_spr)$")
+   set_target_properties(faiss PROPERTIES EXCLUDE_FROM_ALL TRUE)
+ else()
+   set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
+@@ -749,54 +749,33 @@ else()
+   target_link_libraries(faiss_sve PRIVATE ${LAPACK_LIBRARIES})
+ endif()
+ 
+-# to distinguish between faiss and faiss_avx2
++set(faiss_target faiss)
+ if(FAISS_OPT_LEVEL STREQUAL "avx2")
+-  get_target_property(libname faiss_avx2 OUTPUT_NAME)
+-else()
+-  get_target_property(libname faiss OUTPUT_NAME)
++  set(faiss_target faiss_avx2)
++elseif(FAISS_OPT_LEVEL STREQUAL "avx512")
++  set(faiss_target faiss_avx512)
++elseif(FAISS_OPT_LEVEL STREQUAL "avx512_spr")
++  set(faiss_target faiss_avx512_spr)
++elseif(FAISS_OPT_LEVEL STREQUAL "sve")
++  set(faiss_target faiss_sve)
+ endif()
+ 
+-if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
+-  install(TARGETS faiss
+-    EXPORT faiss-targets
+-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+-  )
+-else()
+-  install(TARGETS faiss_avx2
+-    EXPORT faiss-targets
+-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+-  )
+-endif()
+-if(FAISS_OPT_LEVEL STREQUAL "avx512")
+-  install(TARGETS faiss_avx2 faiss_avx512
+-    EXPORT faiss-targets
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  )
+-endif()
+-if(FAISS_OPT_LEVEL STREQUAL "avx512_spr")
+-  install(TARGETS faiss_avx2 faiss_avx512_spr
+-    EXPORT faiss-targets
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  )
+-endif()
+-if(FAISS_OPT_LEVEL STREQUAL "sve")
+-  install(TARGETS faiss_sve
+-    EXPORT faiss-targets
+-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  )
+-endif()
+-# Note: FAISS_OPT_LEVEL=dd builds DD support into main faiss target,
+-# so no separate faiss_dd install is needed
++# This recipe installs one optimized flavour per package. Keep its library,
++# headers, and exported CMake target compatible with consumers of libfaiss.
++set_target_properties(${faiss_target} PROPERTIES
++  OUTPUT_NAME "faiss"
++  EXPORT_NAME "faiss"
++)
++set(libname faiss)
+ 
++install(TARGETS ${faiss_target}
++  EXPORT faiss-targets
++  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++)
++
+ foreach(header ${FAISS_HEADERS})
+   get_filename_component(dir ${header} DIRECTORY )
+   install(FILES ${header}
+-- 
+2.51.0

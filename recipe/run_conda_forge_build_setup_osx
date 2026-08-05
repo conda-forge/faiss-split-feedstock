@@ -1,0 +1,6 @@
+source run_conda_forge_build_setup
+
+if [[ "${CONFIG:-}" == *microarch_level4 ]]; then
+    export CONDA_OVERRIDE_ARCHSPEC=x86_64_v4
+    export EXTRA_CB_OPTIONS="${EXTRA_CB_OPTIONS:-} --no-test"
+fi
