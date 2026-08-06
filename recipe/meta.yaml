@@ -307,7 +307,7 @@ outputs:
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
       run:
-        - faiss {{ version }}.*_cuda
+        - faiss {{ version }}.* *_cuda
     {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
