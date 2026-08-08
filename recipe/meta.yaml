@@ -202,9 +202,7 @@ outputs:
         - pip
         - setuptools
         - numpy
-        # {% if microarch_level|default(1)|int < 4 %}
         - libfaiss {{ version }}.* *_{{ faiss_proc_type }}
-        # {% endif %}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
         {% if cuda_compiler_version != "None" %}
