@@ -4,4 +4,4 @@ c_stdlib_version:            # [osx and arm64]
 microarch_level:
   - 1
   - 3                        # [unix and x86_64]
-  - 4                        # [unix and x86_64]
+  - 4                        # [linux and x86_64]
