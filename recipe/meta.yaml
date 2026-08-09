@@ -69,13 +69,19 @@ source:
     - patches/0012-fall-back-to-CPU-for-Metal-only-contrib-ground-truth.patch
     # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
     - patches/0013-undef-small-macro-before-MergeNetworkWarp.patch              # [win]
+    # install only the SIMD flavour selected for this package variant
+    - patches/0014-install-selected-simd-flavour-as-libfaiss.patch
 
 
 build:
-  number: {{ build }}
+  number: {{ build + 100 * (microarch_level|default(1)|int - 1) }}
+  skip: true  # [not x86_64 and microarch_level > 1]
+  ignore_run_exports_from:
+    - x86_64-microarch-level  # [unix and x86_64]
 
 requirements:
   build:
+    - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
     - {{ stdlib('c') }}
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
@@ -96,14 +102,18 @@ outputs:
     build:
       string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      ignore_run_exports_from:
+        - x86_64-microarch-level  # [unix and x86_64]
       run_exports:
-        # faiss follows SemVer, so restrict packages built with libfaiss to use
-        # at least the same version at runtime, but below the next major version.
-        - libfaiss >={{ version }},<2
+        # faiss follows SemVer for its API but not ABI, see
+        # https://github.com/conda-forge/faiss-split-feedstock/issues/107,
+        # so restrict packages built with libfaiss to use same minor version.
+        - {{ pin_subpackage('libfaiss', max_pin='x.x') }}
         # additionally, we need to ensure matching proc-type
         - libfaiss =*=*_{{ faiss_proc_type }}
     requirements:
       build:
+        - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}    # [cuda_compiler_version != "None"]
@@ -133,11 +143,13 @@ outputs:
       run:
         - libblas
         - liblapack
+        - _x86_64-microarch-level >={{ microarch_level }}  # [unix and x86_64]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       commands:
         # shared
@@ -163,6 +175,7 @@ outputs:
         # CMake metadata
         - test -f $PREFIX/lib/cmake/faiss/faiss-targets.cmake                # [unix]
         - if not exist %LIBRARY_LIB%\cmake\faiss\faiss-targets.cmake exit 1  # [win]
+    {% endif %}
 
   - name: faiss
     script: build-pkg.sh  # [not win]
@@ -170,8 +183,11 @@ outputs:
     build:
       string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
+      ignore_run_exports_from:
+        - x86_64-microarch-level  # [unix and x86_64]
     requirements:
       build:
+        - x86_64-microarch-level =={{ microarch_level }}  # [unix and x86_64]
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - {{ compiler('cuda') }}              # [cuda_compiler_version != "None"]
@@ -186,7 +202,7 @@ outputs:
         - pip
         - setuptools
         - numpy
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss {{ version }}.* *_{{ faiss_proc_type }}
         - libgomp                             # [linux]
         - llvm-openmp                         # [osx]
         {% if cuda_compiler_version != "None" %}
@@ -196,13 +212,14 @@ outputs:
       run:
         - python
         - packaging
-        - libfaiss ={{ version }}=*_{{ faiss_proc_type }}
+        - libfaiss {{ version }}.* *_{{ faiss_proc_type }}
+        - _x86_64-microarch-level >={{ microarch_level }}  # [unix and x86_64]
       run_constrained:
         - faiss-cpu <0.0a0  # [cuda_compiler_version != "None"]
         - faiss-gpu <0.0a0  # [cuda_compiler_version == "None"]
         - faiss-proc =*={{ faiss_proc_type }}
 
-    {% if not (aarch64 or ppc64le) or py == 311 %}
+    {% if microarch_level|default(1)|int < 4 and (not (aarch64 or ppc64le) or py == 311) %}
     # only run the full test suite for one python version when in emulation
     # (each run can take up to 5h!); there's essentially zero divergence
     # in behaviour across python versions anyway
@@ -277,20 +294,24 @@ outputs:
       skip: true  # [cuda_compiler_version != "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cpu
+        - faiss {{ version }}.* *_cpu
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
         - faiss
+    {% endif %}
 
   - name: faiss-gpu
     build:
       skip: true  # [cuda_compiler_version == "None"]
     requirements:
       run:
-        - faiss ={{ version }}=*_cuda
+        - faiss {{ version }}.* *_cuda
+    {% if microarch_level|default(1)|int < 4 %}
     test:
       imports:
         - faiss
+    {% endif %}
 
 about:
   home: https://github.com/facebookresearch/faiss
