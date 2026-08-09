@@ -1,0 +1,97 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Tobias Fischer <info@tobiasfischer.info>
+Date: Wed, 5 Aug 2026 17:30:00 +0930
+Subject: [PATCH 14/14] Install selected SIMD flavour as libfaiss
+
+---
+ faiss/CMakeLists.txt        | 24 ++++++++++++++++++------
+ faiss/gpu/CMakeLists.txt    |  2 ++
+ faiss/python/CMakeLists.txt |  2 +-
+ 3 files changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/faiss/CMakeLists.txt b/faiss/CMakeLists.txt
+--- a/faiss/CMakeLists.txt
++++ b/faiss/CMakeLists.txt
+@@ -439,7 +439,7 @@ add_library(faiss ${FAISS_SRC})
+ add_library(faiss_avx2 ${FAISS_SRC})
+ set_target_properties(faiss_avx2 PROPERTIES OUTPUT_NAME "faiss_avx2")
+ 
+-if(FAISS_OPT_LEVEL STREQUAL "avx2")
++if(FAISS_OPT_LEVEL STREQUAL "avx2" OR FAISS_OPT_LEVEL STREQUAL "avx512")
+   set_target_properties(faiss PROPERTIES EXCLUDE_FROM_ALL TRUE)
+ else()
+   set_target_properties(faiss_avx2 PROPERTIES EXCLUDE_FROM_ALL TRUE)
+@@ -749,14 +749,24 @@ else()
+   target_link_libraries(faiss_sve PRIVATE ${LAPACK_LIBRARIES})
+ endif()
+ 
++if(FAISS_OPT_LEVEL STREQUAL "avx2")
++  set_target_properties(faiss PROPERTIES OUTPUT_NAME "faiss_generic")
++  set_target_properties(faiss_avx2 PROPERTIES OUTPUT_NAME "faiss" EXPORT_NAME "faiss")
++elseif(FAISS_OPT_LEVEL STREQUAL "avx512")
++  set_target_properties(faiss PROPERTIES OUTPUT_NAME "faiss_generic")
++  set_target_properties(faiss_avx512 PROPERTIES OUTPUT_NAME "faiss" EXPORT_NAME "faiss")
++endif()
++
+ # to distinguish between faiss and faiss_avx2
+ if(FAISS_OPT_LEVEL STREQUAL "avx2")
+   get_target_property(libname faiss_avx2 OUTPUT_NAME)
++elseif(FAISS_OPT_LEVEL STREQUAL "avx512")
++  get_target_property(libname faiss_avx512 OUTPUT_NAME)
+ else()
+   get_target_property(libname faiss OUTPUT_NAME)
+ endif()
+ 
+-if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
++if(NOT FAISS_OPT_LEVEL MATCHES "^(avx2|avx512)$")
+   install(TARGETS faiss
+     EXPORT faiss-targets
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+@@ -764,7 +774,7 @@ if(NOT FAISS_OPT_LEVEL STREQUAL "avx2")
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+   )
+-else()
++elseif(FAISS_OPT_LEVEL STREQUAL "avx2")
+   install(TARGETS faiss_avx2
+     EXPORT faiss-targets
+     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+@@ -774,10 +784,12 @@ else()
+   )
+ endif()
+ if(FAISS_OPT_LEVEL STREQUAL "avx512")
+-  install(TARGETS faiss_avx2 faiss_avx512
++  install(TARGETS faiss_avx512
+     EXPORT faiss-targets
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+   )
+ endif()
+ if(FAISS_OPT_LEVEL STREQUAL "avx512_spr")
+@@ -818,8 +830,8 @@
+ install(FILES ${PROJECT_BINARY_DIR}/cmake/faiss-config.cmake
+   ${PROJECT_BINARY_DIR}/cmake/faiss-config-version.cmake
+-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${libname}
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${libname}
+ )
+ 
+ install(EXPORT faiss-targets
+-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${libname}
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${libname}
+ )
+diff --git a/faiss/gpu/CMakeLists.txt b/faiss/gpu/CMakeLists.txt
+--- a/faiss/gpu/CMakeLists.txt
++++ b/faiss/gpu/CMakeLists.txt
+@@ -335,6 +335,8 @@ install(TARGETS faiss_gpu_objs EXPORT faiss-targets)
+ # to distinguish between faiss and faiss_avx2
+ if(FAISS_OPT_LEVEL STREQUAL "avx2")
+   get_target_property(libname faiss_avx2 OUTPUT_NAME)
++elseif(FAISS_OPT_LEVEL STREQUAL "avx512")
++  get_target_property(libname faiss_avx512 OUTPUT_NAME)
+ else()
+   get_target_property(libname faiss OUTPUT_NAME)
+ endif()
+-- 
+2.51.0

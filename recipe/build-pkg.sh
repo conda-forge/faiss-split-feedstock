@@ -32,7 +32,7 @@ CMAKE_ARGS+=" -DPython_NumPy_INCLUDE_DIR=${Python_NumPy_INCLUDE_DIR}"
 
 cmake -G Ninja \
     ${CMAKE_ARGS} \
-    -Dfaiss_ROOT=_libfaiss_stage/ \
+    -Dfaiss_ROOT=../build/_libfaiss_stage/ \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
     -DFAISS_ENABLE_METAL=${FAISS_ENABLE_METAL} \
     -DCMAKE_BUILD_TYPE=Release \

@@ -3,6 +3,21 @@ set -ex
 
 declare -a CUDA_CONFIG_ARGS
 BUILD_JOBS="${CPU_COUNT}"
+case "${target_platform}:${microarch_level:-1}" in
+    linux-64:3|osx-64:3)
+        FAISS_OPT_LEVEL="avx2"
+        FAISS_TARGET="faiss_avx2"
+        ;;
+    linux-64:4|osx-64:4)
+        FAISS_OPT_LEVEL="avx512"
+        FAISS_TARGET="faiss_avx512"
+        ;;
+    *)
+        FAISS_OPT_LEVEL="generic"
+        FAISS_TARGET="faiss"
+        ;;
+esac
+
 if [ "${cuda_compiler_version}" != "None" ]; then
     # for documentation see e.g.
     # docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#building-for-maximum-compatibility
@@ -48,13 +63,14 @@ cmake -G Ninja \
     -DFAISS_ENABLE_PYTHON=OFF \
     -DFAISS_ENABLE_GPU=${FAISS_ENABLE_GPU} \
     -DFAISS_ENABLE_METAL=${FAISS_ENABLE_METAL} \
+    -DFAISS_OPT_LEVEL=${FAISS_OPT_LEVEL} \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_INSTALL_DATAROOTDIR="${PREFIX}/lib/cmake" \
     ${CUDA_CONFIG_ARGS+"${CUDA_CONFIG_ARGS[@]}"} \
     ..
 
-cmake --build . --target "faiss" -j ${BUILD_JOBS}
+cmake --build . --target "${FAISS_TARGET}" -j ${BUILD_JOBS}
 if [[ "${FAISS_ENABLE_METAL}" == "ON" ]]; then
     cmake --build . --target "faiss_metal" -j ${BUILD_JOBS}
 fi
