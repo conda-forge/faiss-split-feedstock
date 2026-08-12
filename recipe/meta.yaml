@@ -1,4 +1,4 @@
-{% set version = "1.14.3" %}
+{% set version = "1.15.0" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
@@ -42,7 +42,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 7f3c4ed9aec3bd7524382862f5fcbd4d8984e2a8979ff3bdb2c0bcea5144149e
+  sha256: 0b94bf4b17229b28a8a6686d7637ce93de4ef25f6308040184675befad9d9332
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -97,10 +97,10 @@ outputs:
         - exit 0
 
   - name: libfaiss
-    script: build-lib.sh    # [unix]
-    script: build-lib.bat   # [win]
+    script: build-lib.sh  # [unix]
+    script: build-lib.bat  # [win]
     build:
-      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       ignore_run_exports_from:
         - x86_64-microarch-level  # [unix and x86_64]
@@ -178,10 +178,10 @@ outputs:
     {% endif %}
 
   - name: faiss
-    script: build-pkg.sh          # [not win]
-    script: build-pkg.bat         # [win]
+    script: build-pkg.sh  # [not win]
+    script: build-pkg.bat  # [win]
     build:
-      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       ignore_run_exports_from:
         - x86_64-microarch-level  # [unix and x86_64]
