@@ -1,0 +1,457 @@
+schema_version: 1
+
+context:
+  version: "1.15.0"
+  build: 0
+  # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
+  faiss_proc_type: ${{ "cuda" if cuda_compiler_version != "None" else "cpu" }}
+  build_str_prefix: ${{ "cuda" ~ (cuda_compiler_version | version_to_buildstring) if cuda_compiler_version != "None" else "cpu_" }}
+
+recipe:
+  name: faiss-split
+  version: ${{ version }}
+
+source:
+  url: https://github.com/facebookresearch/faiss/archive/v${{ version }}.tar.gz
+  sha256: 0b94bf4b17229b28a8a6686d7637ce93de4ef25f6308040184675befad9d9332
+  patches:
+    - patches/0001-adapt-header-target-directory-to-outputname.patch
+    # patch for avoiding crash in GPU test suite on windows
+    - patches/0002-skip-test_stress-for-GPU-on-windows.patch
+    # enable building libfaiss_avx2 without libfaiss
+    - patches/0003-enable-building-libfaiss_avx2-without-libfaiss.patch
+    # increase tolerance for test that occasionally fails marginally
+    - patches/0004-increase-tolerance-for-marginally-failing-test.patch
+    # add /bigobj on windows to avoid: "fatal error C1128: number of sections exceeded object file format limit"
+    - patches/0005-add-bigobj-to-swigfaiss-compile-options-on-windows.patch
+    # due to switch to ninja
+    - patches/0006-no-more-Release-subfolder.patch
+    # more fixes
+    - if: win
+      then: patches/0007-don-t-hide-faiss-gpu-symbols-on-windows.patch
+    - if: win and cuda_compiler_version != "None"
+      then: patches/0008-don-t-rely-on-luck-for-initialization-order-on-win-C.patch
+    # workaround for https://github.com/facebookresearch/faiss/issues/2985
+    - if: win and cuda_compiler_version != "None"
+      then: patches/0009-fix-a-MSVC-problem.patch
+    # disable library dispatch based on detected CPU instruction sets;
+    # revisit this after (or when) #23 is fixed
+    - patches/0010-disable-loading-different-library-flavours-based-on-.patch
+    # build Metal backend as shared library
+    - patches/0011-build-Metal-backend-as-shared-library.patch
+    # avoid CUDA-style Python helpers for Metal-only builds
+    - patches/0012-fall-back-to-CPU-for-Metal-only-contrib-ground-truth.patch
+    # https://github.com/microsoft/vcpkg/blob/master/ports/faiss/undef-small.diff
+    - if: win
+      then: patches/0013-undef-small-macro-before-MergeNetworkWarp.patch
+    # install only the SIMD flavour selected for this package variant
+    - patches/0014-install-selected-simd-flavour-as-libfaiss.patch
+
+build:
+  number: ${{ build + (200 if cuda_compiler_version != "None" else 0) + 25 * ((microarch_level | default("1") | int) - 1) }}
+  skip: not x86_64 and microarch_level > 1
+
+outputs:
+  - staging:
+      name: faiss-build
+    requirements:
+      build:
+        - if: unix and x86_64
+          then: x86_64-microarch-level ==${{ microarch_level }}
+        - ${{ stdlib('c') }}
+        - ${{ compiler('cxx') }}
+        - if: cuda_compiler_version != "None"
+          then: ${{ compiler('cuda') }}
+      ignore_run_exports:
+         from_package:
+         - if: unix and x86_64
+           then: x86_64-microarch-level
+
+  # A meta-package to select CPU or GPU build for faiss.
+  - package:
+      name: faiss-proc
+      version: 1.0.0
+    build:
+      string: ${{ faiss_proc_type }}
+    tests:
+      - script:
+          - exit 0
+
+  - package:
+      name: libfaiss
+    inherit: faiss-build
+    build:
+      string: ${{ build_str_prefix ~ "h" ~ hash ~ "_" ~ build_number }}
+      script:
+        file: build-lib
+    requirements:
+      build:
+        - if: unix and x86_64
+          then: x86_64-microarch-level ==${{ microarch_level }}
+        - ${{ stdlib('c') }}
+        - ${{ compiler('cxx') }}
+        - if: cuda_compiler_version != "None"
+          then: ${{ compiler('cuda') }}
+        # necessary for conda-build to build the python bindings per version
+        - if: build_platform != target_platform
+          then: python
+        - cmake
+        - ninja
+        - if: cuda_compiler_version != "None" and build_platform != target_platform
+          then:
+            - cuda-cudart-dev
+            - cuda-profiler-api
+            - cuda-version ${{ cuda_compiler_version }}
+            - libcublas-dev
+            - libcurand-dev
+      host:
+        - libblas
+        - liblapack
+        - if: linux
+          then: libgomp
+        - if: osx
+          then: llvm-openmp
+        - if: cuda_compiler_version != "None"
+          then:
+            - cuda-cudart-dev
+            - cuda-profiler-api
+            - cuda-version ==${{ cuda_compiler_version }}
+            - libcublas-dev
+            - libcurand-dev
+      run:
+        - libblas
+        - liblapack
+        - if: unix and x86_64
+          then: _x86_64-microarch-level >=${{ microarch_level }}
+      run_exports:
+        # faiss follows SemVer for its API but not ABI, see
+        # https://github.com/conda-forge/faiss-split-feedstock/issues/107,
+        # so restrict packages built with libfaiss to use same minor version.
+        - ${{ pin_subpackage('libfaiss', upper_bound='x.x') }}
+        # additionally, we need to ensure matching proc-type
+        - libfaiss * [build=${{ faiss_proc_type }}*]
+      ignore_run_exports:
+        from_package:
+          - if: unix and x86_64
+            then: x86_64-microarch-level
+      run_constraints:
+        - if: cuda_compiler_version != "None"
+          then: faiss-cpu <0.0a0
+        - if: cuda_compiler_version == "None"
+          then: faiss-gpu <0.0a0
+        - faiss-proc * [build=${{ faiss_proc_type }}*]
+    tests:
+      - package_contents:
+          strict: true
+          # shared
+          lib:
+            - if: unix
+              then: libfaiss
+            - if: win
+              then: faiss
+            - if: osx and arm64
+              then:
+                - libfaiss_metal.dylib
+                - lib/MetalDistance.metallib
+          # headers for upstream-folders 'faiss/*.h', 'faiss/{impl,invlists,utils}/*.h',
+          # see https://github.com/facebookresearch/faiss/blob/v{{ version }}/faiss/CMakeLists.txt;
+          # gpu adds headers in 'faiss/gpu/*.h', 'faiss/gpu/{impl,utils}/*.(cu)?h'.
+          # generated by:
+          # ls faiss/ | grep -E "h$" | LC_COLLATE=C sort
+          # ls faiss/gpu/ | grep -E "h$" | LC_COLLATE=C sort
+          include:
+            - faiss/AutoTune.h
+            - faiss/Clustering.h
+            - faiss/IVFlib.h
+            - faiss/Index.h
+            - faiss/Index2Layer.h
+            - faiss/IndexAdditiveQuantizer.h
+            - faiss/IndexAdditiveQuantizerFastScan.h
+            - faiss/IndexBinary.h
+            - faiss/IndexBinaryFlat.h
+            - faiss/IndexBinaryFromFloat.h
+            - faiss/IndexBinaryHNSW.h
+            - faiss/IndexBinaryHash.h
+            - faiss/IndexBinaryIVF.h
+            - faiss/IndexEDEN.h
+            - faiss/IndexFastScan.h
+            - faiss/IndexFlat.h
+            - faiss/IndexFlatCodes.h
+            - faiss/IndexHNSW.h
+            - faiss/IndexIDMap.h
+            - faiss/IndexIVF.h
+            - faiss/IndexIVFAdditiveQuantizer.h
+            - faiss/IndexIVFAdditiveQuantizerFastScan.h
+            - faiss/IndexIVFEDEN.h
+            - faiss/IndexIVFFastScan.h
+            - faiss/IndexIVFFlat.h
+            - faiss/IndexIVFFlatPanorama.h
+            - faiss/IndexIVFIndependentQuantizer.h
+            - faiss/IndexIVFPQ.h
+            - faiss/IndexIVFPQFastScan.h
+            - faiss/IndexIVFPQR.h
+            - faiss/IndexIVFRaBitQ.h
+            - faiss/IndexIVFRaBitQFastScan.h
+            - faiss/IndexIVFSpectralHash.h
+            - faiss/IndexLSH.h
+            - faiss/IndexLattice.h
+            - faiss/IndexNNDescent.h
+            - faiss/IndexNSG.h
+            - faiss/IndexNeuralNetCodec.h
+            - faiss/IndexPQ.h
+            - faiss/IndexPQFastScan.h
+            - faiss/IndexPreTransform.h
+            - faiss/IndexRaBitQ.h
+            - faiss/IndexRaBitQFastScan.h
+            - faiss/IndexRefine.h
+            - faiss/IndexReplicas.h
+            - faiss/IndexRowwiseMinMax.h
+            - faiss/IndexScalarQuantizer.h
+            - faiss/IndexShards.h
+            - faiss/IndexShardsIVF.h
+            - faiss/MatrixStats.h
+            - faiss/MetaIndexes.h
+            - faiss/MetricType.h
+            - faiss/SuperKMeans.h
+            - faiss/VectorTransform.h
+            # - faiss/build.h
+            - faiss/clone_index.h
+            - faiss/factory_tools.h
+            - faiss/index_factory.h
+            - faiss/index_io.h
+            - faiss/impl/*.h
+            - faiss/invlists/*.h
+            - faiss/utils/*.h
+            - if: cuda_compiler_version != "None"
+              then:
+                - faiss/gpu/GpuAutoTune.h
+                - faiss/gpu/GpuCloner.h
+                - faiss/gpu/GpuClonerOptions.h
+                - faiss/gpu/GpuDistance.h
+                - faiss/gpu/GpuFaissAssert.h
+                - faiss/gpu/GpuIcmEncoder.h
+                - faiss/gpu/GpuIndex.h
+                # - faiss/gpu/GpuIndexBinaryCagra.h
+                - faiss/gpu/GpuIndexBinaryFlat.h
+                # - faiss/gpu/GpuIndexCagra.h
+                - faiss/gpu/GpuIndexFlat.h
+                - faiss/gpu/GpuIndexIVF.h
+                - faiss/gpu/GpuIndexIVFFlat.h
+                - faiss/gpu/GpuIndexIVFPQ.h
+                - faiss/gpu/GpuIndexIVFScalarQuantizer.h
+                - faiss/gpu/GpuIndicesOptions.h
+                - faiss/gpu/GpuResources.h
+                - faiss/gpu/StandardGpuResources.h
+                # - faiss/gpu/hipify.sh
+                - faiss/gpu/impl/*.h
+                - faiss/gpu/impl/*.cuh
+                - faiss/gpu/utils/*.h
+                - faiss/gpu/utils/*.cuh
+          files:
+            exists:
+              # CMake metadata
+              - ${{ "Library/" if win }}lib/cmake/faiss/faiss-config-version.cmake
+              - ${{ "Library/" if win }}lib/cmake/faiss/faiss-config.cmake
+              - ${{ "Library/" if win }}lib/cmake/faiss/faiss-targets.cmake
+              - ${{ "Library/" if win }}lib/cmake/faiss/faiss-targets-release.cmake
+            # absence of static libraries
+            not_exists:
+              - if: unix
+                then:
+                  - lib/libfaiss.a
+                  - lib/libfaiss_gpu.a
+              - if: osx and arm64
+                then: lib/libfaiss_metal.a
+              - if: win
+                then: faiss_gpu.lib
+
+  - package:
+      name: faiss
+    inherit:
+      from: faiss-build
+      run_exports: false
+    build:
+      string: ${{ build_str_prefix ~ "py" ~ (python | version_to_buildstring) ~ "h" ~ hash ~ "_" ~ build_number }}
+      script:
+        file: build-pkg
+    requirements:
+      build:
+        - if: unix and x86_64
+          then: x86_64-microarch-level ==${{ microarch_level }}
+        - ${{ stdlib('c') }}
+        - ${{ compiler('cxx') }}
+        - if: cuda_compiler_version != "None"
+          then: ${{ compiler('cuda') }}
+        - cmake
+        - ninja
+        - swig
+        - if: build_platform != target_platform
+          then:
+            - python
+            - cross-python_${{ target_platform }}
+            - numpy
+      host:
+        - libfaiss ==${{ version }} [build=${{ faiss_proc_type }}*]
+        - numpy
+        - pip
+        - python
+        - setuptools
+        - if: linux
+          then: libgomp
+        - if: osx
+          then: llvm-openmp
+        - if: cuda_compiler_version != "None"
+          then:
+            - cuda-version ==${{ cuda_compiler_version }}
+            - libcublas-dev
+      run:
+        - python
+        - packaging
+        - libfaiss ==${{ version }} [build=${{ faiss_proc_type }}*]
+        - if: unix and x86_64
+          then: _x86_64-microarch-level >=${{ microarch_level }}
+      run_constraints:
+        - if: cuda_compiler_version != "None"
+          then: faiss-cpu <0.0a0
+        - if: cuda_compiler_version == "None"
+          then: faiss-gpu <0.0a0
+        - faiss-proc * [build=${{ faiss_proc_type }}*]
+    tests:
+      - python:
+          imports:
+            - if: (microarch_level|default(1)|int < 4)
+              then: faiss
+          pip_check: true
+      - files:
+          source:
+            - tests/
+        requirements:
+          run:
+            - scipy
+            - pytest
+        script:
+          interpreter: python
+          # only run the full test suite for one python version when in emulation
+          # (each run can take up to 5h!); there's essentially zero divergence
+          # in behaviour across python versions anyway
+          content:
+            - if: (match(python, "==3.11") and (microarch_level|default(1)|int < 4) and ((unix and not ppc64le) or win))
+              then:
+              - import pytest
+              - from numpy._core._multiarray_umath import __cpu_features__
+              - print(f'Testing version with AVX2-support - ' + str(__cpu_features__['AVX2']))
+              - 'tests_to_skip = "_not_a_real_test"'
+              # flaky double encoding test that occasionally fails
+              - 'tests_to_skip += " or test_RQ6x8"'
+              # TestComputeGT switches between CPU & GPU implementation depending on availability;
+              # GPU device detection (on win) currently seems broken in CUDA, and segfaults the test suite
+              - if: win
+                then:
+                  - 'tests_to_skip += " or TestComputeGT"'
+                  # test relies on linux-isms
+                  - 'tests_to_skip += " or test_RQ6x8"'
+                  - 'tests_to_skip += " or (test_contrib and test_checkpoint)"'
+              - if: osx
+                then:
+                  # marginal tolerance violation
+                  - 'tests_to_skip += " or (TestProductLocalSearchQuantizer and test_lut)"'
+              # two failing tests on aarch and win (test_index_accuracy & test_index_accuracy2)
+              - if: aarch64 or ppc64le or win
+                then: 'tests_to_skip += " or (test_residual_quantizer and test_index_accuracy)"'
+              - if: win
+                then: 'tests_to_skip += " or (test_local_search_quantizer and test_index_accuracy2)"'
+              # test errors on aarch (probably due to emulation)
+              - if: aarch64
+                then:
+                  - 'tests_to_skip += " or (TestPCA and test_pca)"'
+                  - 'tests_to_skip += " or test_PQ4_speed"'
+                  - 'tests_to_skip += " or test_update_codebooks"'
+              # a test run in emulation takes ~2.5h on the fastest agents,
+              # and over 5h on a slow one; we need to skip some of the
+              # longest-running tests to have a chance of finishing
+              - if: aarch64 or ppc64le
+                then:
+                  # test modules that may take 2h or more on a slow agent
+                  - 'tests_to_skip += " or test_index_accuracy.py"'
+                  - 'tests_to_skip += " or test_fast_scan.py"'
+                  # other really slow tests
+                  - 'tests_to_skip += " or (test_merge_index.py and TestMerge1)"'
+                  - 'tests_to_skip += " or (test_meta_index.py and IDRemap)"'
+                  - 'tests_to_skip += " or (TestClone and AdditiveQuantizer)"'
+                  - 'tests_to_skip += " or (TestIndexProduct and test_accuracy1)"'
+                  - 'tests_to_skip += " or test_wrapped_quantizer_HNSW"'
+              # Failing tests on NumPy 2: TestPreassigned::test_float,
+              # TestClustering::test_ivf_train_2level, OPQRelativeAccuracy::test_OIVFPQ and
+              # TestComponents::test_update_codebooks_with_double. Remove after faiss>=1.13.0
+              # https://github.com/facebookresearch/faiss/pull/4523
+              - 'tests_to_skip += " or test_float"'
+              - if: linux or win
+                then: 'tests_to_skip += " or test_ivf_train_2level"'
+              - if: linux
+                then: 'tests_to_skip += " or test_update_codebooks_with_double"'
+              # GPU-only tests abort on CUDA builds without a usable GPU
+              - if: cuda_compiler_version != "None"
+                then:
+                  - 'tests_to_skip += " or TestComputeGT"'
+                  - 'tests_to_skip += " or test_wheel_smoke_gpu.py"'
+              # Segfaults on Windows + MKL + no CUDA builds
+              - if: win
+                then: 'tests_to_skip += " or (TestReconstructBatch and test_exception)"'
+              # the linux & windows CI agents support AVX2 (OSX doesn't yet), so by default,
+              # we expect faiss will load the library with AVX2-support, see
+              # https://github.com/facebookresearch/faiss/blob/v1.7.1/faiss/python/loader.py#L52-L66
+              - 'args = ["--log-file-level=INFO", "--log-file=log.txt", "-k", f"not ({tests_to_skip})", "--durations=50"]'
+              - 'print(f"running pytest with args: {args}")'
+              - 'pytest.main(args)'
+              # running the following test requires an actual GPU device, which is not available in CI
+              # - pytest faiss/gpu/test/
+
+  # for compatibility with (& ease of migration from) existing packages in the pytorch channel
+  - package:
+      name: faiss-cpu
+    build:
+      skip: cuda_compiler_version != "None"
+    requirements:
+      run:
+        - faiss ==${{ version }} [build=cpu*]
+    tests:
+      - python:
+          imports:
+            - if: (microarch_level|default(1)|int < 4)
+              then: faiss
+
+  - package:
+      name: faiss-gpu
+    build:
+      skip: cuda_compiler_version == "None"
+    requirements:
+      run:
+        - faiss ==${{ version }} [build=cuda*]
+    tests:
+      - python:
+          imports:
+            - if: (microarch_level|default(1)|int < 4)
+              then: faiss
+
+about:
+  homepage: https://github.com/facebookresearch/faiss
+  license: MIT
+  license_file: LICENSE
+  summary: A library for efficient similarity search and clustering of dense vectors.
+  description: |
+    Faiss is a library for efficient similarity search and clustering of dense vectors.
+    It contains algorithms that search in sets of vectors of any size, up to ones that
+    possibly do not fit in RAM. It also contains supporting code for evaluation and
+    parameter tuning. Faiss is written in C++ with complete wrappers for Python/numpy.
+    Some of the most useful algorithms are implemented on the GPU. It is developed by
+    [Facebook AI Research](https://research.fb.com/category/facebook-ai-research-fair/).
+
+    The BLAS/LAPACK implementation can be selected at runtime by installing
+    the desired libblas/liblapack variant.
+  documentation: https://faiss.ai/
+  repository: https://github.com/facebookresearch/faiss
+
+extra:
+  recipe-maintainers:
+    - h-vetinari
+    - weiji14
