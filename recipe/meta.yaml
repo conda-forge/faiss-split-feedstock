@@ -1,8 +1,8 @@
-{% set version = "1.14.3" %}
+{% set version = "1.15.1" %}
 # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
 {% set faiss_proc_type = "cuda" if cuda_compiler_version != "None" else "cpu" %}
 
-{% set build = 1 %}
+{% set build = 0 %}
 # Use a higher build number for the CUDA variant, to ensure that it's
 # preferred by conda's solver, and it's preferentially
 # installed where the platform supports it.
@@ -42,7 +42,7 @@ package:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v{{ version }}.tar.gz
-  sha256: 7f3c4ed9aec3bd7524382862f5fcbd4d8984e2a8979ff3bdb2c0bcea5144149e
+  sha256: 7b583010cc3c0a778b909a1beecbc5a4bd42f415d82af734b2c05d5eaaca0ffa
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
@@ -97,10 +97,10 @@ outputs:
         - exit 0
 
   - name: libfaiss
-    script: build-lib.sh    # [unix]
-    script: build-lib.bat   # [win]
+    script: build-lib.sh  # [unix]
+    script: build-lib.bat  # [win]
     build:
-      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       ignore_run_exports_from:
         - x86_64-microarch-level  # [unix and x86_64]
@@ -178,10 +178,10 @@ outputs:
     {% endif %}
 
   - name: faiss
-    script: build-pkg.sh          # [not win]
-    script: build-pkg.bat         # [win]
+    script: build-pkg.sh  # [not win]
+    script: build-pkg.bat  # [win]
     build:
-      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"                                                    # [cuda_compiler_version == "None"]
+      string: "py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version == "None"]
       string: "py{{ CONDA_PY }}cuda{{ cuda_compiler_version | replace('.', '') }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}_{{ faiss_proc_type }}"  # [cuda_compiler_version != "None"]
       ignore_run_exports_from:
         - x86_64-microarch-level  # [unix and x86_64]
