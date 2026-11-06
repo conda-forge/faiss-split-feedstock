@@ -1,7 +1,7 @@
 schema_version: 1
 
 context:
-  version: "1.15.0"
+  version: "1.15.1"
   build: 0
   # see github.com/conda-forge/conda-forge.github.io/issues/1059 for naming discussion
   faiss_proc_type: ${{ "cuda" if cuda_compiler_version != "None" else "cpu" }}
@@ -13,7 +13,7 @@ recipe:
 
 source:
   url: https://github.com/facebookresearch/faiss/archive/v${{ version }}.tar.gz
-  sha256: 0b94bf4b17229b28a8a6686d7637ce93de4ef25f6308040184675befad9d9332
+  sha256: 7b583010cc3c0a778b909a1beecbc5a4bd42f415d82af734b2c05d5eaaca0ffa
   patches:
     - patches/0001-adapt-header-target-directory-to-outputname.patch
     # patch for avoiding crash in GPU test suite on windows
