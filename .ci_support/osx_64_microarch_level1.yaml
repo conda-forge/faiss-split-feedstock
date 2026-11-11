@@ -10,20 +10,18 @@ channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
-cuda_compiler:
-- cuda-nvcc
 cuda_compiler_version:
 - None
 cxx_compiler:
 - clangxx
 cxx_compiler_version:
-- '19'
+- '21'
 libblas:
 - 3.9.* *netlib
 liblapack:
 - 3.9.* *netlib
 llvm_openmp:
-- '19'
+- '21'
 macos_machine:
 - x86_64-apple-darwin13.4.0
 microarch_level:
